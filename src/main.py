@@ -1,7 +1,6 @@
 
 from util.database import DataBase
 
-
 '''
     Inicialización de la aplicación: 
     Crea el esquema de la BBDD, realiza una carga inicial de datos en la BD y muestra un menú
@@ -14,5 +13,3 @@ DATA = "resources/data.sql"
 db = DataBase(DBNAME)
 db.executeScript(SCHEMA)  # Genera el esquema ejecutando el script SCHEMA
 db.executeScript(DATA)  # Carga incial de datos especificada en el script DATA
-
-db.executeQuery("select * from Deportista")
