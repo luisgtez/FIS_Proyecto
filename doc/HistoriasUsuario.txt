@@ -4,3 +4,8 @@ Ejemplos de Historias de Usuario
 Descripción: Como deportista deseo registrar una nueva actividad para poder realizar un seguimiento posterior
 Criterios de Aceptación:
 El deportista se identifica mediante su correo electrónico. Se mostrarán sus datos (al menos, nombre y apellidos y correo electrónico) e introduce los datos sobre la nueva actividad realizada. Los datos mínimos de la actividad que se registrará en este sprint son fecha, duración (en horas), localización, distancia (en kms) y FC máx/FC mín (si se conocen). Se indicará también el tipo de actividad realizada, que en este sprint estará limitado a dos (carrera, natación)
+
+
+Descripción: Como gestor quiero añadir un indicativo sobre el estado de forma a cada deportista
+Criterios de aceptación:
+El estado de forma se calcula en base a las actividades del úñtimo mes.Esta métrica se calcula a partir del cociente entre la media de actividades del deportista y la media de actividaddes totales.Resultados inferiores a uno se indicarán con un estado de forma decreciente,iguales a uno buen estado y superiores a uno muy bueno.
