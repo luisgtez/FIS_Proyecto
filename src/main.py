@@ -1,5 +1,6 @@
 
 from util.database import DataBase
+from deportista.deportistaView import DeportistaView
 
 '''
     Inicialización de la aplicación: 
@@ -13,3 +14,5 @@ DATA = "resources/data.sql"
 db = DataBase(DBNAME)
 db.executeScript(SCHEMA)  # Genera el esquema ejecutando el script SCHEMA
 db.executeScript(DATA)  # Carga incial de datos especificada en el script DATA
+
+DeportistaView().run()  # Muestra el menú de opciones

@@ -5,7 +5,8 @@ VALUES
     (2, 'Maria', 'Gomez', 'maria.gomez@example.com', '2023-02-20', FALSE),
     (3, 'Pedro', 'Lopez', 'pedro.lopez@example.com', '2023-03-10', TRUE),
     (4, 'Ana', 'Rodriguez', 'ana.rodriguez@example.com', '2023-04-05', FALSE),
-    (5, 'Luis', 'Martinez', 'luis.martinez@example.com', '2023-05-12', TRUE);
+    (5, 'Luis', 'Martinez', 'luis.martinez@example.com', '2023-05-12', TRUE),
+    (6, 'example', 'examplez', 'example@example.com', '2023-06-01', FALSE);
 
 -- Insert data into the Actividad table
 INSERT INTO Actividad (ID, Fecha, DuracionHoras, Localizacion, DistanciaKms, FCMax, FCMin, TipoActividad, DeportistaID)
