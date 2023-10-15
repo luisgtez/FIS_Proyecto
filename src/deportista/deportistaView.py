@@ -1,7 +1,7 @@
 
 import sys
 from deportista.deportistaModel import DeportistaModel
-
+import datetime
 
 class DeportistaView:
     '''
@@ -46,23 +46,73 @@ class DeportistaView:
         else:
             nombre,apellidos = self.deportista.getNombreCompletoDeportista(correoDeportista)
             print(f"Iniciado sesion: {correoDeportista}")
-            print(f"¡Bienvenido {nombre} {apellidos}!" )
+            print(f"\n¡Bienvenido {nombre} {apellidos}!" )
             
             print("\nIntrodcir los datos de la actividad")
-            fecha = input ("Fecha: ")
-            duracion_horas = input ("Duracion en horas: ")
-            localizacion = input ("Localizacion: ")
-            distancia_kms = input ("Distancia en kms: ")
-            FC_max = input ("FC max (opcional): ")
-            FC_min = input ("FC min (opcional): ")
-            tipo_actividad = input (f"Tipo de actividad : ")
-            
+            try:
+                
+                fecha = input ("Fecha (AAAA-MM-DD), dejar vacío si quieres que la fecha sea igual a la actual: ")
+                if fecha=="":
+                    fecha = datetime.datetime.now().strftime("%Y-%m-%d")
+                else:
+                    try:
+                        fecha = datetime.datetime.strptime(fecha, '%Y-%m-%d').strftime("%Y-%m-%d")
+                    except ValueError:
+                        print ("Error en el formato de la fecha, debe tener el formato AAAA-MM-DD")
+                        return
+                
+                duracion_horas = input ("Duracion en horas: ")
+                try:
+                    duracion_horas.replace(",",".")
+                    duracion_horas = float(duracion_horas)
+                except ValueError:
+                    print ("Error en el formato de la duracion, debe ser un numero entero o decimal")
+                    return
+                
+                localizacion = input ("Localizacion: ")
+                
+                distancia_kms = input ("Distancia en kms: ")
+                try:
+                    distancia_kms = float(distancia_kms)
+                except ValueError:
+                    print ("Error en el formato de la distancia, debe ser un numero entero o decimal")
+                    return
+
+                FC_max = input ("FC max (opcional): ")
+                if FC_max=="":
+                    FC_max = None
+                else:
+                    try :
+                        FC_max = int(FC_max)
+                    except ValueError:
+                        print ("Error en el formato de la FC max, debe ser un numero entero")
+                        return
+                    
+                FC_min = input ("FC min (opcional): ")
+                if FC_min=="":
+                    FC_min = None
+                else:
+                    try :
+                        FC_min = int(FC_min)
+                    except ValueError:
+                        print ("Error en el formato de la FC min, debe ser un numero entero")
+                        return
+                
+                tipo_actividad = input (f"Tipo de actividad (carrera o natación): ")
+                #Quitar espacios en blanco, saltos de linea y tabuladores, y convertir a minusculas sin acentos
+                tipo_actividad = tipo_actividad.strip().lower().replace("á","a").replace("é","e").replace("í","i").replace("ó","o").replace("ú","u")
+                actividades = ["carrera", "natacion"]                
+                if tipo_actividad not in actividades:
+                    print (f"Error en el tipo de actividad, debe ser una de estas:{actividades}")
+                    return
+                
+            except:
+                print ("Error en los datos introducidos")
+                return    
             #Invocación al modelo para insertar la actividad
             self.deportista.insertActivity(fecha,duracion_horas,localizacion,distancia_kms,FC_max,FC_min,tipo_actividad,idDeportista)
-            print(f"Se ha registrado la actividad de {tipo_actividad} el {fecha} en {localizacion} con una duracion de {duracion_horas} horas y una distancia de {distancia_kms} kms")
             
-            
-            
+            print(f"\nSe ha registrado la actividad de \"{tipo_actividad}\" el \"{fecha}\" en \"{localizacion}\" con una duracion de \"{duracion_horas}\" horas y una distancia de \"{distancia_kms}\" kms")
             
             
     def quit(self):
