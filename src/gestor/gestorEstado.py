@@ -7,7 +7,7 @@ total deportistas activos, porcentaje perfil “Free” y “Premium”,
 porcentaje por sexo y porcentaje por rango de edad (<30, 30-49,>50)
 """
 # Conectar a la base de datos SQLite
-conexion = sqlite3.connect('AppDB.db')  # Reemplaza 'tu_base_de_datos.db' con el nombre de tu archivo SQLite
+conexion = sqlite3.connect('AppDB.db')  
 cursor = conexion.cursor()
 
 # Consulta para obtener el total de deportistas activos
