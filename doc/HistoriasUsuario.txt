@@ -9,3 +9,7 @@ El deportista se identifica mediante su correo electrónico. Se mostrarán sus d
 Descripción: Como gestor quiero añadir un indicativo sobre el estado de forma a cada deportista
 Criterios de aceptación:
 El estado de forma se calcula en base a las actividades del úñtimo mes.Esta métrica se calcula a partir del cociente entre la media de actividades del deportista y la media de actividaddes totales.Resultados inferiores a uno se indicarán con un estado de forma decreciente,iguales a uno buen estado y superiores a uno muy bueno.
+
+Descripción: Como deportista quiero ver un resumen básico sobre mi actividad deportiva a lo largo del tiempo, incluyendo el estado de forma
+Criterios de aceptación:
+El deportista se identifica mediante su correo electrónico y se mostrarán sus datos. A continuación, se genera un listado con tipo de actividad, número de sesiones y total distancia, y se mostrará el indicativo sobre el estado de forma del deportista.

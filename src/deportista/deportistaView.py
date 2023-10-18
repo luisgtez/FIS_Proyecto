@@ -14,14 +14,16 @@ class DeportistaView:
         self.deportista = DeportistaModel () #Crea un objeto model que se invocará desde esta vista
         #Crea un diccionario con las opciones (key) y los métodos/acciones que se pueden realizar en este objeto (values)
         self.choices = { "1": self.addActivity,
-                         "2": self.quit
+                         "2": self.showSummary,
+                         "3": self.quit
                        }
     
     def displayMenu (self):
         print("#"*20)
         print(""" Opciones: \n
               1.- Registrar nueva actividad
-              2.- Salir 
+              2.- Resumen de actividad
+              3.- Salir 
               """)
     
     #Muestra la lista de opciones y permite la selección
@@ -113,6 +115,30 @@ class DeportistaView:
             self.deportista.insertActivity(fecha,duracion_horas,localizacion,distancia_kms,FC_max,FC_min,tipo_actividad,idDeportista)
             
             print(f"\nSe ha registrado la actividad de \"{tipo_actividad}\" el \"{fecha}\" en \"{localizacion}\" con una duracion de \"{duracion_horas}\" horas y una distancia de \"{distancia_kms}\" kms")
+            
+    #Vista para la HU Resumen básico sobre mi actividad deportiva a lo largo del tiempo, incluyendo el estado de forma
+    def showSummary(self):
+        '''
+        El deportista se identifica mediante su correo electrónico y se mostrarán sus datos. A continuación, se genera un listado con tipo de actividad, número de sesiones y total distancia, y se mostrará el indicativo sobre el estado de forma del deportista.
+        '''
+        print("#"*20)
+        correoDeportista = input ("Introducir tu correo: ")
+        #Invocación al modelo para obtener el id de la compañia
+        idDeportista = self.deportista.getIdDeportista(correoDeportista)
+        
+        if idDeportista==None:
+            print ("No existe el deportista con correo:",correoDeportista)
+        else:
+            nombre,apellidos = self.deportista.getNombreCompletoDeportista(correoDeportista)
+            print(f"Iniciado sesion: {correoDeportista}")
+            print(f"\n¡Bienvenido {nombre} {apellidos}!" )
+            
+            print("\nResumen de actividad: ")
+            print ("----------------------------------")
+
+            #Invocación al modelo para obtener el resumen
+            res = self.deportista.getSummary(idDeportista)
+            self.printResults(res)
             
             
     def quit(self):
