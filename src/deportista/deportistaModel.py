@@ -71,3 +71,12 @@ class DeportistaModel:
                 insert into Actividad(ID, Fecha, DuracionHoras, Localizacion, DistanciaKms, FCMax, FCMin, TipoActividad, DeportistaID) values (null,?,?,?,?,?,?,?,?) 
                 """
         self.db.executeUpdateQuery(query,fecha,duracion_horas,localizacion,distancia_kms,FC_max,FC_min,tipo_actividad,idDeportista)
+        
+    def getSummary(self,idDeportista):
+        # query = """select TipoActividad, count(*) as NumeroSesiones, sum(DistanciaKms) as DistanciaTotal
+        #            from Actividad
+        #            where DeportistaID = ?
+        #            group by TipoActividad
+        #         """
+        query = "select TipoActividad, count(*) as NumeroSesiones, sum(DistanciaKms) as DistanciaTotal from Actividad where DeportistaID = ? group by TipoActividad"
+        return self.db.executeQuery(query,idDeportista)
