@@ -1,12 +1,12 @@
 -- Insert data into the Deportista table
-INSERT INTO Deportista (ID, Nombre, Apellidos, CorreoElectronico, FechaAlta, Premium)
+INSERT INTO Deportista (ID, Nombre, Apellidos, CorreoElectronico, FechaAlta, Premium,Sexo,FechaNacimiento)
 VALUES
-    (1, 'Juan', 'Perez', 'juan.perez@example.com', '2023-01-15', TRUE),
-    (2, 'Maria', 'Gomez', 'maria.gomez@example.com', '2023-02-20', FALSE),
-    (3, 'Pedro', 'Lopez', 'pedro.lopez@example.com', '2023-03-10', TRUE),
-    (4, 'Ana', 'Rodriguez', 'ana.rodriguez@example.com', '2023-04-05', FALSE),
-    (5, 'Luis', 'Martinez', 'luis.martinez@example.com', '2023-05-12', TRUE),
-    (6, 'example', 'examplez', 'example@example.com', '2023-06-01', FALSE);
+    (1, 'Juan', 'Perez', 'juan.perez@example.com', '2023-01-15', TRUE,"Masculino", "2004-12-23"),
+    (2, 'Maria', 'Gomez', 'maria.gomez@example.com', '2023-02-20', FALSE,"Femenino", "1968-03-21"),
+    (3, 'Pedro', 'Lopez', 'pedro.lopez@example.com', '2023-03-10', TRUE,"Masculino", "1979-04-06"),
+    (4, 'Ana', 'Rodriguez', 'ana.rodriguez@example.com', '2023-04-05', FALSE,"Femenino", "2003-12-09"),
+    (5, 'Luis', 'Martinez', 'luis.martinez@example.com', '2023-05-12', TRUE,"Masculino", "2003-12-04"),
+    (6, 'example', 'examplez', 'example@example.com', '2023-06-01', FALSE,"Masculino", "2003-10-22");
 
 -- Insert data into the Actividad table
 INSERT INTO Actividad (ID, Fecha, DuracionHoras, Localizacion, DistanciaKms, FCMax, FCMin, TipoActividad, DeportistaID)

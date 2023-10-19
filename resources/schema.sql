@@ -10,7 +10,9 @@ CREATE TABLE Deportista(
     Apellidos VARCHAR(255),
     CorreoElectronico VARCHAR(255) UNIQUE,
     FechaAlta DATE,
-    Premium BOOLEAN
+    Premium BOOLEAN,
+    Sexo VARCHAR(255),
+    FechaNacimiento DATE
 );
 
 -- Crear la tabla Actividad
