@@ -47,9 +47,12 @@ class GestorModel:
 
     #Obtiene el id de un deportista especificado por su correo.
    
-   def gestorEstado(self):
-        consulta_total_activos = "SELECT COUNT(*) FROM Deportista;"
-        total_activos = self.db.executeQuery(consulta_total_activos)
+    def gestorEstado(self):
+        
+        results = {}
+        
+        consulta_total_activos = "SELECT COUNT(*) FROM Deportista as TotalActivos;"
+        results["total_activos"] = self.db.executeQuery(consulta_total_activos)[0]["COUNT(*)"]
 
         consulta_perfil = """
                         SELECT
@@ -57,8 +60,33 @@ class GestorModel:
                             SUM(CASE WHEN Premium = 0 THEN 1 ELSE 0 END) AS TotalFree
                         FROM Deportista;
                         """     
-        resultados_perfil = self.db.executeQuery(consulta_perfil)
-        total_premium = resultados_perfil[0]
-        total_free = resultados_perfil[1]
+        resultados_perfil = self.db.executeQuery(consulta_perfil)[0]
+        results["total_premium"] = resultados_perfil["TotalPremium"]
+        results["total_free"] = resultados_perfil["TotalFree"]
+        
+        consulta_por_sexo = """
+        SELECT
+            Sexo,
+            (COUNT(*) * 100.0 / (SELECT COUNT(*) FROM Deportista)) AS Porcentaje
+        FROM Deportista
+        GROUP BY Sexo;
+        """
+        
+        results["resultados_sexo"] = self.db.executeQuery(consulta_por_sexo)
+        
+        consulta_por_edad = """
+        SELECT
+            CASE
+                WHEN strftime('%Y', 'now') - strftime('%Y', FechaNacimiento) < 30 THEN '<30'
+                WHEN strftime('%Y', 'now') - strftime('%Y', FechaNacimiento) BETWEEN 30 AND 49 THEN '30-49'
+                ELSE '>50'
+            END AS RangoEdad,
+            (COUNT(*) * 100.0 / (SELECT COUNT(*) FROM Deportista)) AS Porcentaje
+        FROM Deportista
+        GROUP BY RangoEdad;
+        """
+        
+        
+        results["resultados_edad"] = self.db.executeQuery(consulta_por_edad)
 
-        return [total_activos,total_free,total_premium]
+        return results

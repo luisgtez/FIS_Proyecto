@@ -2,6 +2,7 @@
 import sys
 from deportista.deportistaModel import DeportistaModel
 import datetime
+from pprint import pprint
 
 class DeportistaView:
     '''
@@ -13,29 +14,29 @@ class DeportistaView:
     def __init__ (self):
         self.deportista = DeportistaModel () #Crea un objeto model que se invocará desde esta vista
         #Crea un diccionario con las opciones (key) y los métodos/acciones que se pueden realizar en este objeto (values)
-        self.choices = { "1": self.addActivity,
-                         "2": self.showSummary,
-                         "3": self.quit
-                       }
+        # self.choices = { "1": self.addActivity,
+        #                  "2": self.showSummary,
+        #                  "3": self.quit
+        #                }
     
-    def displayMenu (self):
-        print("#"*20)
-        print(""" Opciones: \n
-              1.- Registrar nueva actividad
-              2.- Resumen de actividad
-              3.- Salir 
-              """)
+    # def displayMenu (self):
+    #     print("#"*20)
+    #     print(""" Opciones: \n
+    #           1.- Registrar nueva actividad
+    #           2.- Resumen de actividad
+    #           3.- Salir 
+    #           """)
     
     #Muestra la lista de opciones y permite la selección
-    def run (self):
-        while True:
-            self.displayMenu()
-            choice = input("Introducir opción: ")
-            action = self.choices.get(choice)
-            if action:
-                action()
-            else:
-                print("{0} no es una opción valida\n".format(choice))
+    # def run (self):
+    #     while True:
+    #         self.displayMenu()
+    #         choice = input("Introducir opción: ")
+    #         action = self.choices.get(choice)
+    #         if action:
+    #             action()
+    #         else:
+    #             print("{0} no es una opción valida\n".format(choice))
     
     #Vista para la HU Registrar una nueva actividad
     def addActivity(self):
@@ -138,12 +139,13 @@ class DeportistaView:
 
             #Invocación al modelo para obtener el resumen
             res = self.deportista.getSummary(idDeportista)
-            self.printResults(res)
+            for dict in res:
+                print(f"Tipo de actividad: {dict['TipoActividad']}\n -------------------------- \n\tNumero de sesiones: {dict['NumeroSesiones']} \n\tTotal distancia: {dict['DistanciaTotal']} kms \n --------------------------")
             
             
-    def quit(self):
-        print("Cerrando opciones.")
-        sys.exit(0)
+    # def quit(self):
+    #     print("Cerrando opciones.")
+    #     sys.exit(0)
 
     #Médodo muy general para imprimir los resultados (res) que vienen del model
     def printResults (self,res):
@@ -157,6 +159,3 @@ class DeportistaView:
             for row in res:
                 print ([*row.values()]) # Imprime valor de una fila (values del diccionario)
             print ("----------------------------------")
-
-
-        
