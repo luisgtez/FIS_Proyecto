@@ -80,3 +80,24 @@ class DeportistaModel:
         #         """
         query = "select TipoActividad, count(*) as NumeroSesiones, sum(DistanciaKms) as DistanciaTotal from Actividad where DeportistaID = ? group by TipoActividad"
         return self.db.executeQuery(query,idDeportista)
+    
+    # Comprobar que el deportista es Premium
+    def premium(self,idDeportista):
+        query="""
+                select Premium from Deportista 
+                where Deportista.ID=?"""
+        return self.db.executeQuery(query,idDeportista)
+    
+    # Obtener sexo y fecha de nacimiento de un deportista
+    def getSexoFecha(self,idDeportista):
+        query="""
+                select Sexo,FechaNacimiento from Deportista
+                where Deportista.ID=?"""
+        res = self.db.executeQuery(query,idDeportista)
+        if len(res)==1:
+            return res[0].get("Sexo"),res[0].get("FechaNacimiento")
+        else:
+            return None,None
+
+    
+

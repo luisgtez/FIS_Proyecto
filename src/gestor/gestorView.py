@@ -74,3 +74,14 @@ class GestorView:
     #         for row in res:
     #             print ([*row.values()]) # Imprime valor de una fila (values del diccionario)
     #         print ("----------------------------------")
+
+    # Vista para la HU de ver estado de forma 
+    def getEstadoFormaView(self):
+        
+        resultados=self.gestor.gestorEstadoForma()
+
+        for deportista in resultados:
+            id=deportista["ID"]
+            estadoforma=deportista["EstadoForma"]
+            print(f"ID: {id}")
+            print(f"Estado de forma: {estadoforma}")

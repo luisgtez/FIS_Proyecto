@@ -17,7 +17,9 @@ class View:
         self.choices = { "1": self.deportista.addActivity,
                          "2": self.deportista.showSummary,
                          "3": self.gestor.gestorEstadoview,
-                         "4": self.quit
+                         "4":self.gestor.getEstadoFormaView,
+                         "5":self.deportista.showComparacion,
+                         "6": self.quit
                        }
         
     def displayMenu (self):
@@ -26,7 +28,9 @@ class View:
               1.- Registrar nueva actividad
               2.- Resumen de actividad
               3.- Datos Deportistas (Gestor)
-              4.- Salir 
+              4.- Estado de Forma Deportistas (Gestor)
+              5.- Comparar con deportista (Premium)
+              6.- Salir 
               """)
         
     #Muestra la lista de opciones y permite la selección

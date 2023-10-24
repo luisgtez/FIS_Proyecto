@@ -141,8 +141,54 @@ class DeportistaView:
             res = self.deportista.getSummary(idDeportista)
             for dict in res:
                 print(f"Tipo de actividad: {dict['TipoActividad']}\n -------------------------- \n\tNumero de sesiones: {dict['NumeroSesiones']} \n\tTotal distancia: {dict['DistanciaTotal']} kms \n --------------------------")
-            
-            
+
+   # Vista para la HU comparación con otro deportista (para Premium)
+    def showComparacion(self):
+        
+        correoDeportista = input("Introduce tu correo: ")
+        idDeportista = self.deportista.getIdDeportista(correoDeportista) 
+
+        if idDeportista==None:
+            print ("No existe el deportista con correo:",correoDeportista)
+        
+        else:
+            premium=self.deportista.premium(idDeportista)
+            if premium==False:
+                print("Esta funcionalidad solo se permite para deportistas Premium")
+            else:
+                correoDeportistaComparar = input("Indique el correo del deportista con quien se quiere comparar: ")
+                idDeportistaComparar = self.deportista.getIdDeportista(correoDeportistaComparar)
+                if idDeportistaComparar==None:
+                    print("No existe el deportista con correo",correoDeportistaComparar)
+                else:
+                    # Deportista premium
+                    nombre,apellidos=self.deportista.getNombreCompletoDeportista(idDeportista)
+                    print(f"Iniciado sesion: {correoDeportista}")
+                    print(f"\n¡Bienvenido {nombre} {apellidos}!" )
+                    print("Iniciando comparacion")
+                    sexo,fecha=self.deportista.getSexoFecha(idDeportista)
+                    print("Aquí tienes tus datos:")
+                    print(f"Nombre: {nombre} Apellidos: {apellidos}")
+                    print(f"Sexo: {sexo} Fecha de nacimiento: {fecha}")
+                    res = self.deportista.getSummary(idDeportista)
+                    for dict in res:
+                        print(f"Tipo de actividad: {dict['TipoActividad']}\n -------------------------- \n\tNumero de sesiones: {dict['NumeroSesiones']} \n\tTotal distancia: {dict['DistanciaTotal']} kms \n --------------------------")
+
+                    # Deportista a comparar
+                    nombre2,apellidos2=self.deportista.getNombreCompletoDeportista(idDeportistaComparar)
+                    print(f"Datos del deportista a comparar de correo {correoDeportistaComparar}")
+                    print(f"Nombre: {nombre2} Apellidos: {apellidos2}")
+                    sexo2,fecha2=self.deportista.getSexoFecha(idDeportistaComparar)
+                    print(f"Sexo: {sexo2} Fecha de nacimiento: {fecha2}")
+                    res2 = self.deportista.getSummary(idDeportistaComparar)
+                    for dict in res2:
+                        print(f"Tipo de actividad: {dict['TipoActividad']}\n -------------------------- \n\tNumero de sesiones: {dict['NumeroSesiones']} \n\tTotal distancia: {dict['DistanciaTotal']} kms \n --------------------------")
+
+
+
+
+  
+        
     # def quit(self):
     #     print("Cerrando opciones.")
     #     sys.exit(0)

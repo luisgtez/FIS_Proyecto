@@ -90,3 +90,22 @@ class GestorModel:
         results["resultados_edad"] = self.db.executeQuery(consulta_por_edad)
 
         return results
+    
+    # Obtiene el estado de forma de los deportistas
+    def gestorEstadoForma(self):
+        
+        query="""
+                SELECT Deportista.ID,
+                CASE
+                    WHEN AVG(CASE WHEN strftime('%Y-%m-%d', 'now', '-1 month') <= Actividad.Fecha THEN 1 ELSE 0 END) /
+                        AVG(CASE WHEN Deportista.ID = Actividad.DeportistaID THEN 1 ELSE 0 END) < 1 THEN 'Decreciente'
+                    WHEN AVG(CASE WHEN strftime('%Y-%m-%d', 'now', '-1 month') <= Actividad.Fecha THEN 1 ELSE 0 END) /
+                        AVG(CASE WHEN Deportista.ID = Actividad.DeportistaID THEN 1 ELSE 0 END) = 1 THEN 'Buena'
+                    ELSE 'Muy Buena'
+                END AS EstadoForma
+                FROM Deportista
+                LEFT JOIN Actividad ON Deportista.ID = Actividad.DeportistaID
+                GROUP BY Deportista.ID;
+            """
+        res = self.db.executeQuery(query)
+        return res
