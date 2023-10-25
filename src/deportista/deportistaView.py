@@ -162,7 +162,7 @@ class DeportistaView:
                     print("No existe el deportista con correo",correoDeportistaComparar)
                 else:
                     # Deportista premium
-                    nombre,apellidos=self.deportista.getNombreCompletoDeportista(idDeportista)
+                    nombre,apellidos=self.deportista.getNombreCompletoDeportista(correoDeportista)
                     print(f"Iniciado sesion: {correoDeportista}")
                     print(f"\n¡Bienvenido {nombre} {apellidos}!" )
                     print("Iniciando comparacion")
@@ -175,7 +175,7 @@ class DeportistaView:
                         print(f"Tipo de actividad: {dict['TipoActividad']}\n -------------------------- \n\tNumero de sesiones: {dict['NumeroSesiones']} \n\tTotal distancia: {dict['DistanciaTotal']} kms \n --------------------------")
 
                     # Deportista a comparar
-                    nombre2,apellidos2=self.deportista.getNombreCompletoDeportista(idDeportistaComparar)
+                    nombre2,apellidos2=self.deportista.getNombreCompletoDeportista(correoDeportistaComparar)
                     print(f"Datos del deportista a comparar de correo {correoDeportistaComparar}")
                     print(f"Nombre: {nombre2} Apellidos: {apellidos2}")
                     sexo2,fecha2=self.deportista.getSexoFecha(idDeportistaComparar)

@@ -85,3 +85,10 @@ class GestorView:
             estadoforma=deportista["EstadoForma"]
             print(f"ID: {id}")
             print(f"Estado de forma: {estadoforma}")
+            
+    def masActivos(self):
+    # Mostrar los resultados por consola
+        resultados = self.gestor.getMasActivos()
+        for fila in resultados:
+            nombre_deportista, fecha_alta, total_actividades = fila["NombreDeportista"], fila["FechaAlta"], fila["TotalActividades"]
+            print(f"Nombre: {nombre_deportista}, Fecha de Alta: {fecha_alta}, Total de Actividades: {total_actividades}")

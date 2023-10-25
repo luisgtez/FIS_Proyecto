@@ -109,3 +109,32 @@ class GestorModel:
             """
         res = self.db.executeQuery(query)
         return res
+    
+    def getMasActivos(self):
+        consulta = """
+                    SELECT
+                        D.Nombre || ' ' || D.Apellidos AS NombreDeportista,
+                        D.FechaAlta,
+                        COUNT(A.ID) AS TotalActividades
+                    FROM
+                        Deportista D
+                    LEFT JOIN
+                        Actividad A ON D.ID = A.DeportistaID
+                    GROUP BY
+                        D.ID, D.Nombre, D.Apellidos, D.FechaAlta
+                    ORDER BY
+                        TotalActividades DESC; 
+                    """
+        
+        # tipos_actividades_uniques = self.db.executeQuery("SELECT DISTINCT TipoActividad FROM Actividad;")
+        # tipos_actividades_uniques = [tipo_actividad["TipoActividad"] for tipo_actividad in tipos_actividades_uniques]
+        
+        # res = []
+        # for tipo_actividad in tipos_actividades_uniques:
+        #     query = f"SELECT Nombre,Apellidos,FechaAlta, COUNT(*) AS TotalActividades FROM Deportista INNER JOIN Actividad ON Deportista.ID = Actividad.DeportistaID WHERE TipoActividad = {tipo_actividad} GROUP BY Deportista.ID ORDER BY TotalActividades DESC;"
+        #     res_query = self.db.executeQuery(query)
+        #     res.append(res_query)
+        # print(res)
+        
+        res = self.db.executeQuery(consulta)
+        return res
