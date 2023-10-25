@@ -16,11 +16,13 @@ class View:
         #Crea un diccionario con las opciones (key) y los métodos/acciones que se pueden realizar en este objeto (values)
         self.choices = { "1": self.deportista.addActivity,
                          "2": self.deportista.showSummary,
-                         "3": self.deportista.showComparacion,
-                         "4": self.gestor.gestorEstadoview,
-                         "5": self.gestor.getEstadoFormaView,
-                         "6": self.gestor.masActivos,
-                         "7": self.quit
+                         "3": self.deportista.showActividadesEnPeriodo,
+                         "4": self.deportista.showActividadesDeportistaTipo,
+                         "5": self.deportista.showComparacion,
+                         "6": self.gestor.gestorEstadoview,
+                         "7": self.gestor.getEstadoFormaView,
+                         "8": self.gestor.masActivos,
+                         "9": self.quit
                        }
         
     def displayMenu (self):
@@ -28,11 +30,13 @@ class View:
         print(""" Opciones: \n
               1.- Registrar nueva actividad
               2.- Resumen de actividad
-              3.- Comparar con deportista (Premium)
-              4.- Datos Deportistas (Gestor)
-              5.- Estado de Forma Deportistas (Gestor)
-              6.- Deportistas más activos (Gestor)
-              7.- Salir 
+              3.- Resumen de actividad entre dos fechas
+              4.- Resumen de actividad de deportista por tipo (Premium)
+              5.- Comparar con deportista (Premium)
+              6.- Datos Deportistas (Gestor)
+              7.- Estado de Forma Deportistas (Gestor)
+              8.- Deportistas más activos (Gestor)
+              9.- Salir 
               """)
         
     #Muestra la lista de opciones y permite la selección

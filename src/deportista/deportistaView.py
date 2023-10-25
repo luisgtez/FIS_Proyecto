@@ -104,11 +104,14 @@ class DeportistaView:
                 tipo_actividad = input (f"Tipo de actividad (carrera o natación): ")
                 #Quitar espacios en blanco, saltos de linea y tabuladores, y convertir a minusculas sin acentos
                 tipo_actividad = tipo_actividad.strip().lower().replace("á","a").replace("é","e").replace("í","i").replace("ó","o").replace("ú","u")
-                actividades = ["carrera", "natacion"]                
+                actividades = ["carrera", "natacion"]
+                
                 if tipo_actividad not in actividades:
                     print (f"Error en el tipo de actividad, debe ser una de estas:{actividades}")
                     return
-                
+
+                dict_actividad = {"carrera":"Carrera", "natacion":"Natación"}
+                tipo_actividad = dict_actividad.get(tipo_actividad)
             except:
                 print ("Error en los datos introducidos")
                 return    
@@ -153,6 +156,7 @@ class DeportistaView:
         
         else:
             premium=self.deportista.premium(idDeportista)
+            premium = premium[0].get("Premium")
             if premium==False:
                 print("Esta funcionalidad solo se permite para deportistas Premium")
             else:
@@ -183,6 +187,88 @@ class DeportistaView:
                     res2 = self.deportista.getSummary(idDeportistaComparar)
                     for dict in res2:
                         print(f"Tipo de actividad: {dict['TipoActividad']}\n -------------------------- \n\tNumero de sesiones: {dict['NumeroSesiones']} \n\tTotal distancia: {dict['DistanciaTotal']} kms \n --------------------------")
+                        
+                        
+    def showActividadesEnPeriodo(self):
+        print("#"*20)
+        correoDeportista = str(input("Introducir tu correo: "))
+
+        fecha_inicio = input ("Fecha de inicio (AAAA-MM-DD), dejar vacío si quieres que la fecha sea igual a la actual: ")
+        if fecha_inicio=="":
+                fecha_inicio = datetime.datetime.now().strftime("%Y-%m-%d")
+        else:
+            try:
+                fecha_inicio = datetime.datetime.strptime(fecha_inicio, '%Y-%m-%d').strftime("%Y-%m-%d")
+            except ValueError:
+                    print ("Error en el formato de la fecha, debe tener el formato AAAA-MM-DD")
+                    return
+        fecha_fin = input ("Fecha de inicio (AAAA-MM-DD), dejar vacío si quieres que la fecha sea igual a la actual: ")
+        if fecha_fin=="":
+                fecha_fin = datetime.datetime.now().strftime("%Y-%m-%d")
+        else:
+            try:
+                fecha_fin = datetime.datetime.strptime(fecha_fin, '%Y-%m-%d').strftime("%Y-%m-%d")
+            except ValueError:
+                    print ("Error en el formato de la fecha, debe tener el formato AAAA-MM-DD")
+                    return
+        
+        idDeportista = self.deportista.getIdDeportista(correoDeportista)
+        if idDeportista==None:
+            print ("No existe el deportista con correo:",correoDeportista)
+        else:
+            nombre,apellidos = self.deportista.getNombreCompletoDeportista(correoDeportista)
+            print(f"Iniciado sesion: {correoDeportista}")
+            print(f"\n¡Bienvenido {nombre} {apellidos}!" )
+            
+            print(f"\nResumen de actividad entre {fecha_inicio} y {fecha_fin}: ")
+            print ("----------------------------------")
+        res = self.deportista.getActividadesEnPeriodo(idDeportista, fecha_inicio, fecha_fin)
+        self.printResults(res)
+        
+
+    #ver los detalles de las actividades de un tipo realizadas por un deportista (Premium)
+    def showActividadesDeportistaTipo(self):
+
+        correoDeportista = input("Introduce tu correo: ")
+        idDeportista = self.deportista.getIdDeportista(correoDeportista) 
+
+        if idDeportista==None:
+            print ("No existe el deportista con correo:",correoDeportista)
+            return
+        else:
+            premium=self.deportista.premium(idDeportista)
+            premium = premium[0].get("Premium")
+            
+            if premium==False:
+                print("Esta funcionalidad solo se permite para deportistas Premium")
+                return
+        
+        print("#"*20)
+        correoDeportista = str(input("Introducir el correo del deportista: "))
+
+        idDeportista = self.deportista.getIdDeportista(correoDeportista)
+        
+        if idDeportista==None:
+            print ("No existe el deportista con correo:",correoDeportista)
+            return
+        else:
+            nombre,apellidos = self.deportista.getNombreCompletoDeportista(correoDeportista)
+        
+        tipo_actividad = input (f"Tipo de actividad (carrera o natación): ")
+        #Quitar espacios en blanco, saltos de linea y tabuladores, y convertir a minusculas sin acentos
+        tipo_actividad = tipo_actividad.strip().lower().replace("á","a").replace("é","e").replace("í","i").replace("ó","o").replace("ú","u")
+        actividades = ["carrera", "natacion"]                
+        if tipo_actividad not in actividades:
+            print (f"Error en el tipo de actividad, debe ser una de estas:{actividades}")
+            return
+        print(f"\nActividades de {tipo_actividad} realizadas por {nombre} {apellidos}: ")
+        print ("----------------------------------")
+        if tipo_actividad == "carrera":
+           tipo_actividad="Carrera" 
+        else:
+            tipo_actividad="Natación"
+        res = self.deportista.getActividadesDeportistaTipo(idDeportista, tipo_actividad)
+        self.printResults(res)           
 
 
 

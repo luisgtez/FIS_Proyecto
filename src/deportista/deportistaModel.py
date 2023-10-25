@@ -98,6 +98,20 @@ class DeportistaModel:
             return res[0].get("Sexo"),res[0].get("FechaNacimiento")
         else:
             return None,None
+        
+    #obtener los detalles de las actividades realizadas por un deportista en un periodo de tiempo
+    def getActividadesEnPeriodo(self, idDeportista, fecha_inicio, fecha_fin):
 
+        queryActividadesIntervalo = """select Fecha, DuracionHoras, Localizacion, DistanciaKms, FCMax, FCMin, TipoActividad
+                                       from Actividad where DeportistaID = ? and Fecha between ? and ?"""
+        resultActividades = self.db.executeQuery(queryActividadesIntervalo, idDeportista, fecha_inicio, fecha_fin)
+
+        return resultActividades
     
-
+    #Como deportista “Premium” obtener la actividad de otro deportista por tipo de actividad a lo largo del tiempo.
+    def getActividadesDeportistaTipo(self, idDeportista, tipoActividad):
+       
+        queryActividadesDeportista = "select Fecha, DuracionHoras, DistanciaKms from Actividad where DeportistaID = ? and TipoActividad = ? order by Fecha desc"
+        resultActividades = self.db.executeQuery(queryActividadesDeportista, idDeportista, tipoActividad)
+        
+        return resultActividades
