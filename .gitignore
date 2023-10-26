@@ -1,2 +1,2 @@
-# Ignore all files in any folder .pyc
-**/.pyc
+#Ignorar archivos de cache de python
+__pycache__/
