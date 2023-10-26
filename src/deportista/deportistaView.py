@@ -53,7 +53,7 @@ class DeportistaView:
             
             print("\nIntrodcir los datos de la actividad")
             try:
-                
+            # Fecha
                 fecha = input ("Fecha (AAAA-MM-DD), dejar vacío si quieres que la fecha sea igual a la actual: ")
                 if fecha=="":
                     fecha = datetime.datetime.now().strftime("%Y-%m-%d")
@@ -63,8 +63,9 @@ class DeportistaView:
                     except ValueError:
                         print ("Error en el formato de la fecha, debe tener el formato AAAA-MM-DD")
                         return
-                
+            # Duracion en horas
                 duracion_horas = input ("Duracion en horas: ")
+
                 try:
                     duracion_horas.replace(",",".")
                     duracion_horas = float(duracion_horas)
@@ -72,25 +73,40 @@ class DeportistaView:
                     print ("Error en el formato de la duracion, debe ser un numero entero o decimal")
                     return
                 
+                if duracion_horas < 0:
+                    print ("Error en el formato de la duracion, debe ser un numero entero o decimal positivo")
+                    return
+                
+                # Localizacion
                 localizacion = input ("Localizacion: ")
                 
+                # Distancia en kms
                 distancia_kms = input ("Distancia en kms: ")
                 try:
                     distancia_kms = float(distancia_kms)
                 except ValueError:
                     print ("Error en el formato de la distancia, debe ser un numero entero o decimal")
                     return
-
+                
+                if distancia_kms < 0:
+                    print ("Error en el formato de la distancia, debe ser un numero entero o decimal positivo")
+                    return
+    
+                # FC max y min
                 FC_max = input ("FC max (opcional): ")
                 if FC_max=="":
                     FC_max = None
+                    
                 else:
                     try :
                         FC_max = int(FC_max)
                     except ValueError:
                         print ("Error en el formato de la FC max, debe ser un numero entero")
                         return
-                    
+                    if FC_max < 0:
+                        print ("Error en el formato de la FC max, debe ser un numero entero positivo")
+                        return
+                
                 FC_min = input ("FC min (opcional): ")
                 if FC_min=="":
                     FC_min = None
@@ -99,6 +115,9 @@ class DeportistaView:
                         FC_min = int(FC_min)
                     except ValueError:
                         print ("Error en el formato de la FC min, debe ser un numero entero")
+                        return
+                    if FC_min < 0:
+                        print ("Error en el formato de la FC min, debe ser un numero entero positivo")
                         return
                 
                 tipo_actividad = input (f"Tipo de actividad (carrera o natación): ")
@@ -110,13 +129,15 @@ class DeportistaView:
                     print (f"Error en el tipo de actividad, debe ser una de estas:{actividades}")
                     return
 
-                dict_actividad = {"carrera":"Carrera", "natacion":"Natación"}
+                dict_actividad = {"carrera":"Carrera", "natacion":"Natacion"}
                 tipo_actividad = dict_actividad.get(tipo_actividad)
             except:
                 print ("Error en los datos introducidos")
                 return    
             #Invocación al modelo para insertar la actividad
             self.deportista.insertActivity(fecha,duracion_horas,localizacion,distancia_kms,FC_max,FC_min,tipo_actividad,idDeportista)
+            
+            tipo_actividad = "Natación" if tipo_actividad == "Natacion" else tipo_actividad
             
             print(f"\nSe ha registrado la actividad de \"{tipo_actividad}\" el \"{fecha}\" en \"{localizacion}\" con una duracion de \"{duracion_horas}\" horas y una distancia de \"{distancia_kms}\" kms")
             
@@ -143,7 +164,9 @@ class DeportistaView:
             #Invocación al modelo para obtener el resumen
             res = self.deportista.getSummary(idDeportista)
             for dict in res:
-                print(f"Tipo de actividad: {dict['TipoActividad']}\n -------------------------- \n\tNumero de sesiones: {dict['NumeroSesiones']} \n\tTotal distancia: {dict['DistanciaTotal']} kms \n --------------------------")
+                tipo_actividad = dict.get("TipoActividad")
+                tipo_actividad = "Natación" if tipo_actividad == "Natacion" else tipo_actividad
+                print(f"Tipo de actividad: {tipo_actividad}\n -------------------------- \n\tNumero de sesiones: {dict['NumeroSesiones']} \n\tTotal distancia: {dict['DistanciaTotal']} kms \n --------------------------")
 
    # Vista para la HU comparación con otro deportista (para Premium)
     def showComparacion(self):
