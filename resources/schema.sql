@@ -1,7 +1,12 @@
+PRAGMA encoding = "UTF-8";
+
+
 --Primero se deben borrar todas las tablas (de detalle a maestro) y lugo anyadirlas (de maestro a detalle)
 
 drop table if exists Deportista;
 drop table if exists Actividad;
+drop table if exists TipoActividad;
+drop table if exists Premium;
 
 -- Crear la tabla Deportista
 CREATE TABLE Deportista(
@@ -12,19 +17,39 @@ CREATE TABLE Deportista(
     FechaAlta DATE,
     Premium BOOLEAN,
     Sexo VARCHAR(255),
-    FechaNacimiento DATE
+    FechaNacimiento DATE,
+    Altura INTEGER,
+    Peso DECIMAL(6,3),
+    ObjetivoHoras DECIMAL(7,3),
+    ObjetivoCantidad INTEGER
+);
+
+CREATE TABLE Premium(
+    ID INTEGER PRIMARY KEY,
+    DeportistaID INTEGER,
+    FormaPago VARCHAR(255),
+    Facturacion VARCHAR(255),
+    FOREIGN KEY (DeportistaID) REFERENCES Deportista(ID)
 );
 
 -- Crear la tabla Actividad
 CREATE TABLE Actividad(
     ID INTEGER PRIMARY KEY,
     Fecha DATE,
-    DuracionHoras DECIMAL(5, 2),
+    DuracionHoras DECIMAL(7, 3),
     Localizacion VARCHAR(255),
-    DistanciaKms DECIMAL(5, 2),
-    FCMax INT,
-    FCMin INT,
-    TipoActividad VARCHAR(50),
-    DeportistaID INT,
+    DistanciaKms DECIMAL(6, 3),
+    FCMax INTEGER,
+    FCMin INTEGER,
+    TipoActividadID INTEGER,
+    DeportistaID INTEGER,
     FOREIGN KEY (DeportistaID) REFERENCES Deportista(ID)
+    FOREIGN KEY (TipoActividadID) REFERENCES TipoActividad(ID)
+);
+
+CREATE TABLE TipoActividad(
+    ID INTEGER PRIMARY KEY,
+    Tipo VARCHAR(255),
+    MET INTEGER,
+    Subtipo VARCHAR(255)
 );

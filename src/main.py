@@ -12,7 +12,7 @@ DATA = "resources/data.sql"
 
 # Conexión a la base de datos DBNAME, si no existe la crea
 db = DataBase(DBNAME)
-# db.executeScript(SCHEMA)  # Genera el esquema ejecutando el script SCHEMA
-# db.executeScript(DATA)  # Carga incial de datos especificada en el script DATA
+db.executeScript(SCHEMA)  # Genera el esquema ejecutando el script SCHEMA
+db.executeScript(DATA)  # Carga incial de datos especificada en el script DATA
 
 View().run()  # Muestra el menú de opciones
