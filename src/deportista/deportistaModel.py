@@ -116,3 +116,45 @@ class DeportistaModel:
         resultActividades = self.db.executeQuery(queryActividadesDeportista, idDeportista, tipoActividad)
         
         return resultActividades
+
+    #Como deportista quiero añadir objetivos semanales
+    def addObjetivoSemanal(self, idDeportista):
+        print("¿Qué tipo de objetivo quieres introducir?")
+        print("1. Cantidad de horas de deporte semanales")
+        print("2. Cantidad de actividades realizadas en la semana")
+
+        opcion = input("Selecciona una opción (1 o 2): ")
+
+        if opcion not in ["1", "2"]:
+            print("Opción no válida. Debe seleccionar 1 o 2.")
+            return False
+
+        if opcion == "1":
+            objetivoHoras = float(input("Introduce la cantidad de horas de deporte semanales que deseas realizar: "))
+            objetivoCantidad = None
+        else:
+            objetivoCantidad = int(input("Introduce la cantidad de actividades realizadas en la semana que deseas alcanzar: "))
+            objetivoHoras = None
+
+        # Verificar si ya existe un objetivo para la próxima semana
+        fechaInicio = datetime.now()
+        fechaFin = fechaInicio + timedelta(days=7)
+        queryVerificar = "select count(*) as countObjetivos from ObjetivoSemanal where DeportistaID = ? and FechaInicio >= ? and FechaFin <= ?"
+        resVerificar = self.db.executeQuery(queryVerificar, idDeportista, fechaInicio, fechaFin)
+
+        # Manejar el caso cuando resVerificar es None
+        if resVerificar is not None and resVerificar[0].get("countObjetivos", 0) > 0:
+            # Ya existe un objetivo para la próxima semana
+            print("Ya tienes un objetivo para la próxima semana. No se puede añadir otro.")
+            return False
+
+        # Calcular la fecha de inicio y fin del próximo periodo de siete días
+        fechaInicio = datetime.now()
+        fechaFin = fechaInicio + timedelta(days=7)
+
+        # Insertar el objetivo semanal en la tabla ObjetivoSemanal
+        queryInsert = "insert into ObjetivoSemanal(ID, FechaInicio, FechaFin, ObjetivoHoras, ObjetivoCantidad, DeportistaID) values (null,?,?,?,?,?)"
+        self.db.executeUpdateQuery(queryInsert, fechaInicio, fechaFin, objetivoHoras, objetivoCantidad, idDeportista)
+
+        print("Objetivo añadido con éxito.")
+        return True
