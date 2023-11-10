@@ -1,4 +1,5 @@
 from util.database import DataBase
+from datetime import datetime, timedelta
 
 class DeportistaModel:
     '''
