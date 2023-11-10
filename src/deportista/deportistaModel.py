@@ -118,6 +118,8 @@ class DeportistaModel:
         
         return resultActividades
 
+
+    
     #Como deportista quiero añadir objetivos semanales
     def addObjetivoSemanal(self, idDeportista):
         print("¿Qué tipo de objetivo quieres introducir?")
@@ -159,3 +161,43 @@ class DeportistaModel:
 
         print("Objetivo añadido con éxito.")
         return True
+
+
+    
+    # Nueva función para registrar a un deportista de forma gratuita
+    def registrarDeportista(self, nombre, apellidos, correo, fecha_nacimiento, sexo, peso, altura):
+        # Obtener la fecha actual como fecha de alta
+        fecha_alta = datetime.now().date()
+
+        # Definir los valores iniciales para Premium y Objetivos (pueden ser ajustados según tus requisitos)
+        premium = False
+        objetivo_horas = None
+        objetivo_cantidad = None
+
+        # Insertar el nuevo deportista en la tabla Deportista
+        query_insert = """
+            INSERT INTO Deportista(
+                Nombre, Apellidos, CorreoElectronico, FechaAlta, Premium, Sexo,
+                FechaNacimiento, Altura, Peso, ObjetivoHoras, ObjetivoCantidad
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """
+        self.db.executeUpdateQuery(
+            query_insert,
+            nombre, apellidos, correo, fecha_alta, premium, sexo,
+            fecha_nacimiento, altura, peso, objetivo_horas, objetivo_cantidad
+        )
+
+        # Obtener el ID del deportista recién registrado
+        id_deportista = self.getIdDeportista(correo)
+
+        # Mostrar justificante con los datos proporcionados y la fecha de alta
+        print("Justificante de Registro:")
+        print(f"Nombre: {nombre} {apellidos}")
+        print(f"Correo Electrónico: {correo}")
+        print(f"Fecha de Alta: {fecha_alta}")
+        print("\nGuarde esta información para futuras referencias.")
+
+        print("Registro exitoso. ¡Bienvenido a la aplicación!")
+
+        # Devolver el ID del deportista recién registrado
+        return id_deportista
