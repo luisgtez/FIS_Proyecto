@@ -1,6 +1,3 @@
-PRAGMA encoding = "UTF-8";
-
-
     -- Insert data into the Deportista table
 INSERT INTO Deportista (ID, Nombre, Apellidos, CorreoElectronico, FechaAlta, Premium, Sexo, FechaNacimiento, Altura, Peso, ObjetivoHoras, ObjetivoCantidad)
 VALUES
@@ -48,8 +45,15 @@ VALUES
 
 -- Insert data into TipoActividad table
 
-INSERT INTO TipoActividad (ID, Tipo, MET,Subtipo)
+INSERT INTO TipoActividad (ID, Tipo, MET)
 VALUES
-    (1, 'Carrera', 8, NULL),
-    (2, 'Natación',9, NULL),
-    (3, 'Carrera', 8, 'Montaña');
+    (1, 'Carrera', 8),
+    (2, 'Natación',9);
+
+INSERT INTO SubtipoActividad (ID, Subtipo, TipoActividadID)
+VALUES
+    (1, 'Montaña', 1),
+    (2, 'Pista', 1),
+    (3, 'Maratón', 1),
+    (4, 'Piscina', 2),
+    (5, 'Playa', 2);
