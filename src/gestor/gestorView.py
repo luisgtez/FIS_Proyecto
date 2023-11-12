@@ -34,13 +34,25 @@ class GestorView:
     # Vista para la HU de ver estado de forma 
     def getEstadoFormaView(self):
         
-        resultados=self.gestor.gestorEstadoForma()
+        idDeportista = input("Introduzca el ID del deportista: ")
+        # Comprobamos que el ID es un entero
+        try:
+            idDeportista = int(idDeportista)
+        except ValueError:
+            print("El ID del deportista debe ser un entero")
+            return
         
-        estado_forma = {}
-        for dict in resultados:
-            estado_forma[dict["ID"]] = dict["EstadoForma"]
-        return estado_forma      
-            
+        # Comprobamos que el ID existe en la base de datos
+        if not self.gestor.existeID(idDeportista):
+            print("El ID del deportista no existe en la base de datos")
+            return
+        
+        # Obtenemos el estado de forma del deportista
+        estado_forma = self.gestor.gestorEstadoForma(idDeportista)
+        
+        # Mostramos el estado de forma del deportista
+        print(f"Estado de forma del deportista con ID {idDeportista}: {estado_forma}")
+
     def masActivos(self):
     # Mostrar los resultados por consola
         resultados = self.gestor.getMasActivos()
