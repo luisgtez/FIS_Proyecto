@@ -1,5 +1,6 @@
 from deportista.deportistaModel import DeportistaModel
 from gestor.gestorView import GestorView
+from gestor.gestorModel import GestorModel
 from util.Utils import utils
 
 import datetime
@@ -19,6 +20,7 @@ class DeportistaView:
     def __init__ (self):
         self.deportista = DeportistaModel() #Crea un objeto model que se invocará desde esta vista
         self.gestor_view = GestorView() #Crea un objeto model que se invocará desde esta vista
+        self.gestor_model = GestorModel() #Crea un objeto model que se invocará desde esta vista
         
     #Vista para la HU Registrar una nueva actividad
     def addActivity(self):
@@ -169,7 +171,7 @@ class DeportistaView:
         subtipo_actividad = self.deportista.mapSubtiposActividad(tipo_actividad_id)[subtipo_actividad_id]
         
         # Mostramos un mensaje al usuario para indicar que se ha insertado la actividad correctamente
-        print(f"Se ha insertado la actividad correctamente: {fecha}, {duracion_horas}, {localizacion}, {distancia_kms}, {FC_max}, {FC_min}, {tipo_actividad}, {subtipo_actividad}")
+        print(f"Se ha insertado la actividad correctamente la actividad con fecha {fecha}, duracion {duracion_horas} horas, localizacion {localizacion}, distancia {distancia_kms} kms, FC max {FC_max}, FC min {FC_min}, tipo de actividad {tipo_actividad} y subtipo de actividad {subtipo_actividad}")
            
     #Vista para la HU Resumen básico sobre mi actividad deportiva a lo largo del tiempo, incluyendo el estado de forma
     def showSummary(self):
@@ -183,23 +185,33 @@ class DeportistaView:
         if idDeportista==None:
             return
         
-        # Mostramos el resumen de actividad
-        print("\nResumen de actividad: ")
 
         #Invocación al modelo para obtener el resumen
         res = self.deportista.getSummary(idDeportista)
 
+        # Si no tiene actividades, mostramos un mensaje de error y salimos de la funcion
+        if len(res)==0:
+            print("No hay actividades")
+            return
+        
+        # Mostramos el resumen
+        print("\nResumen de actividad: \n")
+        
         # Convertir ID de tipo de actividad a su nombre
         for dict in res:
             dict["TipoActividad"] = self.deportista.mapTiposActividad()[dict["TipoActividadID"]]
             del dict["TipoActividadID"]
         
         # Obtener estado de forma del deportista
-        estado_forma = self.gestor_view.getEstadoFormaView()[idDeportista]
+        estado_forma = self.gestor_model.gestorEstadoForma(idDeportista)
         
         # Reordenamos las columnas
         res = [{key: dict[key] for key in ["TipoActividad", "NumeroSesiones", "DistanciaTotal"]} for dict in res]
         
+        # Redondeamos la distancia a 2 decimales
+        for dict in res:
+            dict["DistanciaTotal"] = round(dict["DistanciaTotal"],3)
+            
         # Mostramos el resumen con el método printTable de la clase utils
         utils.printTable(res)
         
@@ -425,10 +437,10 @@ class DeportistaView:
                 subtipo_actividad_id = row["SubtipoActividadID"]
                 
                 # Insertamos la actividad
-                self.deportista.insertActivity(fecha,duracion_horas,localizacion,distancia_kms,fc_max,fc_min,tipo_actividad_id,id_deportista,subtipo_actividad_id)
+                self.deportista.insertActivity(fecha=fecha,duracion_horas=duracion_horas,localizacion=localizacion,distancia_kms=distancia_kms,FC_max=fc_max,FC_min=fc_min,tipo_actividad_id=tipo_actividad_id,idDeportista=id_deportista,subtipo_actividad_id=subtipo_actividad_id)
             
             # Si todo ha ido bien, mostramos un mensaje de éxito
-            print(f"Se han insetado {len(df)} actividades correctamente, {id}")
+            print(f"Se han insetado {len(df)} actividades correctamente")
             
             # Como todo ha ido bien, borramos la copia de la base de datos
             os.remove("AppDB_copia.db")
@@ -467,7 +479,6 @@ class DeportistaView:
         nombre,apellidos = self.deportista.getNombreCompletoDeportista(correoDeportista)
         
         # Mostramos un mensaje de bienvenida
-        print(f"Iniciado sesion: {correoDeportista}")
         print(f"\n¡Bienvenido {nombre} {apellidos}!" )
         # Devolvemos el id del deportista
         return idDeportista
