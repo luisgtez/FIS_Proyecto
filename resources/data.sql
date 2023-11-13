@@ -1,6 +1,3 @@
-PRAGMA encoding = "UTF-8";
-
-
     -- Insert data into the Deportista table
 INSERT INTO Deportista (ID, Nombre, Apellidos, CorreoElectronico, FechaAlta, Premium, Sexo, FechaNacimiento, Altura, Peso, ObjetivoHoras, ObjetivoCantidad)
 VALUES
@@ -10,7 +7,8 @@ VALUES
     (4, 'Ana', 'Rodriguez', 'ana.rodriguez@example.com', '2023-04-05', 0, 'Femenino', '2003-12-09', 165, 55.8, 2.5, 8),
     (5, 'Luis', 'Martinez', 'luis.martinez@example.com', '2023-05-12', 1, 'Masculino', '2003-12-04', 170, 68.3, 3.0, 9),
     (6, 'Example', 'Examplez', 'example@example.com', '2023-06-01', 0, 'Masculino', '2003-10-22', 185, 75.0, 2.5, 7),
-    (7, 'PExample', 'PExamplez', 'pexample@example.com', '2023-06-01', 1, 'Masculino', '2003-10-22', 185, 75.0, 2.5, 7);
+    (7, 'PExample', 'PExamplez', 'pexample@example.com', '2023-06-01', 1, 'Masculino', '2003-10-22', 185, 75.0, 2.5, 7),
+    (8, 'nombre', 'apellido', 'c', '2023-11-11', 1, 'Masculino', '2003-10-22', 185, 75.0, 2.5, 7);
 
 
 -- Insert data into the Premium table
@@ -22,34 +20,41 @@ VALUES
 
 
 -- Insert data into the Actividad table
-INSERT INTO Actividad (ID, Fecha, DuracionHoras, Localizacion, DistanciaKms, FCMax, FCMin, TipoActividadID, DeportistaID)
+INSERT INTO Actividad (ID, Fecha, DuracionHoras, Localizacion, DistanciaKms, FCMax, FCMin, TipoActividadID, SubtipoActividadID, DeportistaID)
 VALUES
-    (1, '2023-01-20', 1.5, 'Parque Central', 5.2, 180, 120, 1, 1),
-    (2, '2023-02-05', 2.0, 'Gimnasio FitLife', 6.2, 160, 100, 2, 2),
-    (3, '2023-03-15', 1.0, 'Pista de atletismo', 10.0, 190, 130, 2, 3),
-    (4, '2023-04-10', 1.5, 'Paseo Marítimo', 7.8, 175, 115, 1, 4),
-    (5, '2023-05-02', 2.5, 'Bosque Nacional', 12.3, 195, 140, 1, 5),
-    (6, '2023-01-25', 1.0, 'Piscina Municipal', 2.3, 160, 100, 1, 1),
-    (7, '2023-03-01', 2.5, 'Gimnasio FitLife', 5, 185, 125, 2, 3),
-    (8, '2023-04-20', 1.2, 'Parque Central', 4.0, 170, 110, 2, 4),
-    (9, '2023-05-10', 3.0, 'Montaña', 15.5, 200, 150, 2, 5),
-    (10, '2023-02-15', 1.5, 'Pista de atletismo', 8.0, 175, 120, 1, 2),
-    (11, '2023-06-05', 2.0, 'Paseo Marítimo', 8.7, 180, 125, 2, 6),
-    (12, '2023-07-20', 1.0, 'Parque Central', 5.0, 170, 120, 2, 6),
-    (13, '2023-08-10', 2.5, 'Bosque Nacional', 11.0, 185, 130, 1, 6),
-    (14, '2023-09-15', 1.5, 'Pista de atletismo', 9.0, 175, 120, 2, 6),
-    (15, '2023-10-05', 3.0, 'Gimnasio FitLife', 10, 165, 110, 1, 6),
-    (16, '2023-06-05', 2.0, 'Paseo Marítimo', 8.7, 180, 125, 2, 7),
-    (17, '2023-07-20', 1.0, 'Parque Central', 5.0, 170, 120, 2, 7),
-    (18, '2023-08-10', 2.5, 'Bosque Nacional', 11.0, 185, 130, 1, 7),
-    (19, '2023-09-15', 1.5, 'Pista de atletismo', 9.0, 175, 120, 2, 7),
-    (20, '2023-10-05', 3.0, 'Gimnasio FitLife', 10, 165, 110, 1,7);
+    (1, '2023-01-20', 1.5, 'Parque Central', 5.2, 180, 120, 1, 1, 1),
+    (2, '2023-02-05', 2.0, 'Gimnasio FitLife', 6.2, 160, 100, 2, 1, 2),
+    (3, '2023-03-15', 1.0, 'Pista de atletismo', 10.0, 190, 130, 2, 2, 3),
+    (4, '2023-04-10', 1.5, 'Paseo Marítimo', 7.8, 175, 115, 1, 2, 4),
+    (5, '2023-05-02', 2.5, 'Bosque Nacional', 12.3, 195, 140, 1, 1, 5),
+    (6, '2023-01-25', 1.0, 'Piscina Municipal', 2.3, 160, 100, 1, 1, 1),
+    (7, '2023-03-01', 2.5, 'Gimnasio FitLife', 5, 185, 125, 2, 2, 3),
+    (8, '2023-04-20', 1.2, 'Parque Central', 4.0, 170, 110, 2, 1, 4),
+    (9, '2023-05-10', 3.0, 'Montaña', 15.5, 200, 150, 2, 2, 5),
+    (10, '2023-02-15', 1.5, 'Pista de atletismo', 8.0, 175, 120, 1, 2, 2),
+    (11, '2023-06-05', 2.0, 'Paseo Marítimo', 8.7, 180, 125, 2, 1, 6),
+    (12, '2023-07-20', 1.0, 'Parque Central', 5.0, 170, 120, 2, 2, 6),
+    (13, '2023-08-10', 2.5, 'Bosque Nacional', 11.0, 185, 130, 1, 1, 6),
+    (14, '2023-09-15', 1.5, 'Pista de atletismo', 9.0, 175, 120, 2, 2, 6),
+    (15, '2023-10-05', 3.0, 'Gimnasio FitLife', 10, 165, 110, 1, 1, 6),
+    (16, '2023-06-05', 2.0, 'Paseo Marítimo', 8.7, 180, 125, 2, 1, 7),
+    (17, '2023-07-20', 1.0, 'Parque Central', 5.0, 170, 120, 2, 2, 7),
+    (18, '2023-08-10', 2.5, 'Bosque Nacional', 11.0, 185, 130, 1, 1, 7),
+    (19, '2023-09-15', 1.5, 'Pista de atletismo', 9.0, 175, 120, 2, 2, 7),
+    (20, '2023-10-05', 3.0, 'Gimnasio FitLife', 10, 165, 110, 1, 1, 7);
+
 
 
 -- Insert data into TipoActividad table
-
-INSERT INTO TipoActividad (ID, Tipo, MET,Subtipo)
+INSERT INTO TipoActividad (ID, Tipo, MET)
 VALUES
-    (1, 'Carrera', 8, NULL),
-    (2, 'Natación',9, NULL),
-    (3, 'Carrera', 8, 'Montaña');
+    (1, 'Carrera', 8),
+    (2, 'Natacion',9);
+
+-- Insert data into SubtipoActividad table
+INSERT INTO SubtipoActividad (ID, Subtipo, TipoActividadID)
+VALUES
+    (1, 'Cinta', 1),
+    (2, 'Calle', 1),
+    (3, 'Piscina', 2),
+    (4, 'Mar', 2);
