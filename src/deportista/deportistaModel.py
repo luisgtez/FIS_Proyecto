@@ -9,85 +9,143 @@ class DeportistaModel:
     '''
     
     def __init__ (self):
-        self.db = DataBase ("AppDB.db")
-    
-    # #Obtiene la lista de empleados para una compañia especificada por su nombre
-    # def getAllEmployees (self,companyName):
-    #     query = """select Company.name as Compania, Employee.id as IdEmpleado, Employee.name as NombreEmpleado, Employee.salary as Salario 
-    #                from Company inner join Employee on Company.id=Employee.idCompany
-    #                where Compania = ? order by Employee.id asc
-    #             """
-    #     return self.db.executeQuery(query,companyName)
-    
-    # #Obtiene resumen (total empleados y media de salario) para una compañia especificada por su nombre
-    # def getSummaryEmployees (self, companyName): 
-    #     query = """select count(Employee.id) as total, avg(Employee.salary) as average
-    #                from Company inner join Employee on Company.id=Employee.idCompany
-    #                where Company.name = ?
-    #                group by (Company.id)
-    #             """
-    #     return  self.db.executeQuery(query,companyName)
-    
-    # #Obtiene el salario medio de todos los empleado por compañia
-    # def getAvgSalary (self):
-    #     query = """select Company.name, avg(Employee.salary) as avgSalary
-    #               from Company left join Employee on Company.id=Employee.idCompany
-    #               group by (Company.id)
-    #             """
-    #     return self.db.executeQuery(query)
-    
-    #Inserción de lo datos de un empleado (name,salary,birthdate) en una compañia
-    #Notar que no es necesario indicar explícitamente el valor de la clave del empleado (id),
-    # #ya que cuando éste es null, sqlite lo genera de forma autoincremental
-    # def insertEmploye (self,name,salary,birthDate,idCompany):
-    #     query = """
-    #             insert into Employee(id,name,salary,birthDate,idCompany) values (null,?,?,?,?) 
-    #             """
-    #     self.db.executeUpdateQuery(query,name,salary,birthDate,idCompany)
-    
+        self.db = DataBase ("AppDB.db") # Crea un objeto DataBase con la ruta de la base de datos
 
-    #Obtiene el id de un deportista especificado por su correo.
     def getIdDeportista(self,correoDeportista):
+        '''Método que obtiene el ID de un deportista a partir de su correo electrónico.
+        
+        Parámetros
+        ----------
+        correoDeportista : str
+            Correo electrónico del deportista del que se quiere obtener el ID.
+        
+        Devuelve
+        -------
+        int or None
+            ID del deportista si existe en la base de datos, None en caso contrario.
+        '''
+        # Creamos una query para obtener el ID del deportista a partir de su correo electrónico
         query = """select id from Deportista where Deportista.CorreoElectronico = ?"""
+        
+        # Ejecutamos la query, guardamos el resultado en res
         res = self.db.executeQuery(query,correoDeportista)
+        
+        # Comprobamos que el resultado tiene un único elemento
         if len(res)==1:
+            # Si tiene un único elemento, devolvemos el ID del deportista
             return res[0].get("ID")
+        
         else:
+            # Si no tiene un único elemento, devolvemos None
             return None
     
-    #Obtiene el nombre y apellidos de un deportista especificado por su correo.
     def getNombreCompletoDeportista(self,correoDeportista):
+        '''Método que obtiene el nombre y apellidos de un deportista a partir de su correo electrónico	
+        
+        Parámetros
+        ----------
+        correoDeportista : str
+            Correo electrónico del deportista del que se quiere obtener el nombre y apellidos.
+        
+        Devuelve
+        -------
+        str or None
+            Nombre del deportista si existe en la base de datos, None en caso contrario.
+        '''
+        # Creamos una query para obtener el nombre y apellidos del deportista a partir de su correo electrónico
         query = """select Nombre, Apellidos from Deportista
                    where Deportista.CorreoElectronico = ?
                 """
+        
+        # Ejecutamos la query, guardamos el resultado en res
         res = self.db.executeQuery(query,correoDeportista)
+        
+        # Comprobamos que el resultado tiene un único elemento
         if len(res)==1:
+            # Si tiene un único elemento, devolvemos el nombre y apellidos del deportista
             return res[0].get("Nombre"),res[0].get("Apellidos")
         else:
+            # Si no tiene un único elemento, devolvemos None
             return None,None
     
-    #Inserción de lo datos de una actividad (fecha,duracion_horas,localizacion,distancia_kms,FC_max,FC_min,tipo_actividad,idCompany) de un deportista. ID se genera de forma autoincremental al ser null
-    def insertActivity(self,fecha,duracion_horas,localizacion,distancia_kms,FC_max,FC_min,tipo_actividad,idDeportista):
-        tipo_actividad = "Natacion" if tipo_actividad == "Natación" else tipo_actividad
-        query = """
-                insert into Actividad(ID, Fecha, DuracionHoras, Localizacion, DistanciaKms, FCMax, FCMin, TipoActividad, DeportistaID) values (null,?,?,?,?,?,?,?,?) 
-                """
-        self.db.executeUpdateQuery(query,fecha,duracion_horas,localizacion,distancia_kms,FC_max,FC_min,tipo_actividad,idDeportista)
+    def insertActivity(self,fecha,duracion_horas,localizacion,distancia_kms,FC_max,FC_min,tipo_actividad_id,subtipo_actividad_id,idDeportista):
+        '''Método que inserta una actividad en la base de datos
         
+        Parámetros
+        ----------
+        fecha : str
+            Fecha de la actividad.
+        duracion_horas : float
+            Duración de la actividad en horas.
+        localizacion : str
+            Localización de la actividad.
+        distancia_kms : float
+            Distancia recorrida en la actividad en kilómetros.
+        FC_max : int
+            Frecuencia cardíaca máxima alcanzada en la actividad.
+        FC_min : int
+            Frecuencia cardíaca mínima alcanzada en la actividad.
+        tipo_actividad_id : int
+            ID del tipo de actividad.
+        subtipo_actividad_id : int
+            ID del subtipo de actividad.
+        idDeportista : int  
+            ID del deportista que realiza la actividad.
+        
+        Devuelve
+        -------
+        str
+            "OK" si la inserción se ha realizado correctamente.
+        '''
+        # Creamos una query para insertar los datos en la tabla Actividad
+        query = """ 
+                insert into Actividad(ID, Fecha, DuracionHoras, Localizacion, DistanciaKms, FCMax, FCMin, TipoActividadID,SubtipoActividadID, DeportistaID) values (null,?,?,?,?,?,?,?,?,?) 
+                """ 
+        # Ejecutamos la query con los parámetros correspondientes
+        self.db.executeUpdateQuery(query,fecha,duracion_horas,localizacion,distancia_kms,FC_max,FC_min,tipo_actividad_id,subtipo_actividad_id,idDeportista)
+        
+        # Devolvemos "OK"
+        return "OK"
+            
     def getSummary(self,idDeportista):
-        # query = """select TipoActividad, count(*) as NumeroSesiones, sum(DistanciaKms) as DistanciaTotal
-        #            from Actividad
-        #            where DeportistaID = ?
-        #            group by TipoActividad
-        #         """
-        query = "select TipoActividad, count(*) as NumeroSesiones, sum(DistanciaKms) as DistanciaTotal from Actividad where DeportistaID = ? group by TipoActividad"
+        '''Método que obtiene un resumen de las actividades realizadas por un deportista
+        
+        Parámetros
+        ----------
+        idDeportista : int
+            ID del deportista del que se quiere obtener el resumen de actividades.
+            
+        Devuelve
+        -------
+        list
+            Lista de diccionarios con el resumen de las actividades realizadas por el deportista.
+        '''
+        
+        # Creamos una query para obtener el resumen de las actividades realizadas por el deportista
+        query = "select TipoActividadID, count(*) as NumeroSesiones, sum(DistanciaKms) as DistanciaTotal from Actividad where DeportistaID = ? group by TipoActividadID"
+        
+        # Ejecutamos la query y la retornamos
         return self.db.executeQuery(query,idDeportista)
     
-    # Comprobar que el deportista es Premium
     def premium(self,idDeportista):
+        '''Método que comprueba si un deportista es premium
+        
+        Parámetros
+        ----------
+        idDeportista : int
+            ID del deportista del que se quiere comprobar si es premium.
+            
+        Devuelve
+        -------
+        bool
+            True si el deportista es premium, False en caso contrario.
+        '''
+        # Creamos una query para obtener el campo Premium de la tabla Deportista
         query="""
                 select Premium from Deportista 
                 where Deportista.ID=?"""
+        
+        # Ejecutamos la query y retornamos el resultado
         return self.db.executeQuery(query,idDeportista)
     
     # Obtener sexo y fecha de nacimiento de un deportista
@@ -202,6 +260,7 @@ class DeportistaModel:
         # Devolver el ID del deportista recién registrado
         return id_deportista
 
+<<<<<<< HEAD
     # función para ver la métrica del consumo calórico para una actividad
     def getConsumoCalorico(self,idDeportista,Actividad):
         # Calcular el MBR del deportista 
@@ -274,3 +333,52 @@ class DeportistaModel:
         """
         self.db.executeUpdateQuery(query_premium,formapago,facturacion,id_deportista)
         
+=======
+    
+    def mapTiposActividad(self):
+        '''Método que obtiene los tipos de actividad unicos
+        
+        Devuelve
+        -------
+        dict
+            Diccionario con los tipos de actividad unicos. Clave: ID del tipo de actividad, Valor: Tipo de actividad.
+        '''
+        # Creamos una query para obtener los tipos de actividad unicos
+        query = "SELECT DISTINCT Tipo, ID FROM TipoActividad"
+        
+        # Ejecutamos la query y guardamos el resultado en result
+        result = self.db.executeQuery(query)
+        
+        # Creamos un diccionario con los tipos de actividad unicos
+        tipos_actividad = {dict_values["ID"] : dict_values["Tipo"] for dict_values in result}
+        
+        # Retornamos el diccionario
+        return tipos_actividad
+    
+
+    def mapSubtiposActividad(self,TipoActividad):
+        '''Método que obtiene los subtipos de actividad unicos
+        
+        Parámetros
+        ----------
+        TipoActividad : int
+            ID del tipo de actividad del que se quiere obtener los subtipos.
+            
+        Devuelve
+        -------
+        dict
+            Diccionario con los subtipos de actividad unicos. Clave: ID del subtipo de actividad, Valor: Subtipo de actividad.
+        '''
+        
+        # Creamos una query para obtener los subtipos de actividad unicos
+        query = "SELECT DISTINCT Subtipo, ID FROM SubtipoActividad where TipoActividadID = ?"
+        
+        # Ejecutamos la query y guardamos el resultado en result
+        result = self.db.executeQuery(query,TipoActividad)
+        
+        # Creamos un diccionario con los subtipos de actividad unicos
+        subtipos_actividad = {dict_values["ID"] : dict_values["Subtipo"] for dict_values in result}
+        
+        # Retornamos el diccionario
+        return subtipos_actividad
+>>>>>>> 72be3e8bb152d7218298cd09c59666ccae18ceec

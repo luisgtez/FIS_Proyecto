@@ -9,43 +9,6 @@ class GestorModel:
     
     def __init__ (self):
         self.db = DataBase ("AppDB.db")
-    
-    # #Obtiene la lista de empleados para una compañia especificada por su nombre
-    # def getAllEmployees (self,companyName):
-    #     query = """select Company.name as Compania, Employee.id as IdEmpleado, Employee.name as NombreEmpleado, Employee.salary as Salario 
-    #                from Company inner join Employee on Company.id=Employee.idCompany
-    #                where Compania = ? order by Employee.id asc
-    #             """
-    #     return self.db.executeQuery(query,companyName)
-    
-    # #Obtiene resumen (total empleados y media de salario) para una compañia especificada por su nombre
-    # def getSummaryEmployees (self, companyName): 
-    #     query = """select count(Employee.id) as total, avg(Employee.salary) as average
-    #                from Company inner join Employee on Company.id=Employee.idCompany
-    #                where Company.name = ?
-    #                group by (Company.id)
-    #             """
-    #     return  self.db.executeQuery(query,companyName)
-    
-    # #Obtiene el salario medio de todos los empleado por compañia
-    # def getAvgSalary (self):
-    #     query = """select Company.name, avg(Employee.salary) as avgSalary
-    #               from Company left join Employee on Company.id=Employee.idCompany
-    #               group by (Company.id)
-    #             """
-    #     return self.db.executeQuery(query)
-    
-    #Inserción de lo datos de un empleado (name,salary,birthdate) en una compañia
-    #Notar que no es necesario indicar explícitamente el valor de la clave del empleado (id),
-    # #ya que cuando éste es null, sqlite lo genera de forma autoincremental
-    # def insertEmploye (self,name,salary,birthDate,idCompany):
-    #     query = """
-    #             insert into Employee(id,name,salary,birthDate,idCompany) values (null,?,?,?,?) 
-    #             """
-    #     self.db.executeUpdateQuery(query,name,salary,birthDate,idCompany)
-    
-
-    #Obtiene el id de un deportista especificado por su correo.
    
     def gestorEstado(self):
         
@@ -92,9 +55,9 @@ class GestorModel:
         return results
     
     # Obtiene el estado de forma de los deportistas
-    def gestorEstadoForma(self):
+    def gestorEstadoForma(self, idDeportista):
         
-        query="""
+        query=f"""
                 SELECT Deportista.ID,
                 CASE
                     WHEN AVG(CASE WHEN strftime('%Y-%m-%d', 'now', '-1 month') <= Actividad.Fecha THEN 1 ELSE 0 END) /
@@ -105,10 +68,12 @@ class GestorModel:
                 END AS EstadoForma
                 FROM Deportista
                 LEFT JOIN Actividad ON Deportista.ID = Actividad.DeportistaID
+                WHERE Deportista.ID = {idDeportista}
                 GROUP BY Deportista.ID;
             """
         res = self.db.executeQuery(query)
-        return res
+        estado_forma = res[0]["EstadoForma"]
+        return estado_forma
     
     def getMasActivos(self):
         consulta = """
@@ -125,16 +90,25 @@ class GestorModel:
                     ORDER BY
                         TotalActividades DESC; 
                     """
-        
-        # tipos_actividades_uniques = self.db.executeQuery("SELECT DISTINCT TipoActividad FROM Actividad;")
-        # tipos_actividades_uniques = [tipo_actividad["TipoActividad"] for tipo_actividad in tipos_actividades_uniques]
-        
-        # res = []
-        # for tipo_actividad in tipos_actividades_uniques:
-        #     query = f"SELECT Nombre,Apellidos,FechaAlta, COUNT(*) AS TotalActividades FROM Deportista INNER JOIN Actividad ON Deportista.ID = Actividad.DeportistaID WHERE TipoActividad = {tipo_actividad} GROUP BY Deportista.ID ORDER BY TotalActividades DESC;"
-        #     res_query = self.db.executeQuery(query)
-        #     res.append(res_query)
-        # print(res)
-        
         res = self.db.executeQuery(consulta)
         return res
+    
+    def existeID(self, idDeportista):
+        '''
+        Método que comprueba si existe un deportista con el ID especificado
+        '''
+        # Creamos una query para obtener el campo Premium de la tabla Deportista
+        query="""
+                select ID from Deportista 
+                where Deportista.ID=?"""
+        
+        # Ejecutamos la query 
+        res = self.db.executeQuery(query,idDeportista)
+        
+        # Si la query devuelve algún resultado, el ID existe
+        if len(res) > 0:
+            return True
+        else:
+            return False
+        
+        
