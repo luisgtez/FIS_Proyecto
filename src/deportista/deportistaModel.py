@@ -162,64 +162,47 @@ class DeportistaModel:
     #obtener los detalles de las actividades realizadas por un deportista en un periodo de tiempo
     def getActividadesEnPeriodo(self, idDeportista, fecha_inicio, fecha_fin):
 
-        queryActividadesIntervalo = """select Fecha, DuracionHoras, Localizacion, DistanciaKms, FCMax, FCMin, TipoActividad
-                                       from Actividad where DeportistaID = ? and Fecha between ? and ?"""
+        queryActividadesIntervalo = """SELECT
+                                        A.Fecha,
+                                        A.DuracionHoras,
+                                        A.Localizacion,
+                                        A.DistanciaKms,
+                                        A.FCMax,
+                                        A.FCMin,
+                                        TA.Tipo,
+                                        STA.Subtipo
+                                        FROM Actividad A
+                                        JOIN TipoActividad TA ON A.TipoActividadID = TA.ID
+                                        JOIN SubtipoActividad STA ON A.SubtipoActividadID = STA.ID
+                                        WHERE A.DeportistaID = ? AND A.Fecha BETWEEN ? AND ?"""
         resultActividades = self.db.executeQuery(queryActividadesIntervalo, idDeportista, fecha_inicio, fecha_fin)
 
         return resultActividades
     
     #Como deportista “Premium” obtener la actividad de otro deportista por tipo de actividad a lo largo del tiempo.
-    def getActividadesDeportistaTipo(self, idDeportista, tipoActividad):
+    def getActividadesDeportistaTipo(self, idDeportista, tipoActividadID):
        
-        queryActividadesDeportista = "select Fecha, DuracionHoras, DistanciaKms from Actividad where DeportistaID = ? and TipoActividad = ? order by Fecha desc"
-        resultActividades = self.db.executeQuery(queryActividadesDeportista, idDeportista, tipoActividad)
+        queryActividadesDeportista = "select Fecha, DuracionHoras, DistanciaKms from Actividad where DeportistaID = ? and TipoActividadID = ? order by Fecha desc"
+        resultActividades = self.db.executeQuery(queryActividadesDeportista, idDeportista, tipoActividadID)
         
         return resultActividades
 
 
-    
-    #Como deportista quiero añadir objetivos semanales
-    def addObjetivoSemanal(self, idDeportista):
-        print("¿Qué tipo de objetivo quieres introducir?")
-        print("1. Cantidad de horas de deporte semanales")
-        print("2. Cantidad de actividades realizadas en la semana")
-
-        opcion = input("Selecciona una opción (1 o 2): ")
-
-        if opcion not in ["1", "2"]:
-            print("Opción no válida. Debe seleccionar 1 o 2.")
-            return False
-
-        if opcion == "1":
-            objetivoHoras = float(input("Introduce la cantidad de horas de deporte semanales que deseas realizar: "))
-            objetivoCantidad = None
-        else:
-            objetivoCantidad = int(input("Introduce la cantidad de actividades realizadas en la semana que deseas alcanzar: "))
-            objetivoHoras = None
-
+    def comprobarExisteObjetivo(self,idDeportista,tipoObjetivo):
+        
         # Verificar si ya existe un objetivo para la próxima semana
-        fechaInicio = datetime.now()
-        fechaFin = fechaInicio + timedelta(days=7)
-        queryVerificar = "select count(*) as countObjetivos from ObjetivoSemanal where DeportistaID = ? and FechaInicio >= ? and FechaFin <= ?"
-        resVerificar = self.db.executeQuery(queryVerificar, idDeportista, fechaInicio, fechaFin)
+        queryVerificar = f"select {tipoObjetivo} from Deportista where Deportista.ID = ?"
+        resVerificar = self.db.executeQuery(queryVerificar, idDeportista)
 
-        # Manejar el caso cuando resVerificar es None
-        if resVerificar is not None and resVerificar[0].get("countObjetivos", 0) > 0:
-            # Ya existe un objetivo para la próxima semana
-            print("Ya tienes un objetivo para la próxima semana. No se puede añadir otro.")
-            return False
+        value = resVerificar[0][tipoObjetivo]
+        return value
+        
+    #Como deportista quiero añadir objetivos semanales
+    def addObjetivoSemanal(self, idDeportista, tipoObjetivo, valorObjetivo):
 
-        # Calcular la fecha de inicio y fin del próximo periodo de siete días
-        fechaInicio = datetime.now()
-        fechaFin = fechaInicio + timedelta(days=7)
-
-        # Insertar el objetivo semanal en la tabla ObjetivoSemanal
-        queryInsert = "insert into ObjetivoSemanal(ID, FechaInicio, FechaFin, ObjetivoHoras, ObjetivoCantidad, DeportistaID) values (null,?,?,?,?,?)"
-        self.db.executeUpdateQuery(queryInsert, fechaInicio, fechaFin, objetivoHoras, objetivoCantidad, idDeportista)
-
-        print("Objetivo añadido con éxito.")
-        return True
-
+        # Creamos la consulta
+        query = f"UPDATE Deportista SET {tipoObjetivo} = {valorObjetivo} WHERE Deportista.ID = {idDeportista}"
+        self.db.executeUpdateQuery(query)
 
     
     # Nueva función para registrar a un deportista de forma gratuita
@@ -259,8 +242,42 @@ class DeportistaModel:
 
         # Devolver el ID del deportista recién registrado
         return id_deportista
+    
+        
+    # función para registrar un deportista premium
+    def registrarDeportista(self, nombre, apellidos, correo, fecha_nacimiento, sexo, peso, altura,formapago,facturacion, premium =False):
+        # Obtener la fecha actual como fecha de alta
+        fecha_alta = datetime.now().date()
 
-<<<<<<< HEAD
+        # Definir los valores iniciales para Premium y Objetivos (pueden ser ajustados según tus requisitos)
+        objetivo_horas = None
+        objetivo_cantidad = None
+
+        # Insertar el nuevo deportista en la tabla Deportista las características básicas
+        query_insert = """
+            INSERT INTO Deportista(
+                Nombre, Apellidos, CorreoElectronico, FechaAlta, Premium, Sexo,
+                FechaNacimiento, Altura, Peso, ObjetivoHoras, ObjetivoCantidad
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """
+
+        self.db.executeUpdateQuery(
+            query_insert,
+            nombre, apellidos, correo, fecha_alta, premium, sexo,
+            fecha_nacimiento, altura, peso, objetivo_horas, objetivo_cantidad)
+        
+        if premium==True:
+            # Obtener el ID del deportista recién registrado
+            id_deportista = self.getIdDeportista(correo)
+            
+            # Insertamos la forma de pago y la facturación a la talba Premium
+            query_premium = """
+                INSERT INTO Premium(
+                    FormaPago, Facturacion, DeportistaID
+                ) VALUES (?, ?, ?)
+            """
+            self.db.executeUpdateQuery(query_premium,formapago,facturacion,id_deportista)
+
     # función para ver la métrica del consumo calórico para una actividad
     def getConsumoCalorico(self,idDeportista,Actividad):
         # Calcular el MBR del deportista 
@@ -277,6 +294,7 @@ class DeportistaModel:
         
         # A partir de la fecha de nacimiento se calcula la edad
         fechaActual = datetime.now()
+        fechaNacimiento = datetime.strptime(fechaNacimiento, '%Y-%m-%d')
         edad = fechaActual.year - fechaNacimiento.year - ((fechaActual.month, fechaActual.day) < (fechaNacimiento.month, fechaNacimiento.day))
 
         # Calcular el MBR dependiendo del sexo
@@ -298,42 +316,8 @@ class DeportistaModel:
         consumoCalorico = (MBR/24/60)*MET
 
         return consumoCalorico
-    
-    # función para registrar un deportista premium
-    def registrarDeportistaPremium(self, nombre, apellidos, correo, fecha_nacimiento, sexo, peso, altura,formapago,facturacion):
-        # Obtener la fecha actual como fecha de alta
-        fecha_alta = datetime.now().date()
 
-        # Definir los valores iniciales para Premium y Objetivos (pueden ser ajustados según tus requisitos)
-        premium = True
-        objetivo_horas = None
-        objetivo_cantidad = None
-
-        # Insertar el nuevo deportista en la tabla Deportista las características básicas
-        query_insert = """
-            INSERT INTO Deportista(
-                Nombre, Apellidos, CorreoElectronico, FechaAlta, Premium, Sexo,
-                FechaNacimiento, Altura, Peso, ObjetivoHoras, ObjetivoCantidad
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """
-
-        self.db.executeUpdateQuery(
-            query_insert,
-            nombre, apellidos, correo, fecha_alta, premium, sexo,
-            fecha_nacimiento, altura, peso, objetivo_horas, objetivo_cantidad)
         
-        # Obtener el ID del deportista recién registrado
-        id_deportista = self.getIdDeportista(correo)
-        
-        # Insertamos la forma de pago y la facturación a la talba Premium
-        query_premium = """
-            INSERT INTO Premium(
-                FormaPago, Facturacion, DeportistaID
-            ) VALUES (?, ?, ?)
-        """
-        self.db.executeUpdateQuery(query_premium,formapago,facturacion,id_deportista)
-        
-=======
     
     def mapTiposActividad(self):
         '''Método que obtiene los tipos de actividad unicos
@@ -381,4 +365,3 @@ class DeportistaModel:
         
         # Retornamos el diccionario
         return subtipos_actividad
->>>>>>> 72be3e8bb152d7218298cd09c59666ccae18ceec

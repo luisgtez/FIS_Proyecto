@@ -21,6 +21,7 @@ class DeportistaView:
         self.deportista = DeportistaModel() #Crea un objeto model que se invocará desde esta vista
         self.gestor_view = GestorView() #Crea un objeto model que se invocará desde esta vista
         self.gestor_model = GestorModel() #Crea un objeto model que se invocará desde esta vista
+        self.utils = utils()
         
     #Vista para la HU Registrar una nueva actividad
     def addActivity(self):
@@ -249,7 +250,13 @@ class DeportistaView:
                     print(f"Sexo: {sexo} Fecha de nacimiento: {fecha}")
                     res = self.deportista.getSummary(idDeportista)
                     for dict in res:
-                        print(f"Tipo de actividad: {dict['TipoActividad']}\n -------------------------- \n\tNumero de sesiones: {dict['NumeroSesiones']} \n\tTotal distancia: {dict['DistanciaTotal']} kms \n --------------------------")
+                        tipo_actividad_nombre = self.deportista.mapTiposActividad()[dict["TipoActividadID"]]
+                        # print(f"Tipo de actividad: {tipo_actividad_nombre}\n -------------------------- \n\tNumero de sesiones: {dict['NumeroSesiones']} \n\tTotal distancia: {dict['DistanciaTotal']} kms \n --------------------------")
+                    for dict in res:
+                        dict["TipoActividad"] = self.deportista.mapTiposActividad()[dict["TipoActividadID"]]
+                        del dict["TipoActividadID"]
+                    res = [{key: dict[key] for key in ["TipoActividad", "NumeroSesiones", "DistanciaTotal"]} for dict in res]
+                    utils.printTable(res)
 
                     # Deportista a comparar
                     nombre2,apellidos2=self.deportista.getNombreCompletoDeportista(correoDeportistaComparar)
@@ -258,8 +265,16 @@ class DeportistaView:
                     sexo2,fecha2=self.deportista.getSexoFecha(idDeportistaComparar)
                     print(f"Sexo: {sexo2} Fecha de nacimiento: {fecha2}")
                     res2 = self.deportista.getSummary(idDeportistaComparar)
+                    # for dict in res2:
+                    #     tipo_actividad_nombre = self.deportista.mapTiposActividad()[dict["TipoActividadID"]]
+                        # print(f"Tipo de actividad: {tipo_actividad_nombre}\n -------------------------- \n\tNumero de sesiones: {dict['NumeroSesiones']} \n\tTotal distancia: {dict['DistanciaTotal']} kms \n --------------------------")
+                    # Change tipo_actividad_id to tipo_actividad_nombre
                     for dict in res2:
-                        print(f"Tipo de actividad: {dict['TipoActividad']}\n -------------------------- \n\tNumero de sesiones: {dict['NumeroSesiones']} \n\tTotal distancia: {dict['DistanciaTotal']} kms \n --------------------------")
+                        dict["TipoActividad"] = self.deportista.mapTiposActividad()[dict["TipoActividadID"]]
+                        del dict["TipoActividadID"]
+                    # Change columns order
+                    res2 = [{key: dict[key] for key in ["TipoActividad", "NumeroSesiones", "DistanciaTotal"]} for dict in res2]
+                    utils.printTable(res2)
                                 
     def showActividadesEnPeriodo(self):
         print("#"*20)
@@ -299,7 +314,8 @@ class DeportistaView:
             print(f"\nResumen de actividad entre {fecha_inicio} y {fecha_fin}: ")
             print ("----------------------------------")
         res = self.deportista.getActividadesEnPeriodo(idDeportista, fecha_inicio, fecha_fin)
-        self.printResults(res)
+        # self.printResults(res)
+        utils.printTable(res)
         
     #ver los detalles de las actividades de un tipo realizadas por un deportista (Premium)
     def showActividadesDeportistaTipo(self):
@@ -329,23 +345,17 @@ class DeportistaView:
         else:
             nombre,apellidos = self.deportista.getNombreCompletoDeportista(correoDeportista)
         
-        tipo_actividad = input (f"Tipo de actividad (carrera o natación): ")
-        #Quitar espacios en blanco, saltos de linea y tabuladores, y convertir a minusculas sin acentos
-        tipo_actividad = tipo_actividad.strip().lower().replace("á","a").replace("é","e").replace("í","i").replace("ó","o").replace("ú","u")
-        actividades = ["carrera", "natacion"]                
-        if tipo_actividad not in actividades:
-            print (f"Error en el tipo de actividad, debe ser una de estas:{actividades}")
-            return
-        print(f"\nActividades de {tipo_actividad} realizadas por {nombre} {apellidos}: ")
+        
+        tipo_actividad = self.escoger_tipo_actividad()
+        
+        tipo_actividad_nombre = self.deportista.mapTiposActividad()[tipo_actividad]
+        
+        print(f"\nActividades de {tipo_actividad_nombre} realizadas por {nombre} {apellidos}: ")
         print ("----------------------------------")
-        if tipo_actividad == "carrera":
-           tipo_actividad="Carrera" 
-        else:
-            tipo_actividad="Natación"
         res = self.deportista.getActividadesDeportistaTipo(idDeportista, tipo_actividad)
-        self.printResults(res)           
+        # self.printResults(res)    
+        utils.printTable(res)       
 
-<<<<<<< HEAD
     # Vista para la HU de consumo calorico
     def showConsumoCalorico(self):
 
@@ -358,60 +368,94 @@ class DeportistaView:
             return
         
         # Actividad que quiere ver consumo calorico
-        actividad = input("Introduce actividad para ver consumo calorico: ")
-
-        # Comprobar que la actividad es valida
-        query = "SELECT DISTINCT TipoActividad FROM TipoActividad"
-        tipo_actividad = self.deportista.query(query)
-        tipo_actividad = [x.get("TipoActividad") for x in tipo_actividad]
-
-        if actividad not in tipo_actividad:
-            print("Actividad no valida")
-            return
-
+        actividad_id = self.escoger_tipo_actividad()
+        actividad = self.deportista.mapTiposActividad()[actividad_id]
         res = self.deportista.getConsumoCalorico(idDeportista,actividad)
 
-        print(f"El consumo calorico para la actividad {actividad} es de {res[0].get('ConsumoCalorico')} calorias por minuto")
+        print(f"El consumo calorico para la actividad {actividad} es de {res} calorias por minuto")
 
-    # Vista para la HU de registrar deportista Premium
-    def showDeportistaPremium(self):
-        print('Registrar deportista premium')
+    # Vista para la HU de registrar deportista 
+    def showRegistro(self):
+        print('Registrar deportista')
+        
+        premium = input('¿Quieres ser deportista premium? (Si/No): ')
+        if premium not in ['Si', 'No']:
+            print('Respuesta no valida')
+            return
+        
+        premium = True if premium == 'Si' else False
+        
         nombre = input('Introduce tu nombre: ')
         apellidos = input('Introduce tus apellidos: ')
         correo = input('Introduce tu correo: ')
+        
+        if self.utils.comprobarExisteCorreo(correo):
+            print('Ya existe un deportista con ese correo')
+            return
+        
+        
         fecha_nacimiento = input('Introduce tu fecha de nacimiento (AAAA-MM-DD): ')
+        try:
+            fecha_nacimiento = datetime.datetime.strptime(fecha_nacimiento, '%Y-%m-%d').strftime("%Y-%m-%d")
+        except:
+            print('Fecha de nacimiento no valida')
+            return
+        
+        if fecha_nacimiento>datetime.datetime.now().strftime("%Y-%m-%d"):
+            print('Fecha de nacimiento futura no valida')
+            return
+        
         sexo = input('Introduce tu sexo (Masculino/Femenino): ')
+        while sexo not in ['Masculino', 'Femenino']:
+            print('Sexo no valido')
+            sexo = input('Introduce tu sexo (Masculino/Femenino): ')
+        
         peso = input('Introduce tu peso: ')
+        try:
+            peso = float(peso)
+        except:
+            print('Peso no valido')
+            return
+        
         altura = input('Introduce tu altura: ')
-        facturacion = input('Introduce tu facturacion (solo se permite Mensual): ')  
-        formadepago = input('Introduce tu forma de pago (Tarjeta/Transferecia): ')
-        if formadepago == 'Tarjeta':
-            nombrepropietario = input('Introduce el nombre del propietario de la tarjeta: ')
-            numtarjeta = input('Introduce tu numero de tarjeta: ')
-            caducidad = input('Introduce la caducidad de tu tarjeta (AAAA-MM-DD): ')
-            cvv = input('Introduce el cvv de tu tarjeta: ')
-            self.deportista.registrarDeportistaPremium(nombre, apellidos, correo, fecha_nacimiento, sexo, peso, altura, formadepago, facturacion)
+        try:
+            altura = float(altura)
+        except:
+            print('Altura no valida')
+            return
+        
+        if not premium:
+            self.deportista.registrarDeportista(nombre, apellidos, correo, fecha_nacimiento, sexo, peso, altura, premium=premium, facturacion=None, formapago=None)
             print('Deportista registrado correctamente')
-            print('Datos de pago')
-            print(f'Nombre: {nombrepropietario}')
-            print(f'Numero de tarjeta: {numtarjeta}')
-        elif formadepago == 'Transferencia':
-            self.deportista.registrarDeportistaPremium(nombre, apellidos, correo, fecha_nacimiento, sexo, peso, altura, formadepago, facturacion)
-            print('Deportista registrado correctamente')
-            print('Datos de pago')
-            print('Transferencia realizada correctamente')
-        else:
-            print('Forma de pago no valida')
+        
+        if premium == True:
+        
+            facturacion = input('Introduce tu facturacion (solo se permite Mensual): ')
+            while facturacion not in ['Mensual']:
+                print('Facturacion no valida')
+                facturacion = input('Introduce tu facturacion (solo se permite Mensual): ')
             
+            formadepago = input('Introduce tu forma de pago (Tarjeta/Transferecia): ')
+            while formadepago not in ['Tarjeta', 'Transferencia']:
+                print('Forma de pago no valida')
+                formadepago = input('Introduce tu forma de pago (Tarjeta/Transferecia): ')
+                            
+            if formadepago == 'Tarjeta':
+                nombrepropietario = input('Introduce el nombre del propietario de la tarjeta: ')
+                numtarjeta = input('Introduce tu numero de tarjeta: ')
+                caducidad = input('Introduce la caducidad de tu tarjeta (AAAA-MM-DD): ')
+                cvv = input('Introduce el cvv de tu tarjeta: ')
+                self.deportista.registrarDeportista(nombre, apellidos, correo, fecha_nacimiento, sexo, peso, altura, formadepago, facturacion, premium=premium)
+                print('Datos de pago')
+                print(f'Nombre: {nombrepropietario}')
+                print(f'Numero de tarjeta: {numtarjeta}')
+            else:
+                print("Mandar transferencia a la cuenta ES 1234 5678 9012 3456 7890")
+                self.deportista.registrarDeportista(nombre, apellidos, correo, fecha_nacimiento, sexo, peso, altura, formadepago, facturacion)
 
+            print('Deportista registrado correctamente')
+            print('Transferencia realizada correctamente')
 
-              
-    # def quit(self):
-    #     print("Cerrando opciones.")
-    #     sys.exit(0)
-
-=======
->>>>>>> 72be3e8bb152d7218298cd09c59666ccae18ceec
     #Médodo muy general para imprimir los resultados (res) que vienen del model
     def printResults (self,res):
         if len(res)==0: 
@@ -554,6 +598,8 @@ class DeportistaView:
         '''Método que permite escoger el tipo de actividad al deportista, mostrandole todos y dandole a escoger en base a un número.
         
         Se mostrarán los tipos de actividad disponibles y se solicitará el tipo de actividad. Si el tipo de actividad no es correcto, se mostrará un mensaje de error y se volverá a solicitar el tipo de actividad.
+        
+        Devuelve el tipo de actividad escogido en ID
         '''
         # Obtenemos los tipos de actividad
         tipos = self.deportista.mapTiposActividad()
@@ -592,6 +638,7 @@ class DeportistaView:
         # Ensñamos los subtipos de actividad y sus ids
         print("Subtipos de actividad:")
         for key,value in subtipos.items():
+            key = key + 1 - min(subtipos.keys())
             print(f"{key}: {value}")
             
         # Pedimos el subtipo de actividad
@@ -601,10 +648,14 @@ class DeportistaView:
         try:
             subtipo_actividad = int(subtipo_actividad)
         
+
         # Si da error, mostramos un mensaje de error y volvemos a pedir el subtipo de actividad
         except:
             print("El subtipo de actividad debe ser un número")
             return self.escoger_subtipo_actividad(tipo_actividad_id)
+        
+        # Recuperamos el indice del subtipo de actividad
+        subtipo_actividad = subtipo_actividad + min(subtipos.keys()) - 1
         
         # Si el subtipo de actividad no está en los subtipos de actividad, mostramos un mensaje de error y volvemos a pedir el subtipo de actividad
         if subtipo_actividad not in subtipos.keys():
@@ -612,4 +663,45 @@ class DeportistaView:
             return self.escoger_subtipo_actividad(tipo_actividad_id)
         
         # Devolvemos el subtipo de actividad escogido
-        return subtipo_actividad 
+        return subtipo_actividad
+    
+    def addObjetivoSemanalView(self):
+        
+        idDeportista = self.inicio_sesion_view()
+        if idDeportista==None:
+            print("No se ha iniciado sesion correctamente")
+            return
+        
+        print("¿Qué tipo de objetivo quieres introducir?")
+        print("1. Cantidad de horas de deporte semanales")
+        print("2. Cantidad de actividades realizadas en la semana")
+        opcion = input("Selecciona una opción (1 o 2): ")
+
+        if opcion not in ["1", "2"]:
+            print("Opción no válida. Debe seleccionar 1 o 2.")
+            return False
+        
+        opcion = "ObjetivoHoras" if opcion == "1" else "ObjetivoCantidad"
+        
+        # Comprobar si el objetivo ya existe
+        objetivo = self.deportista.comprobarExisteObjetivo(idDeportista, opcion)
+        
+        # Si hay un objetivo ya establecido
+        if objetivo != None:
+            print(f"Ya tienes un objetivo establecido: {objetivo}")
+            cambiar = input("¿Quieres cambiarlo? (Si/No): ")
+            
+            if cambiar == "No":
+                return False
+        
+        if opcion == "1":
+            objetivoHoras = float(input("Introduce la cantidad de horas de deporte semanales que deseas realizar: "))
+            self.deportista.addObjetivoSemanal(idDeportista=idDeportista,tipoObjetivo=opcion, valorObjetivo=objetivoHoras)
+        else:
+            objetivoCantidad = int(input("Introduce la cantidad de actividades realizadas en la semana que deseas alcanzar: "))
+            self.deportista.addObjetivoSemanal(idDeportista=idDeportista,tipoObjetivo=opcion, valorObjetivo=objetivoCantidad)
+            
+        
+
+            
+        

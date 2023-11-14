@@ -14,61 +14,39 @@ class View:
         self.deportista = DeportistaView () #Crea un objeto model que se invocará desde esta vista
         self.gestor = GestorView() #Crea un objeto model que se invocará desde esta vista
         #Crea un diccionario con las opciones (key) y los métodos/acciones que se pueden realizar en este objeto (values)
-<<<<<<< HEAD
-        self.choices = { "1": self.deportista.addActivity,
-                         "2": self.deportista.showSummary,
-                         "3": self.deportista.showActividadesEnPeriodo,
-                         "4": self.deportista.showActividadesDeportistaTipo,
-                         "5": self.deportista.showComparacion,
-                         "6": self.gestor.gestorEstadoview,
-                         "7": self.gestor.getEstadoFormaView,
-                         "8": self.gestor.masActivos,
-                         "9":self.deportista.showConsumoCalorico,
-                         "10": self.quit
-                       }
-=======
-        self.choices = {"1": self.deportista.addActivity,
+        self.choices = {
+                        "0":self.deportista.showRegistro,
+                            
+                        "1": self.deportista.addActivity,
                         "2": self.deportista.importar_csv_view,
                         "3": self.deportista.showSummary,
                         "4": self.deportista.showActividadesEnPeriodo,
-                        "5": self.deportista.showActividadesDeportistaTipo,
-                        "6": self.deportista.showComparacion,
-                        "7": self.gestor.gestorEstadoview,
-                        "8": self.gestor.getEstadoFormaView,
-                        "9": self.gestor.masActivos,
-                        "10": self.quit,
+                        "5": self.deportista.showConsumoCalorico,
+                        "6": self.deportista.addObjetivoSemanalView,
+                        "7": self.deportista.showActividadesDeportistaTipo,
+                        "8": self.deportista.showComparacion,
+                        "9": self.gestor.gestorEstadoview,
+                        "10": self.gestor.masActivos,
+                        "11": self.quit
                           }
->>>>>>> 72be3e8bb152d7218298cd09c59666ccae18ceec
         
     def displayMenu (self):
         print("#"*20)
         print(""" Opciones: \n
-<<<<<<< HEAD
+              0.- Registrar nuevo deportista
+               
               1.- Registrar nueva actividad
-              2.- Resumen de actividad
-              3.- Resumen de actividad entre dos fechas
-              4.- Resumen de actividad de deportista por tipo (Premium)
-              5.- Comparar con deportista (Premium)
-              6.- Datos Deportistas (Gestor)
-              7.- Estado de Forma Deportistas (Gestor)
-              8.- Deportistas más activos (Gestor)
-              9.- Consumo calórico
-              10.- Salir 
+              2.- Importar actividades CSV
+              3. -Resumen de actividad
+              4.- Resumen de actividad entre dos fechas
+              5.- Consumo calórico
+              6.- Añadir objetivo semanal
+              7.- Resumen de actividad de deportista por tipo (Premium)
+              8.- Comparar con deportista (Premium)
+              9.- Datos Deportistas (Gestor)
+              10.- Deportistas más activos (Gestor)
+              11.- Salir
               """)
-=======
-                1.- Registrar nueva actividad
-                2.- Importar actividades CSV
-                3.- Resumen de actividad
-                4.- Resumen de actividad entre dos fechas
-                5.- Resumen de actividad de deportista por tipo (Premium)
-                6.- Comparar con deportista (Premium)
-                7.- Datos Deportistas (Gestor)
-                8.- Estado de Forma Deportistas (Gestor)
-                9.- Deportistas más activos (Gestor)
-                10.- Salir
-                """)
-        
->>>>>>> 72be3e8bb152d7218298cd09c59666ccae18ceec
         
     #Muestra la lista de opciones y permite la selección
     def run (self):
