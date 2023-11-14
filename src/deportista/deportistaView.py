@@ -293,11 +293,66 @@ class DeportistaView:
         res = self.deportista.getActividadesDeportistaTipo(idDeportista, tipo_actividad)
         self.printResults(res)           
 
+    # Vista para la HU de consumo calorico
+    def showConsumoCalorico(self):
 
+        correoDeportista = input("Introduce tu correo: ")
+        idDeportista = self.deportista.getIdDeportista(correoDeportista) 
 
-
-  
+        # Comprobamos que el deportista existe
+        if idDeportista==None:
+            print ("No existe el deportista con correo:",correoDeportista)
+            return
         
+        # Actividad que quiere ver consumo calorico
+        actividad = input("Introduce actividad para ver consumo calorico: ")
+
+        # Comprobar que la actividad es valida
+        query = "SELECT DISTINCT TipoActividad FROM TipoActividad"
+        tipo_actividad = self.deportista.query(query)
+        tipo_actividad = [x.get("TipoActividad") for x in tipo_actividad]
+
+        if actividad not in tipo_actividad:
+            print("Actividad no valida")
+            return
+
+        res = self.deportista.getConsumoCalorico(idDeportista,actividad)
+
+        print(f"El consumo calorico para la actividad {actividad} es de {res[0].get('ConsumoCalorico')} calorias por minuto")
+
+    # Vista para la HU de registrar deportista Premium
+    def showDeportistaPremium(self):
+        print('Registrar deportista premium')
+        nombre = input('Introduce tu nombre: ')
+        apellidos = input('Introduce tus apellidos: ')
+        correo = input('Introduce tu correo: ')
+        fecha_nacimiento = input('Introduce tu fecha de nacimiento (AAAA-MM-DD): ')
+        sexo = input('Introduce tu sexo (Masculino/Femenino): ')
+        peso = input('Introduce tu peso: ')
+        altura = input('Introduce tu altura: ')
+        facturacion = input('Introduce tu facturacion (solo se permite Mensual): ')  
+        formadepago = input('Introduce tu forma de pago (Tarjeta/Transferecia): ')
+        if formadepago == 'Tarjeta':
+            nombrepropietario = input('Introduce el nombre del propietario de la tarjeta: ')
+            numtarjeta = input('Introduce tu numero de tarjeta: ')
+            caducidad = input('Introduce la caducidad de tu tarjeta (AAAA-MM-DD): ')
+            cvv = input('Introduce el cvv de tu tarjeta: ')
+            self.deportista.registrarDeportistaPremium(nombre, apellidos, correo, fecha_nacimiento, sexo, peso, altura, formadepago, facturacion)
+            print('Deportista registrado correctamente')
+            print('Datos de pago')
+            print(f'Nombre: {nombrepropietario}')
+            print(f'Numero de tarjeta: {numtarjeta}')
+        elif formadepago == 'Transferencia':
+            self.deportista.registrarDeportistaPremium(nombre, apellidos, correo, fecha_nacimiento, sexo, peso, altura, formadepago, facturacion)
+            print('Deportista registrado correctamente')
+            print('Datos de pago')
+            print('Transferencia realizada correctamente')
+        else:
+            print('Forma de pago no valida')
+            
+
+
+              
     # def quit(self):
     #     print("Cerrando opciones.")
     #     sys.exit(0)

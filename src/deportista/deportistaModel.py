@@ -201,3 +201,76 @@ class DeportistaModel:
 
         # Devolver el ID del deportista recién registrado
         return id_deportista
+
+    # función para ver la métrica del consumo calórico para una actividad
+    def getConsumoCalorico(self,idDeportista,Actividad):
+        # Calcular el MBR del deportista 
+        queryMBR = """select Peso,Altura,FechaNacimiento,Sexo 
+                      from Deportista where Deportista.ID = ?"""
+        res = self.db.executeQuery(queryMBR,idDeportista)
+        if len(res)==1:
+            peso = res[0].get("Peso")
+            altura = res[0].get("Altura")
+            fechaNacimiento = res[0].get("FechaNacimiento")
+            sexo = res[0].get("Sexo")
+        else:
+            return None
+        
+        # A partir de la fecha de nacimiento se calcula la edad
+        fechaActual = datetime.now()
+        edad = fechaActual.year - fechaNacimiento.year - ((fechaActual.month, fechaActual.day) < (fechaNacimiento.month, fechaNacimiento.day))
+
+        # Calcular el MBR dependiendo del sexo
+        if sexo == "Masculino":
+            MBR = (10*peso)+(6.25*altura)-(5*edad)+5
+        else:
+            MBR = (10*peso)+(6.25*altura)-(5*edad)-161
+        
+        # Otener el MET de la actividad
+        queryMET = """select MET from TipoActividad 
+                      where TipoActividad.Tipo = ?"""
+        res = self.db.executeQuery(queryMET,Actividad)
+        if len(res)==1:
+            MET = res[0].get("MET")
+        else:
+            return None
+        
+        # Calcular el consumo calórico
+        consumoCalorico = (MBR/24/60)*MET
+
+        return consumoCalorico
+    
+    # función para registrar un deportista premium
+    def registrarDeportistaPremium(self, nombre, apellidos, correo, fecha_nacimiento, sexo, peso, altura,formapago,facturacion):
+        # Obtener la fecha actual como fecha de alta
+        fecha_alta = datetime.now().date()
+
+        # Definir los valores iniciales para Premium y Objetivos (pueden ser ajustados según tus requisitos)
+        premium = True
+        objetivo_horas = None
+        objetivo_cantidad = None
+
+        # Insertar el nuevo deportista en la tabla Deportista las características básicas
+        query_insert = """
+            INSERT INTO Deportista(
+                Nombre, Apellidos, CorreoElectronico, FechaAlta, Premium, Sexo,
+                FechaNacimiento, Altura, Peso, ObjetivoHoras, ObjetivoCantidad
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """
+
+        self.db.executeUpdateQuery(
+            query_insert,
+            nombre, apellidos, correo, fecha_alta, premium, sexo,
+            fecha_nacimiento, altura, peso, objetivo_horas, objetivo_cantidad)
+        
+        # Obtener el ID del deportista recién registrado
+        id_deportista = self.getIdDeportista(correo)
+        
+        # Insertamos la forma de pago y la facturación a la talba Premium
+        query_premium = """
+            INSERT INTO Premium(
+                FormaPago, Facturacion, DeportistaID
+            ) VALUES (?, ?, ?)
+        """
+        self.db.executeUpdateQuery(query_premium,formapago,facturacion,id_deportista)
+        

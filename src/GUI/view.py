@@ -22,7 +22,8 @@ class View:
                          "6": self.gestor.gestorEstadoview,
                          "7": self.gestor.getEstadoFormaView,
                          "8": self.gestor.masActivos,
-                         "9": self.quit
+                         "9":self.deportista.showConsumoCalorico,
+                         "10": self.quit
                        }
         
     def displayMenu (self):
@@ -36,7 +37,8 @@ class View:
               6.- Datos Deportistas (Gestor)
               7.- Estado de Forma Deportistas (Gestor)
               8.- Deportistas más activos (Gestor)
-              9.- Salir 
+              9.- Consumo calórico
+              10.- Salir 
               """)
         
     #Muestra la lista de opciones y permite la selección
