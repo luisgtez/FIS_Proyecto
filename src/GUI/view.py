@@ -21,13 +21,12 @@ class View:
                         "2": self.deportista.importar_csv_view,
                         "3": self.deportista.showSummary,
                         "4": self.deportista.showActividadesEnPeriodo,
-                        "5": self.deportista.showConsumoCalorico,
-                        "6": self.deportista.addObjetivoSemanalView,
-                        "7": self.deportista.showActividadesDeportistaTipo,
-                        "8": self.deportista.showComparacion,
-                        "9": self.gestor.gestorEstadoview,
-                        "10": self.gestor.masActivos,
-                        "11": self.quit
+                        "5": self.deportista.addObjetivoSemanalView,
+                        "6": self.deportista.showActividadesDeportistaTipo,
+                        "7": self.deportista.showComparacion,
+                        "8": self.gestor.gestorEstadoview,
+                        "9": self.gestor.masActivos,
+                        "10": self.quit
                           }
         
     def displayMenu (self):
@@ -39,13 +38,12 @@ class View:
               2.- Importar actividades CSV
               3. -Resumen de actividad
               4.- Resumen de actividad entre dos fechas
-              5.- Consumo calórico
-              6.- Añadir objetivo semanal
-              7.- Resumen de actividad de deportista por tipo (Premium)
-              8.- Comparar con deportista (Premium)
-              9.- Datos Deportistas (Gestor)
-              10.- Deportistas más activos (Gestor)
-              11.- Salir
+              5.- Añadir objetivo semanal
+              6.- Resumen de actividad de deportista por tipo (Premium)
+              7.- Comparar con deportista (Premium)
+              8.- Datos Deportistas (Gestor)
+              9.- Deportistas más activos (Gestor)
+              10.- Salir
               """)
         
     #Muestra la lista de opciones y permite la selección

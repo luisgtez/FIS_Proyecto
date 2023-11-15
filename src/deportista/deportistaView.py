@@ -173,6 +173,10 @@ class DeportistaView:
         
         # Mostramos un mensaje al usuario para indicar que se ha insertado la actividad correctamente
         print(f"Se ha insertado la actividad correctamente la actividad con fecha {fecha}, duracion {duracion_horas} horas, localizacion {localizacion}, distancia {distancia_kms} kms, FC max {FC_max}, FC min {FC_min}, tipo de actividad {tipo_actividad} y subtipo de actividad {subtipo_actividad}")
+        
+        # Mostramos el consumo calorico de la actividad registrada
+        consumo_calorico = self.deportista.getConsumoCalorico(idDeportista,tipo_actividad,duracion_horas)
+        print(f"El consumo calorico para la actividad {tipo_actividad} es de {consumo_calorico} calorias por minuto")
            
     #Vista para la HU Resumen básico sobre mi actividad deportiva a lo largo del tiempo, incluyendo el estado de forma
     def showSummary(self):
@@ -355,24 +359,6 @@ class DeportistaView:
         res = self.deportista.getActividadesDeportistaTipo(idDeportista, tipo_actividad)
         # self.printResults(res)    
         utils.printTable(res)       
-
-    # Vista para la HU de consumo calorico
-    def showConsumoCalorico(self):
-
-        correoDeportista = input("Introduce tu correo: ")
-        idDeportista = self.deportista.getIdDeportista(correoDeportista) 
-
-        # Comprobamos que el deportista existe
-        if idDeportista==None:
-            print ("No existe el deportista con correo:",correoDeportista)
-            return
-        
-        # Actividad que quiere ver consumo calorico
-        actividad_id = self.escoger_tipo_actividad()
-        actividad = self.deportista.mapTiposActividad()[actividad_id]
-        res = self.deportista.getConsumoCalorico(idDeportista,actividad)
-
-        print(f"El consumo calorico para la actividad {actividad} es de {res} calorias por minuto")
 
     # Vista para la HU de registrar deportista 
     def showRegistro(self):
