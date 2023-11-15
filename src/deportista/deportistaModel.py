@@ -307,7 +307,7 @@ class DeportistaModel:
         queryMET = """select MET from TipoActividad 
                       where TipoActividad.Tipo = ?"""
         res = self.db.executeQuery(queryMET,Actividad)
-        if len(res)==1:
+        if len(res)!=1:
             return None
         else:
             MET = res[0].get("MET")

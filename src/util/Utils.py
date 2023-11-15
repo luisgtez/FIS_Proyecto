@@ -1,4 +1,5 @@
 from util.database import DataBase
+import re
 
 class utils:
     
@@ -54,3 +55,7 @@ class utils:
                 return True
         
         return False
+    
+    def comprobarCorreoEscrito(self,correo):
+        reg = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+        return re.match(reg,correo)

@@ -373,7 +373,12 @@ class DeportistaView:
         
         nombre = input('Introduce tu nombre: ')
         apellidos = input('Introduce tus apellidos: ')
+        
         correo = input('Introduce tu correo: ')
+        while not self.utils.comprobarCorreoEscrito(correo):
+            print('Correo no valido')
+            correo = input('Introduce tu correo: ')
+        
         
         if self.utils.comprobarExisteCorreo(correo):
             print('Ya existe un deportista con ese correo')
