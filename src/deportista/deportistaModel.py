@@ -279,7 +279,7 @@ class DeportistaModel:
             self.db.executeUpdateQuery(query_premium,formapago,facturacion,id_deportista)
 
     # función para ver la métrica del consumo calórico para una actividad
-    def getConsumoCalorico(self,idDeportista,Actividad):
+    def getConsumoCalorico(self,idDeportista,Actividad,horas):
         # Calcular el MBR del deportista 
         queryMBR = """select Peso,Altura,FechaNacimiento,Sexo 
                       from Deportista where Deportista.ID = ?"""
@@ -303,17 +303,19 @@ class DeportistaModel:
         else:
             MBR = (10*peso)+(6.25*altura)-(5*edad)-161
         
-        # Otener el MET de la actividad
+        # Otener el MET  y el ID de la actividad
         queryMET = """select MET from TipoActividad 
                       where TipoActividad.Tipo = ?"""
         res = self.db.executeQuery(queryMET,Actividad)
         if len(res)==1:
-            MET = res[0].get("MET")
-        else:
             return None
-        
+        else:
+            MET = res[0].get("MET")
+            
+        # pasar las horas a minutos
+        min = horas*60
         # Calcular el consumo calórico
-        consumoCalorico = (MBR/24/60)*MET
+        consumoCalorico = (MBR/24/60)*MET*min
 
         return consumoCalorico
 
