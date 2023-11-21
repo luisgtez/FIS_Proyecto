@@ -687,11 +687,11 @@ class DeportistaView:
         
         if opcion == "1":
             objetivoHoras = float(input("Introduce la cantidad de horas de deporte semanales que deseas realizar: "))
-            print("Éxito, objetivo establecido.")
+            print(f"Éxito, objetivo establecido: {objetivoHoras} horas")
             self.deportista.addObjetivoSemanal(idDeportista=idDeportista,tipoObjetivo=opcion, valorObjetivo=objetivoHoras)
         else:
             objetivoCantidad = int(input("Introduce la cantidad de actividades realizadas en la semana que deseas alcanzar: "))
-            print("Éxito, objetivo establecido.")
+            print(f"Éxito, objetivo establecido:{objetivoCantidad} actividades")
             self.deportista.addObjetivoSemanal(idDeportista=idDeportista,tipoObjetivo=opcion, valorObjetivo=objetivoCantidad)
             
         
