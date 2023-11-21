@@ -477,17 +477,19 @@ class DeportistaView:
         csv = csv.strip().split(".")[0]+".csv"
         
         # Comprobamos que existe el csv
-        if not os.path.isfile(csv):
+        while not os.path.isfile(csv):
             print("No existe el csv")
-            return
+            csv = input("Introduce el nombre del csv: ")
+            csv = csv.strip().split(".")[0]+".csv"
+        
         
         # Comprobamos que el csv tiene el formato correcto
         try:
             df = pd.read_csv(csv)
         # Si hay un error, mostramos un mensaje de error y salimos de la funcion
         except:
-            print("Error al leer el csv")
-            return
+            print("Ha ocurrido un error inesperado al leer el csv")
+            return            
         
         
         # Comprobamos que el csv tiene las columnas correctas
@@ -497,7 +499,7 @@ class DeportistaView:
             # Si no está, mostramos un mensaje de error y salimos de la funcion
             if columna not in df.columns:
                 print(f"El csv no tiene la columna {columna}")
-                print(f"Las columnas del csv deben ser:\n {columnas}")
+                print(f"Las columnas del csv deben ser:\n{columnas}")
                 return
         
         # Comprobamos que el csv tiene los tipos de datos correctos
@@ -526,8 +528,8 @@ class DeportistaView:
                 if fecha=="":
                     fecha = datetime.datetime.now().strftime("%Y-%m-%d")
                 if fecha>datetime.datetime.now().strftime("%Y-%m-%d"):
-                    print(f"Error en la fila {index+1}, la fecha no puede ser mayor que la actual")
-                    return
+                    print("\nError en el formato de la fecha, no puede ser mayor que la actual")
+                    raise Exception
                 
                 # Obtenemos los datos de la fila
                 duracion_horas = row["DuracionHoras"]
@@ -542,7 +544,7 @@ class DeportistaView:
                 self.deportista.insertActivity(fecha=fecha,duracion_horas=duracion_horas,localizacion=localizacion,distancia_kms=distancia_kms,FC_max=fc_max,FC_min=fc_min,tipo_actividad_id=tipo_actividad_id,idDeportista=id_deportista,subtipo_actividad_id=subtipo_actividad_id)
             
             # Si todo ha ido bien, mostramos un mensaje de éxito
-            print(f"Se han insetado {len(df)} actividades correctamente")
+            print(f"Se han insertado {len(df)}/{len(df)} actividades correctamente")
             
             # Como todo ha ido bien, borramos la copia de la base de datos
             os.remove("AppDB_copia.db")
@@ -557,7 +559,9 @@ class DeportistaView:
             # Borramos la copia de la base de datos
             os.remove("AppDB_copia.db")
             # Mostramos un mensaje de error al usuario y devolvemos None
-            print("Ha ocurrido un error al insertar las actividades")
+            print(f"\nHa ocurrido un error mientras se insertaba la actividad {index+1}")
+            print(f"Se devolvera el registro de actividades a su estado anterior al intento de insertar las actividades de {csv}")
+            print(f"Por favor, corrige el csv y vuelve a intentarlo (con el documento completo)") 
             return None
         
     def inicio_sesion_view(self):
