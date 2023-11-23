@@ -59,3 +59,83 @@ class utils:
     def comprobarCorreoEscrito(self,correo):
         reg = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
         return re.match(reg,correo)
+    
+    def mapTiposActividad(self):
+        '''Método que obtiene los tipos de actividad unicos
+        
+        Devuelve
+        -------
+        dict
+            Diccionario con los tipos de actividad unicos. Clave: ID del tipo de actividad, Valor: Tipo de actividad.
+        '''
+        # Creamos una query para obtener los tipos de actividad unicos
+        query = "SELECT DISTINCT Tipo, ID FROM TipoActividad"
+        
+        # Ejecutamos la query y guardamos el resultado en result
+        result = self.db.executeQuery(query)
+        
+        # Creamos un diccionario con los tipos de actividad unicos
+        tipos_actividad = {dict_values["ID"] : dict_values["Tipo"] for dict_values in result}
+        
+        # Retornamos el diccionario
+        return tipos_actividad
+    
+    def mapSubtiposActividad(self,TipoActividad):
+        
+        '''Método que obtiene los subtipos de actividad unicos de un tipo de actividad
+        
+        Parámetros
+        ----------
+        TipoActividad : int
+            ID del tipo de actividad del que se quiere obtener los subtipos.
+            
+        Devuelve
+        -------
+        dict
+            Diccionario con los subtipos de actividad unicos. Clave: ID del subtipo de actividad, Valor: Subtipo de actividad.
+        '''
+        
+        # Creamos una query para obtener los subtipos de actividad unicos
+        query = "SELECT DISTINCT Subtipo, ID FROM SubtipoActividad where TipoActividadID = ?"
+        
+        # Ejecutamos la query y guardamos el resultado en result
+        result = self.db.executeQuery(query,TipoActividad)
+        
+        # Creamos un diccionario con los subtipos de actividad unicos
+        subtipos_actividad = {dict_values["ID"] : dict_values["Subtipo"] for dict_values in result}
+        
+        # Retornamos el diccionario
+        return subtipos_actividad
+    
+    def tiposActividad(self):
+        '''
+        Método que obtiene los tipos de actividad de la base de datos unicos
+        '''
+        # Creamos una query para obtener los tipos de actividad unicos
+        query = "SELECT DISTINCT Tipo FROM TipoActividad"
+        
+        # Ejecutamos la query y guardamos el resultado en result
+        result = self.db.executeQuery(query)
+        
+        # Creamos una lista con los tipos de actividad unicos
+        tipos_actividad = [dict_values["Tipo"] for dict_values in result]
+        
+        # Retornamos la lista
+        return tipos_actividad
+    
+    def subtiposActividad(self,TipoActividad):
+        '''
+        Método que obtiene los distintos subtipos de actividad de la base de datos unicos de un tipo de actividad
+        '''
+        
+        # Creamos una query para obtener los subtipos de actividad unicos
+        query = "SELECT DISTINCT Subtipo FROM SubtipoActividad where TipoActividadID = ?"
+        
+        # Ejecutamos la query y guardamos el resultado en result
+        result = self.db.executeQuery(query,TipoActividad)
+        
+        # Creamos una lista con los subtipos de actividad unicos
+        subtipos_actividad = [dict_values["Subtipo"] for dict_values in result]
+        
+        # Retornamos la lista
+        return subtipos_actividad
