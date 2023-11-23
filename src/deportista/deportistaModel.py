@@ -68,7 +68,7 @@ class DeportistaModel:
             # Si no tiene un único elemento, devolvemos None
             return None,None
     
-    def insertActivity(self,fecha,duracion_horas,localizacion,distancia_kms,FC_max,FC_min,tipo_actividad_id,subtipo_actividad_id,idDeportista):
+    def insertActivity(self,fecha,duracion_horas,localizacion,distancia_kms,FC_max,FC_min,consumo_calorico,tipo_actividad_id,subtipo_actividad_id,idDeportista):
         '''Método que inserta una actividad en la base de datos
         
         Parámetros
@@ -85,6 +85,8 @@ class DeportistaModel:
             Frecuencia cardíaca máxima alcanzada en la actividad.
         FC_min : int
             Frecuencia cardíaca mínima alcanzada en la actividad.
+        ConsumoCalorico : float
+            Consumo calórico de la actividad.
         tipo_actividad_id : int
             ID del tipo de actividad.
         subtipo_actividad_id : int
@@ -99,10 +101,10 @@ class DeportistaModel:
         '''
         # Creamos una query para insertar los datos en la tabla Actividad
         query = """ 
-                insert into Actividad(ID, Fecha, DuracionHoras, Localizacion, DistanciaKms, FCMax, FCMin, TipoActividadID,SubtipoActividadID, DeportistaID) values (null,?,?,?,?,?,?,?,?,?) 
+                insert into Actividad(ID, Fecha, DuracionHoras, Localizacion, DistanciaKms, FCMax, FCMin, ConsumoCalorico, TipoActividadID,SubtipoActividadID, DeportistaID) values (null,?,?,?,?,?,?,?,?,?,?) 
                 """ 
         # Ejecutamos la query con los parámetros correspondientes
-        self.db.executeUpdateQuery(query,fecha,duracion_horas,localizacion,distancia_kms,FC_max,FC_min,tipo_actividad_id,subtipo_actividad_id,idDeportista)
+        self.db.executeUpdateQuery(query,fecha,duracion_horas,localizacion,distancia_kms,FC_max,FC_min,consumo_calorico,tipo_actividad_id,subtipo_actividad_id,idDeportista)
         
         # Devolvemos "OK"
         return "OK"
@@ -169,6 +171,7 @@ class DeportistaModel:
                                         A.DistanciaKms,
                                         A.FCMax,
                                         A.FCMin,
+                                        A.ConsumoCalorico,
                                         TA.Tipo,
                                         STA.Subtipo
                                         FROM Actividad A
@@ -245,7 +248,7 @@ class DeportistaModel:
     
         
     # función para registrar un deportista premium
-    def registrarDeportista(self, nombre, apellidos, correo, fecha_nacimiento, sexo, peso, altura,formapago,facturacion, premium =False):
+    def registrarDeportista(self, nombre, apellidos, correo, fecha_nacimiento, sexo, peso, altura,formapago,facturacion,premium):
         # Obtener la fecha actual como fecha de alta
         fecha_alta = datetime.now().date()
 
@@ -279,7 +282,7 @@ class DeportistaModel:
             self.db.executeUpdateQuery(query_premium,formapago,facturacion,id_deportista)
 
     # función para ver la métrica del consumo calórico para una actividad
-    def getConsumoCalorico(self,idDeportista,Actividad,horas):
+    def getConsumoCalorico(self,idDeportista,Actividad_id,horas):
         # Calcular el MBR del deportista 
         queryMBR = """select Peso,Altura,FechaNacimiento,Sexo 
                       from Deportista where Deportista.ID = ?"""
@@ -305,17 +308,19 @@ class DeportistaModel:
         
         # Otener el MET  y el ID de la actividad
         queryMET = """select MET from TipoActividad 
-                      where TipoActividad.Tipo = ?"""
-        res = self.db.executeQuery(queryMET,Actividad)
-        if len(res)==1:
-            return None
-        else:
-            MET = res[0].get("MET")
+                      where TipoActividad.ID= ?"""
+        res = self.db.executeQuery(queryMET,Actividad_id)
+        MET = res[0].get("MET")
             
         # pasar las horas a minutos
         min = horas*60
         # Calcular el consumo calórico
         consumoCalorico = (MBR/24/60)*MET*min
+
+        # Insertamos ese valor en la tabla Actividad
+        #query_cc = """update Actividad set ConsumoCalorico = ? 
+        #              where Actividad.ID = ?"""
+        #self.db.executeUpdateQuery(query_cc,consumoCalorico,Actividad_id)
 
         return consumoCalorico
 

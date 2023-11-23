@@ -20,28 +20,28 @@ VALUES
 
 
 -- Insert data into the Actividad table
-INSERT INTO Actividad (ID, Fecha, DuracionHoras, Localizacion, DistanciaKms, FCMax, FCMin, TipoActividadID, SubtipoActividadID, DeportistaID)
+INSERT INTO Actividad (ID, Fecha, DuracionHoras, Localizacion, DistanciaKms, FCMax, FCMin, ConsumoCalorico, TipoActividadID, SubtipoActividadID, DeportistaID)
 VALUES
-    (1, '2023-01-20', 1.5, 'Parque Central', 5.2, 180, 120, 1, 1, 1),
-    (2, '2023-02-05', 2.0, 'Gimnasio FitLife', 6.2, 160, 100, 2, 1, 2),
-    (3, '2023-03-15', 1.0, 'Pista de atletismo', 10.0, 190, 130, 2, 2, 3),
-    (4, '2023-04-10', 1.5, 'Paseo Maritimo', 7.8, 175, 115, 1, 2, 4),
-    (5, '2023-05-02', 2.5, 'Bosque Nacional', 12.3, 195, 140, 1, 1, 5),
-    (6, '2023-01-25', 1.0, 'Piscina Municipal', 2.3, 160, 100, 1, 1, 1),
-    (7, '2023-03-01', 2.5, 'Gimnasio FitLife', 5, 185, 125, 2, 2, 3),
-    (8, '2023-04-20', 1.2, 'Parque Central', 4.0, 170, 110, 2, 1, 4),
-    (9, '2023-05-10', 3.0, 'Montaña', 15.5, 200, 150, 2, 2, 5),
-    (10, '2023-02-15', 1.5, 'Pista de atletismo', 8.0, 175, 120, 1, 2, 2),
-    (11, '2023-06-05', 2.0, 'Paseo Maritimo', 8.7, 180, 125, 2, 1, 6),
-    (12, '2023-07-20', 1.0, 'Parque Central', 5.0, 170, 120, 2, 2, 6),
-    (13, '2023-08-10', 2.5, 'Bosque Nacional', 11.0, 185, 130, 1, 1, 6),
-    (14, '2023-09-15', 1.5, 'Pista de atletismo', 9.0, 175, 120, 2, 2, 6),
-    (15, '2023-10-05', 3.0, 'Gimnasio FitLife', 10, 165, 110, 1, 1, 6),
-    (16, '2023-06-05', 2.0, 'Paseo Maritimo', 8.7, 180, 125, 2, 1, 7),
-    (17, '2023-07-20', 1.0, 'Parque Central', 5.0, 170, 120, 2, 2, 7),
-    (18, '2023-08-10', 2.5, 'Bosque Nacional', 11.0, 185, 130, 1, 1, 7),
-    (19, '2023-09-15', 1.5, 'Pista de atletismo', 9.0, 175, 120, 2, 2, 7),
-    (20, '2023-10-05', 3.0, 'Gimnasio FitLife', 10, 165, 110, 1, 1, 7);
+    (1, '2023-01-20', 1.5, 'Parque Central', 5.2, 180, 120, 600, 1, 1, 1),
+    (2, '2023-02-05', 2.0, 'Gimnasio FitLife', 6.2, 160, 100, 500, 2, 1, 2),
+    (3, '2023-03-15', 1.0, 'Pista de atletismo', 10.0, 190, 130, 870, 2, 2, 3),
+    (4, '2023-04-10', 1.5, 'Paseo Maritimo', 7.8, 175, 115, 545, 1, 2, 4),
+    (5, '2023-05-02', 2.5, 'Bosque Nacional', 12.3, 195, 140, 234.6, 1, 1, 5),
+    (6, '2023-01-25', 1.0, 'Piscina Municipal', 2.3, 160, 100, 678, 1, 1, 1),
+    (7, '2023-03-01', 2.5, 'Gimnasio FitLife', 5, 185, 125, 456, 2, 2, 3),
+    (8, '2023-04-20', 1.2, 'Parque Central', 4.0, 170, 110, 333, 2, 1, 4),
+    (9, '2023-05-10', 3.0, 'Montaña', 15.5, 200, 150, 234, 2, 2, 5),
+    (10, '2023-02-15', 1.5, 'Pista de atletismo', 8.0, 175, 120, 679, 1, 2, 2),
+    (11, '2023-06-05', 2.0, 'Paseo Maritimo', 8.7, 180, 125, 124, 2, 1, 6),
+    (12, '2023-07-20', 1.0, 'Parque Central', 5.0, 170, 120, 981, 2, 2, 6),
+    (13, '2023-08-10', 2.5, 'Bosque Nacional', 11.0, 185, 130, 478, 1, 1, 6),
+    (14, '2023-09-15', 1.5, 'Pista de atletismo', 9.0, 175, 120, 224, 2, 2, 6),
+    (15, '2023-10-05', 3.0, 'Gimnasio FitLife', 10, 165, 110, 809, 1, 1, 6),
+    (16, '2023-06-05', 2.0, 'Paseo Maritimo', 8.7, 180, 125, 445, 2, 1, 7),
+    (17, '2023-07-20', 1.0, 'Parque Central', 5.0, 170, 120, 632, 2, 2, 7),
+    (18, '2023-08-10', 2.5, 'Bosque Nacional', 11.0, 185, 130, 773, 1, 1, 7),
+    (19, '2023-09-15', 1.5, 'Pista de atletismo', 9.0, 175, 120, 553,2, 2, 7),
+    (20, '2023-10-05', 3.0, 'Gimnasio FitLife', 10, 165, 110, 299, 1, 1, 7);
 
 
 

@@ -40,11 +40,12 @@ CREATE TABLE Actividad(
     DistanciaKms DECIMAL(6, 3),
     FCMax INTEGER,
     FCMin INTEGER,
+    ConsumoCalorico DECIMAL(7, 3),
     TipoActividadID INTEGER,
     SubtipoActividadID INTEGER,
     DeportistaID INTEGER,
     FOREIGN KEY (DeportistaID) REFERENCES Deportista(ID),
-    FOREIGN KEY (TipoActividadID) REFERENCES TipoActividad(ID)
+    FOREIGN KEY (TipoActividadID) REFERENCES TipoActividad(ID),
     FOREIGN KEY (SubtipoActividadID) REFERENCES SubtipoActividad(ID)
 );
 

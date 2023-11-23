@@ -3,7 +3,7 @@ from gestor.gestorView import GestorView
 from gestor.gestorModel import GestorModel
 from util.Utils import utils
 
-import datetime
+import datetime 
 import os
 import pandas as pd
 import shutil
@@ -162,21 +162,21 @@ class DeportistaView:
         except:
             # Si en algun momento hay un error, mostramos un mensaje de error y salimos de la funcion
             print ("Error en los datos introducidos")
-            return   
-         
+            return  
+
+        # Calculamos el consumo calorico de dicha actividad para guardarla en el registro
+        consumo_calorico = self.deportista.getConsumoCalorico(idDeportista,tipo_actividad_id,duracion_horas)
+        
         #Invocación al metodo para insertar la actividad
-        self.deportista.insertActivity(fecha=fecha,duracion_horas=duracion_horas,localizacion=localizacion,distancia_kms=distancia_kms,FC_max=FC_max,FC_min=FC_min,tipo_actividad_id=tipo_actividad_id,idDeportista=idDeportista,subtipo_actividad_id=subtipo_actividad_id)
+        self.deportista.insertActivity(fecha=fecha,duracion_horas=duracion_horas,localizacion=localizacion,distancia_kms=distancia_kms,FC_max=FC_max,FC_min=FC_min,consumo_calorico=consumo_calorico,tipo_actividad_id=tipo_actividad_id,idDeportista=idDeportista,subtipo_actividad_id=subtipo_actividad_id)
         
         # Obtenemos el nombre del tipo y subtipo de actividad
         tipo_actividad = self.deportista.mapTiposActividad()[tipo_actividad_id]
         subtipo_actividad = self.deportista.mapSubtiposActividad(tipo_actividad_id)[subtipo_actividad_id]
         
         # Mostramos un mensaje al usuario para indicar que se ha insertado la actividad correctamente
-        print(f"Se ha insertado la actividad correctamente la actividad con fecha {fecha}, duracion {duracion_horas} horas, localizacion {localizacion}, distancia {distancia_kms} kms, FC max {FC_max}, FC min {FC_min}, tipo de actividad {tipo_actividad} y subtipo de actividad {subtipo_actividad}")
-        
-        # Mostramos el consumo calorico de la actividad registrada
-        consumo_calorico = self.deportista.getConsumoCalorico(idDeportista,tipo_actividad,duracion_horas)
-        print(f"El consumo calorico para la actividad {tipo_actividad} es de {consumo_calorico} calorias por minuto")
+        print(f"Se ha insertado la actividad correctamente la actividad con fecha {fecha}, duracion {duracion_horas} horas, localizacion {localizacion}, distancia {distancia_kms} kms, FC max {FC_max}, FC min {FC_min},consumo calórico {consumo_calorico}, tipo de actividad {tipo_actividad} y subtipo de actividad {subtipo_actividad}")
+
            
     #Vista para la HU Resumen básico sobre mi actividad deportiva a lo largo del tiempo, incluyendo el estado de forma
     def showSummary(self):
@@ -363,7 +363,7 @@ class DeportistaView:
     # Vista para la HU de registrar deportista 
     def showRegistro(self):
         print('Registrar deportista')
-        
+        fechaAlta = datetime.datetime.now().strftime("%Y-%m-%d")
         premium = input('¿Quieres ser deportista premium? (Si/No): ')
         if premium not in ['Si', 'No']:
             print('Respuesta no valida')
@@ -413,20 +413,31 @@ class DeportistaView:
         if not premium:
             self.deportista.registrarDeportista(nombre, apellidos, correo, fecha_nacimiento, sexo, peso, altura, premium=premium, facturacion=None, formapago=None)
             print('Deportista registrado correctamente')
+            print('Justificante de registro')
+            print(f'Nombre: {nombre}')
+            fecha = datetime.datetime.now().date()
+            print(f'Se le mandará un correo a {correo} con el justificante de registro a fecha {fecha}')
         
         if premium == True:
-        
+            # Facturacion (Mensual)
+            print('Facturacion:')
+            print('1. Mensual')
             facturacion = input('Introduce tu facturacion (solo se permite Mensual): ')
-            while facturacion not in ['Mensual']:
+            while facturacion not in ['1']:
                 print('Facturacion no valida')
                 facturacion = input('Introduce tu facturacion (solo se permite Mensual): ')
             
-            formadepago = input('Introduce tu forma de pago (Tarjeta/Transferecia): ')
-            while formadepago not in ['Tarjeta', 'Transferencia']:
+            # Forma de pago (Tarjeta o Transferencia)
+            print('Forma de pago:')
+            print('1. Tarjeta')
+            print('2. Transferencia')
+            formadepago = input('Introduce tu forma de pago: ')
+            # Si no escoge ninguna de las opciones se le indica y vuelve a preguntar
+            while formadepago not in ['1', '2']:
                 print('Forma de pago no valida')
-                formadepago = input('Introduce tu forma de pago (Tarjeta/Transferecia): ')
-                            
-            if formadepago == 'Tarjeta':
+                formadepago = input('Introduce tu forma de pago: ')
+            # Tarjeta
+            if formadepago == '1':
                 nombrepropietario = input('Introduce el nombre del propietario de la tarjeta: ')
                 numtarjeta = input('Introduce tu numero de tarjeta: ')
                 caducidad = input('Introduce la caducidad de tu tarjeta (AAAA-MM-DD): ')
@@ -435,12 +446,19 @@ class DeportistaView:
                 print('Datos de pago')
                 print(f'Nombre: {nombrepropietario}')
                 print(f'Numero de tarjeta: {numtarjeta}')
+            # Transferencia
             else:
                 print("Mandar transferencia a la cuenta ES 1234 5678 9012 3456 7890")
                 self.deportista.registrarDeportista(nombre, apellidos, correo, fecha_nacimiento, sexo, peso, altura, formadepago, facturacion)
+                print('Transferencia realizada correctamente')
 
+            # Justificante de registro
             print('Deportista registrado correctamente')
-            print('Transferencia realizada correctamente')
+            print('Justificante de registro')
+            print(f'Nombre: {nombre}')
+            fecha = datetime.datetime.now().date()
+            print(f'Se le mandará un correo a {correo} con el justificante de registro a fecha {fecha}')
+            
 
     #Médodo muy general para imprimir los resultados (res) que vienen del model
     def printResults (self,res):
@@ -532,10 +550,13 @@ class DeportistaView:
                 fc_max = row["FCMax"]
                 fc_min = row["FCMin"]
                 subtipo_actividad_id = row["SubtipoActividadID"]
+
+                
                 
                 # Insertamos la actividad
                 self.deportista.insertActivity(fecha=fecha,duracion_horas=duracion_horas,localizacion=localizacion,distancia_kms=distancia_kms,FC_max=fc_max,FC_min=fc_min,tipo_actividad_id=tipo_actividad_id,idDeportista=id_deportista,subtipo_actividad_id=subtipo_actividad_id)
-            
+                
+
             # Si todo ha ido bien, mostramos un mensaje de éxito
             print(f"Se han insetado {len(df)} actividades correctamente")
             
@@ -686,6 +707,8 @@ class DeportistaView:
         else:
             objetivoCantidad = int(input("Introduce la cantidad de actividades realizadas en la semana que deseas alcanzar: "))
             self.deportista.addObjetivoSemanal(idDeportista=idDeportista,tipoObjetivo=opcion, valorObjetivo=objetivoCantidad)
+
+    
             
         
 
