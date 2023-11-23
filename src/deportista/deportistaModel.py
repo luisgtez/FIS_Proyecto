@@ -308,9 +308,12 @@ class DeportistaModel:
         
         # Otener el MET  y el ID de la actividad
         queryMET = """select MET from TipoActividad 
-                      where TipoActividad.ID= ?"""
+                      where TipoActividad.Tipo = ?"""
         res = self.db.executeQuery(queryMET,Actividad_id)
-        MET = res[0].get("MET")
+        if len(res)==1:
+            return None
+        else:
+            MET = res[0].get("MET")
             
         # pasar las horas a minutos
         min = horas*60

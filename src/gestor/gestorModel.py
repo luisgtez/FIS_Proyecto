@@ -112,3 +112,18 @@ class GestorModel:
             return False
         
         
+    '''
+    HU #23655
+    '''
+    def añadirTipo(self, tipo, MET):
+        query = f"""
+                INSERT INTO TipoActividad (ID, Tipo, MET) VALUES (null, ?, ?);
+                """
+        self.db.executeQuery(query, tipo, MET)
+        
+    def añadirSubtipo(self, subtipo, tipo):
+        query = f"""
+                INSERT INTO SubtipoActividad (ID, Subtipo, TipoActividadID) VALUES (null, ?, ?);
+                """
+        self.db.executeQuery(query, subtipo, tipo)
+        
