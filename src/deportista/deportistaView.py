@@ -551,11 +551,11 @@ class DeportistaView:
                 fc_min = row["FCMin"]
                 subtipo_actividad_id = row["SubtipoActividadID"]
 
-                
+                # Calculamos el consumo calorico de dicha actividad para guardarla en el registro
+                consumo_calorico = self.deportista.getConsumoCalorico(id_deportista,tipo_actividad_id,duracion_horas)
                 
                 # Insertamos la actividad
-                self.deportista.insertActivity(fecha=fecha,duracion_horas=duracion_horas,localizacion=localizacion,distancia_kms=distancia_kms,FC_max=fc_max,FC_min=fc_min,tipo_actividad_id=tipo_actividad_id,idDeportista=id_deportista,subtipo_actividad_id=subtipo_actividad_id)
-                
+                self.deportista.insertActivity(fecha=fecha,duracion_horas=duracion_horas,localizacion=localizacion,distancia_kms=distancia_kms,FC_max=fc_max,FC_min=fc_min,consumo_calorico=consumo_calorico,tipo_actividad_id=tipo_actividad_id,idDeportista=id_deportista,subtipo_actividad_id=subtipo_actividad_id)       
 
             # Si todo ha ido bien, mostramos un mensaje de éxito
             print(f"Se han insetado {len(df)} actividades correctamente")
