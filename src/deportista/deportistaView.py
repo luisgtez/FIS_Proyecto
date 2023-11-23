@@ -293,7 +293,7 @@ class DeportistaView:
             except ValueError:
                     print ("Error en el formato de la fecha, debe tener el formato AAAA-MM-DD")
                     return
-        fecha_fin = input ("Fecha de inicio (AAAA-MM-DD), dejar vacío si quieres que la fecha sea igual a la actual: ")
+        fecha_fin = input ("Fecha de fin (AAAA-MM-DD), dejar vacío si quieres que la fecha sea igual a la actual: ")
         if fecha_fin=="":
                 fecha_fin = datetime.datetime.now().strftime("%Y-%m-%d")
         else:
