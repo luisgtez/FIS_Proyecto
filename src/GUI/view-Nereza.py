@@ -26,8 +26,7 @@ class View:
                         "7": self.deportista.showComparacion,
                         "8": self.gestor.gestorEstadoview,
                         "9": self.gestor.masActivos,
-                        "10":self.showSeguir,
-                        "11": self.quit
+                        "10": self.quit
                           }
         
     def displayMenu (self):
@@ -44,8 +43,7 @@ class View:
               7.- Comparar con deportista (Premium)
               8.- Datos Deportistas (Gestor)
               9.- Deportistas más activos (Gestor)
-              10.- Seguir a un deportista 
-              11.- Salir
+              10.- Salir
               """)
         
     #Muestra la lista de opciones y permite la selección

@@ -324,7 +324,8 @@ class DeportistaModel:
 
         return consumoCalorico
 
-   
+        
+    
     def mapTiposActividad(self):
         '''Método que obtiene los tipos de actividad unicos
         

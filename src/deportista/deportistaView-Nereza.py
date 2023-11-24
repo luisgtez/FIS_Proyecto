@@ -223,61 +223,48 @@ class DeportistaView:
         # Mostramos el estado de forma
         print(f"Estado de forma: {estado_forma}")
 
-    # Vista para la HU de seguir deportistas (Premium)
-    def showSeguir(self):
-        idDeportista = self.inicio_sesion_view()
+   # Vista para la HU comparación con otro deportista (para Premium)
+    def showComparacion(self):
+        
+        correoDeportista = input("Introduce tu correo: ")
+        idDeportista = self.deportista.getIdDeportista(correoDeportista) 
+
         if idDeportista==None:
-            print("No se ha iniciado sesion correctamente")
-            return
+            print ("No existe el deportista con correo:",correoDeportista)
+        
         else:
             premium=self.deportista.premium(idDeportista)
             premium = premium[0].get("Premium")
             if premium==False:
                 print("Esta funcionalidad solo se permite para deportistas Premium")
             else:
-                deportistas_seguir=[]
                 correoDeportistaComparar = input("Indique el correo del deportista con quien se quiere comparar: ")
                 idDeportistaComparar = self.deportista.getIdDeportista(correoDeportistaComparar)
                 if idDeportistaComparar==None:
                     print("No existe el deportista con correo",correoDeportistaComparar)
                 else:
-                    deportistas_seguir.append(correoDeportistaComparar)
+                    # Deportista premium
+                    nombre,apellidos=self.deportista.getNombreCompletoDeportista(correoDeportista)
+                    print(f"Iniciado sesion: {correoDeportista}")
+                    print(f"\n¡Bienvenido {nombre} {apellidos}!" )
+                    print("Iniciando comparacion")
+                    sexo,fecha=self.deportista.getSexoFecha(idDeportista)
+                    print("Aquí tienes tus datos:")
+                    print(f"Nombre: {nombre} Apellidos: {apellidos}")
+                    print(f"Sexo: {sexo} Fecha de nacimiento: {fecha}")
+                    res = self.deportista.getSummary(idDeportista)
+                    for dict in res:
+                        tipo_actividad_nombre = self.deportista.mapTiposActividad()[dict["TipoActividadID"]]
+                        # print(f"Tipo de actividad: {tipo_actividad_nombre}\n -------------------------- \n\tNumero de sesiones: {dict['NumeroSesiones']} \n\tTotal distancia: {dict['DistanciaTotal']} kms \n --------------------------")
+                    for dict in res:
+                        dict["TipoActividad"] = self.deportista.mapTiposActividad()[dict["TipoActividadID"]]
+                        del dict["TipoActividadID"]
+                    res = [{key: dict[key] for key in ["TipoActividad", "NumeroSesiones", "DistanciaTotal"]} for dict in res]
+                    utils.printTable(res)
 
-        return deportistas_seguir
-
-
-        
-
-   # Vista para la HU comparación con otro deportista (para Premium)
-    def showComparacion(self):
-        correoDeportista = input("Introduce tu correo: ")
-        idDeportista = self.deportista.getIdDeportista(correoDeportista)
-        deportistas_comparar=self.showSeguir(idDeportista)
-
-        # Datos deportista
-        nombre,apellidos=self.deportista.getNombreCompletoDeportista(correoDeportista)
-        print(f"Iniciado sesion: {correoDeportista}")
-        print(f"\n¡Bienvenido {nombre} {apellidos}!" )
-        print("Iniciando comparacion")
-        sexo,fecha=self.deportista.getSexoFecha(idDeportista)
-        print("Aquí tienes tus datos:")
-        print(f"Nombre: {nombre} Apellidos: {apellidos}")
-        print(f"Sexo: {sexo} Fecha de nacimiento: {fecha}")
-        res = self.deportista.getSummary(idDeportista)
-        for dict in res:
-            tipo_actividad_nombre = self.deportista.mapTiposActividad()[dict["TipoActividadID"]]
-            # print(f"Tipo de actividad: {tipo_actividad_nombre}\n -------------------------- \n\tNumero de sesiones: {dict['NumeroSesiones']} \n\tTotal distancia: {dict['DistanciaTotal']} kms \n --------------------------")   
-        for dict in res:
-            dict["TipoActividad"] = self.deportista.mapTiposActividad()[dict["TipoActividadID"]]
-            del dict["TipoActividadID"]
-        res = [{key: dict[key] for key in ["TipoActividad", "NumeroSesiones", "DistanciaTotal"]} for dict in res]
-        utils.printTable(res)
-
-        # Datos deportista a comparar
-        for deportistaCorreo in deportistas_comparar:
-                    idDeportistaComparar = self.deportista.getIdDeportista(deportistaCorreo)
-                    nombre2,apellidos2=self.deportista.getNombreCompletoDeportista(deportistaCorreo)
-                    print(f"Datos del deportista a comparar de correo {deportistaCorreo}:")
+                    # Deportista a comparar
+                    nombre2,apellidos2=self.deportista.getNombreCompletoDeportista(correoDeportistaComparar)
+                    print(f"Datos del deportista a comparar de correo {correoDeportistaComparar}")
                     print(f"Nombre: {nombre2} Apellidos: {apellidos2}")
                     sexo2,fecha2=self.deportista.getSexoFecha(idDeportistaComparar)
                     print(f"Sexo: {sexo2} Fecha de nacimiento: {fecha2}")
@@ -564,11 +551,11 @@ class DeportistaView:
                 fc_min = row["FCMin"]
                 subtipo_actividad_id = row["SubtipoActividadID"]
 
-                
+                # Calculamos el consumo calorico de dicha actividad para guardarla en el registro
+                consumo_calorico = self.deportista.getConsumoCalorico(id_deportista,tipo_actividad_id,duracion_horas)
                 
                 # Insertamos la actividad
-                self.deportista.insertActivity(fecha=fecha,duracion_horas=duracion_horas,localizacion=localizacion,distancia_kms=distancia_kms,FC_max=fc_max,FC_min=fc_min,tipo_actividad_id=tipo_actividad_id,idDeportista=id_deportista,subtipo_actividad_id=subtipo_actividad_id)
-                
+                self.deportista.insertActivity(fecha=fecha,duracion_horas=duracion_horas,localizacion=localizacion,distancia_kms=distancia_kms,FC_max=fc_max,FC_min=fc_min,consumo_calorico=consumo_calorico,tipo_actividad_id=tipo_actividad_id,idDeportista=id_deportista,subtipo_actividad_id=subtipo_actividad_id)       
 
             # Si todo ha ido bien, mostramos un mensaje de éxito
             print(f"Se han insetado {len(df)} actividades correctamente")
@@ -720,14 +707,6 @@ class DeportistaView:
         else:
             objetivoCantidad = int(input("Introduce la cantidad de actividades realizadas en la semana que deseas alcanzar: "))
             self.deportista.addObjetivoSemanal(idDeportista=idDeportista,tipoObjetivo=opcion, valorObjetivo=objetivoCantidad)
-    
-
-
-
-
-
-        
-
 
     
             
