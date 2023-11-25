@@ -717,7 +717,23 @@ class DeportistaView:
             objetivoCantidad = int(input("Introduce la cantidad de actividades realizadas en la semana que deseas alcanzar: "))
             self.deportista.addObjetivoSemanal(idDeportista=idDeportista,tipoObjetivo=opcion, valorObjetivo=objetivoCantidad)
 
-    
+    def mostrarComparacionGrupoEdad(self, idDeportista):
+        '''Método que muestra la comparación del deportista premium con otros deportistas de su franja de edad.'''
+        # Obtener la comparación con el grupo de edad desde el modelo
+        comparacion = self.deportista.compararConGrupoEdad(idDeportista)
+
+        # Mostrar los resultados en la consola o manejarlos según tus necesidades
+        if comparacion:
+            print(f"Comparación con deportistas en la franja de edad de {comparacion['Edad']} años:")
+            print("Edad\t#Act Promedio\tCC Media")
+            print(f"{comparacion['Edad']}\t{comparacion['NumeroSesionesPromedio']:.2f}\t\t{comparacion['ConsumoCaloricoPromedioGrupo']:.2f} kcal")
+            
+            print(f"\nResumen del deportista premium:")
+            print(f"Edad: {comparacion['Edad']} años")
+            print(f"Total de actividades: {comparacion['TotalActividades']}")
+            print(f"Consumo calórico promedio: {comparacion['ConsumoCaloricoPromedio']:.2f} kcal")
+        else:
+            print("No hay suficientes datos para realizar la comparación en este grupo de edad.")
             
         
 
