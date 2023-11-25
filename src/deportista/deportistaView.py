@@ -717,7 +717,45 @@ class DeportistaView:
             objetivoCantidad = int(input("Introduce la cantidad de actividades realizadas en la semana que deseas alcanzar: "))
             self.deportista.addObjetivoSemanal(idDeportista=idDeportista,tipoObjetivo=opcion, valorObjetivo=objetivoCantidad)
 
-    
+    def mostrarProgresoObjetivos(self):
+        '''Método que muestra por pantalla el progreso del deportista en relación con sus objetivos.'''
+        idDeportista = self.inicio_sesion_view()
+        if idDeportista is None:
+            print("No se ha iniciado sesión correctamente.")
+            return
+
+        # Obtener el resumen de actividades del deportista
+        resumen_actividades = self.deportista.getSummary(idDeportista)
+
+        if not resumen_actividades:
+            print("No hay actividades registradas para mostrar progreso.")
+            return
+
+        # Obtener los objetivos del deportista
+        objetivos = self.deportista.getObjetivos(idDeportista)
+
+        if not objetivos:
+            print("No hay objetivos establecidos para mostrar progreso.")
+            return
+
+        # Mostrar resumen de actividades
+        print("Resumen de actividades:")
+        for resumen in resumen_actividades:
+            tipo_actividad_id = resumen.get("TipoActividadID")
+            tipo_actividad = self.deportista.mapTipoActividad(tipo_actividad_id)
+            print(f"{tipo_actividad}: {resumen.get('NumeroSesiones')} sesiones, {resumen.get('DistanciaTotal')} km")
+
+        # Mostrar progreso en relación con los objetivos
+        print("\nProgreso de objetivos:")
+        for objetivo in objetivos:
+            tipo_objetivo = objetivo.get("TipoObjetivo")
+            valor_objetivo = objetivo.get("ValorObjetivo")
+            progreso = self.deportista.calcularProgresoObjetivo(idDeportista, tipo_objetivo)
+
+            if tipo_objetivo == "ObjetivoHoras":
+                print(f"Objetivo de horas semanales: {valor_objetivo} horas, Progreso: {progreso:.2f} horas")
+            elif tipo_objetivo == "ObjetivoCantidad":
+                print(f"Objetivo de actividades semanales: {valor_objetivo} actividades, Progreso: {progreso} actividades")
             
         
 
