@@ -26,7 +26,7 @@ class View:
                         "7": self.deportista.showComparacion,
                         "8": self.gestor.gestorEstadoview,
                         "9": self.gestor.masActivos,
-                        "10":self.showSeguir,
+                        "10": self.deportista.showSeguir,
                         "11": self.quit
                           }
         

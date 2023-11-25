@@ -371,3 +371,59 @@ class DeportistaModel:
         
         # Retornamos el diccionario
         return subtipos_actividad
+    
+    def seguirDeportista(self,idDeportista,idDeportistaSeguido):
+        '''Método que permite a un deportista seguir a otro
+        
+        Parámetros
+        ----------
+        idDeportista : int
+            ID del deportista que quiere seguir a otro.
+        idDeportistaSeguido : int
+            ID del deportista que va a ser seguido.
+            
+        Devuelve
+        -------
+        str
+            "OK" si la inserción se ha realizado correctamente.
+        '''
+        
+        # Creamos una query para insertar los datos en la tabla Seguir
+        query = """ 
+                insert into SeguirDeportista(ID, DeportistaID, SeguidorID) values (null,?,?) 
+                """ 
+        # Ejecutamos la query con los parámetros correspondientes
+        self.db.executeUpdateQuery(query,idDeportista,idDeportistaSeguido)
+
+        return "OK"
+    
+    def getDeportistasComparar(self,idDeportista):
+        '''Método que obtiene los deportistas que sigue un deportista
+        
+        Parámetros
+        ----------
+        idDeportista : int
+            ID del deportista del que se quiere obtener los deportistas que sigue.
+            
+        Devuelve
+        -------
+        list
+            Lista de diccionarios con los deportistas que sigue un deportista.
+        '''
+        
+        # Creamos una query para obtener los deportistas que sigue un deportista
+        query = "select SeguidorID from SeguirDeportista where DeportistaID = ?"
+        
+        # Ejecutamos la query 
+        id = self.db.executeQuery(query,idDeportista)
+
+        # Obtenemos el correo asociado a cada ID
+        query = "select CorreoElectronico from Deportista where Deportista.ID = ?"
+        deportistas = []
+        for i in id:
+            res = self.db.executeQuery(query,i.get("SeguidorID"))
+            deportistas.append(res[0].get("CorreoElectronico"))
+        
+        # Retornamos la lista de deportistas
+        return deportistas
+

@@ -235,24 +235,26 @@ class DeportistaView:
             if premium==False:
                 print("Esta funcionalidad solo se permite para deportistas Premium")
             else:
-                deportistas_seguir=[]
                 correoDeportistaComparar = input("Indique el correo del deportista con quien se quiere comparar: ")
                 idDeportistaComparar = self.deportista.getIdDeportista(correoDeportistaComparar)
                 if idDeportistaComparar==None:
                     print("No existe el deportista con correo",correoDeportistaComparar)
                 else:
-                    deportistas_seguir.append(correoDeportistaComparar)
+                    #Comprobamos que el deportista es free o premium con activdades públicas para poder seguirlo
+                    premiumComparar=self.deportista.premium(idDeportistaComparar)
+                    if premiumComparar[0].get("Premium")==False:
+                        print("El deportista con correo",correoDeportistaComparar,"tiene el perfil público por lo que se puede seguir")
+                        self.deportista.seguirDeportista(idDeportista,idDeportistaComparar)
+                    else:
+                        #Comprobar si tiene actividades públicas
 
-        return deportistas_seguir
+                        pass
 
-
-        
 
    # Vista para la HU comparación con otro deportista (para Premium)
     def showComparacion(self):
         correoDeportista = input("Introduce tu correo: ")
         idDeportista = self.deportista.getIdDeportista(correoDeportista)
-        deportistas_comparar=self.showSeguir(idDeportista)
 
         # Datos deportista
         nombre,apellidos=self.deportista.getNombreCompletoDeportista(correoDeportista)
@@ -274,6 +276,7 @@ class DeportistaView:
         utils.printTable(res)
 
         # Datos deportista a comparar
+        deportistas_comparar = self.deportista.getDeportistasComparar(idDeportista)
         for deportistaCorreo in deportistas_comparar:
                     idDeportistaComparar = self.deportista.getIdDeportista(deportistaCorreo)
                     nombre2,apellidos2=self.deportista.getNombreCompletoDeportista(deportistaCorreo)
@@ -292,7 +295,8 @@ class DeportistaView:
                     # Change columns order
                     res2 = [{key: dict[key] for key in ["TipoActividad", "NumeroSesiones", "DistanciaTotal"]} for dict in res2]
                     utils.printTable(res2)
-                                
+
+
     def showActividadesEnPeriodo(self):
         print("#"*20)
         correoDeportista = str(input("Introducir tu correo: "))
