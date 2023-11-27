@@ -724,6 +724,82 @@ class DeportistaView:
         else:
             objetivoCantidad = int(input("Introduce la cantidad de actividades realizadas en la semana que deseas alcanzar: "))
             self.deportista.addObjetivoSemanal(idDeportista=idDeportista,tipoObjetivo=opcion, valorObjetivo=objetivoCantidad)
+        
+    
+    def showInforme(self):
+        idDeportista = self.inicio_sesion_view()
+        if idDeportista==None:
+            print("No se ha iniciado sesion correctamente")
+            return
+        
+        # Preguntamos que tipo de informe quiere ver
+        print("¿Qué informe quieres ver?")
+        print("1. Informe de actividades mensual")
+        print("2. Informe de actividades anual")
+        opcion = input("Selecciona una opción (1 o 2): ")
+
+        if opcion not in ["1", "2"]:
+            print("Opción no válida. Debe seleccionar 1 o 2.")
+            return False
+        
+        # Visualizacion de los informes mensauales
+        if opcion == '1':
+            print("Has seleccionado el informe de actividades mensual")
+            print("Seleccione la forma de visualización de las actrividades:")
+            print("1. Por total de actividades")
+            print("2. Por subtipo de actividad")
+            tipoInforme = input("Selecciona una opción (1 o 2): ")
+
+            if tipoInforme not in ["1", "2"]:
+                print("Opción no válida. Debe seleccionar 1 o 2.")
+                return False
+            
+            # Visualización informes por total de actividades
+            if tipoInforme == '1':
+                print("Has seleccionado el informe de actividades mensual por total de actividades")
+                # función get para obtener el informe mensual
+                informe = self.deportista.getInformeMensual(idDeportista,1)
+                #Mostramos el informe en forma de tabla
+                utils.printTable(informe)
+
+            
+            # Visualización informes por tipo de actividad
+            else:
+                print("Has seleccionado el informe de actividades mensual por tipo de actividad")
+                # función get para obtener el informe mensual
+                informe = self.deportista.getInformeMensual(idDeportista,2)
+                #Mostramos el informe en forma de tabla
+                utils.printTable(informe)
+
+        # Visualizacion de los inormes anuales
+        else:
+            print("Has seleccionado el informe de actividades anual")
+            print("Seleccione la forma de visualización de las actividades:")
+            print("1. Por total de actividades")
+            print("2. Por subtipo de actividad")
+            tipoInforme = input("Selecciona una opción (1 o 2): ")
+
+            if tipoInforme not in ["1", "2"]:
+                print("Opción no válida. Debe seleccionar 1 o 2.")
+                return False
+            
+            # Visualización informes por total de actividades
+            if tipoInforme == '1':
+                print("Has seleccionado el informe de actividades anual por total de actividades")
+                # función get para obtener el informe anual
+                informe = self.deportista.getInformeAnual(idDeportista,1)
+                #Mostramos el informe en forma de tabla
+                utils.printTable(informe)
+            
+            # Visualización informes por tipo de actividad
+            else:
+                print("Has seleccionado el informe de actividades anual por tipo de actividad")
+                # función get para obtener el informe anual 
+                informe = self.deportista.getInformeAnual(idDeportista,2)
+                #Mostramos el informe en forma de tabla
+                utils.printTable(informe)
+
+
     
 
 

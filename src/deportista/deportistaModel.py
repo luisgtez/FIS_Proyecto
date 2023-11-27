@@ -426,4 +426,97 @@ class DeportistaModel:
         
         # Retornamos la lista de deportistas
         return deportistas
+    
+    def getInformeMensual(self,idDeportista,tipoInforme):
+        '''Método que obtiene el informe mensual de un deportista
+        
+        Parámetros
+        ----------
+        idDeportista : int
+            ID del deportista del que se quiere obtener el informe mensual.
+        tipoInforme : int
+            1- Indica el informe mensual por total de actividades
+            2- Indica el informe mensual por tipo de actividad
+            
+        Devuelve
+        -------
+        list
+            Lista de diccionarios con el informe mensual de un deportista.
+        '''
+        if tipoInforme == 1:
+            # Para este informe se muestra el total de horas de actividad,todas las localizaciones,total de distancia,media FC max y FC min y total consumo calorico
+            # Se agrupan por mes y el nombre del tipo de actividad
+            query= """select strftime('%m',Fecha) as Mes, TipoActividadID, sum(DuracionHoras) as DuracionTotal, count(*) as NumeroSesiones,Localizacion, sum(DistanciaKms) as DistanciaTotal, avg(FCMax) as FCMaxMedia, avg(FCMin) as FCMinMedia, sum(ConsumoCalorico) as ConsumoCaloricoTotal from Actividad where DeportistaID = ? group by Mes,TipoActividadID"""
+            informe = self.db.executeQuery(query,idDeportista)
+            # Cambiamos el ID del tipo de actividad por el nombre del tipo de actividad
+            for i in informe:
+                query = "select Tipo from TipoActividad where TipoActividad.ID = ?"
+                res = self.db.executeQuery(query,i.get("TipoActividadID"))
+                i["TipoActividadID"] = res[0].get("Tipo")
+            return informe
+        
+        elif tipoInforme == 2:
+            # Para este informe se muestran las mismas características de antes pero ahora desglosadas por subtipo de actividad
+            # Se agrupan por mes y subtipo de actividad, se indica a su vez el nombre  tipo de actividad
+            query= """select strftime('%m',Fecha) as Mes, SubtipoActividadID, TipoActividadID, sum(DuracionHoras) as DuracionTotal, count(*) as NumeroSesiones, sum(DistanciaKms) as DistanciaTotal, avg(FCMax) as FCMaxMedia, avg(FCMin) as FCMinMedia, sum(ConsumoCalorico) as ConsumoCaloricoTotal from Actividad where DeportistaID = ? group by Mes, SubtipoActividadID"""
+            informe = self.db.executeQuery(query,idDeportista)
+            # Cambiamos el ID del tipo de actividad por el nombre del tipo de actividad y el ID del subtipo de actividad por el nombre del subtipo de actividad
+            for i in informe:
+                # Seleccionamos el nombre del tipo de actividad asociado al ID del tipo de actividad
+                query = "select Tipo from TipoActividad where TipoActividad.ID = ?"
+                res = self.db.executeQuery(query,i.get("TipoActividadID"))
+                i["TipoActividadID"] = res[0].get("Tipo")
+                # Seleccionamos el nombre del subtipo de actividad asociado al ID del subtipo de actividad
+                query = "select Subtipo from SubtipoActividad where SubtipoActividad.ID = ?"
+                res = self.db.executeQuery(query,i.get("SubtipoActividadID"))
+                i["SubtipoActividadID"] = res[0].get("Subtipo")
+            return informe
+        else:
+            return None
+    
+    def getInformeAnual(self,idDeportista,tipoInforme):
+        '''Método que obtiene el informe anual de un deportista
+        
+        Parámetros
+        ----------
+        idDeportista : int
+            ID del deportista del que se quiere obtener el informe anual.
+        tipoInforme : int
+            1- Indica el informe anual por total de actividades
+            2- Indica el informe anual por tipo de actividad
+            
+        Devuelve
+        -------
+        list
+            Lista de diccionarios con el informe anual de un deportista.
+        '''
+        if tipoInforme == 1:
+            # Para este informe se muestra el total de horas de actividad,todas las localizaciones,total de distancia,media FC max y FC min y total consumo calorico
+            query= """select strftime('%Y',Fecha) as Año, sum(DuracionHoras) as DuracionTotal, count(*) as NumeroSesiones, sum(DistanciaKms) as DistanciaTotal, avg(FCMax) as FCMaxMedia, avg(FCMin) as FCMinMedia, sum(ConsumoCalorico) as ConsumoCaloricoTotal from Actividad where DeportistaID = ? group by Año"""
+            informe = self.db.executeQuery(query,idDeportista)
+            # Cambiamos el ID del tipo de actividad por el nombre del tipo de actividad
+            for i in informe:
+                query = "select Tipo from TipoActividad where TipoActividad.ID = ?"
+                res = self.db.executeQuery(query,i.get("TipoActividadID"))
+                i["TipoActividadID"] = res[0].get("Tipo")
+            return informe
+        
+        elif tipoInforme == 2:
+            # Para este informe se muestran las mismas características de antes pero ahora desglosadas por subtipo de actividad
+            query= """select strftime('%Y',Fecha) as Año, SubtipoActividadID, TipoActividadID, sum(DuracionHoras) as DuracionTotal, count(*) as NumeroSesiones, sum(DistanciaKms) as DistanciaTotal, avg(FCMax) as FCMaxMedia, avg(FCMin) as FCMinMedia, sum(ConsumoCalorico) as ConsumoCaloricoTotal from Actividad where DeportistaID = ? group by Año, SubtipoActividadID"""
+            informe = self.db.executeQuery(query,idDeportista)
+            # Cambiamos el ID del tipo de actividad por el nombre del tipo de actividad y el ID del subtipo de actividad por el nombre del subtipo de actividad
+            for i in informe:
+                # Seleccionamos el nombre del tipo de actividad asociado al ID del tipo de actividad
+                query = "select Tipo from TipoActividad where TipoActividad.ID = ?"
+                res = self.db.executeQuery(query,i.get("TipoActividadID"))
+                i["TipoActividadID"] = res[0].get("Tipo")
+                # Seleccionamos el nombre del subtipo de actividad asociado al ID del subtipo de actividad
+                query = "select Subtipo from SubtipoActividad where SubtipoActividad.ID = ?"
+                res = self.db.executeQuery(query,i.get("SubtipoActividadID"))
+                i["SubtipoActividadID"] = res[0].get("Subtipo")
+            return informe
+        else:
+            return None
+
 
