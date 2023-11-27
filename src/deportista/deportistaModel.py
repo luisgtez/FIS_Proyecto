@@ -68,7 +68,7 @@ class DeportistaModel:
             # Si no tiene un único elemento, devolvemos None
             return None,None
     
-    def insertActivity(self,fecha,duracion_horas,localizacion,distancia_kms,FC_max,FC_min,consumo_calorico,tipo_actividad_id,subtipo_actividad_id,idDeportista):
+    def insertActivity(self,fecha,duracion_horas,localizacion,distancia_kms,FC_max,FC_min,consumo_calorico,tipo_actividad_id,subtipo_actividad_id,idDeportista, publica = False):
         '''Método que inserta una actividad en la base de datos
         
         Parámetros
@@ -101,15 +101,15 @@ class DeportistaModel:
         '''
         # Creamos una query para insertar los datos en la tabla Actividad
         query = """ 
-                insert into Actividad(ID, Fecha, DuracionHoras, Localizacion, DistanciaKms, FCMax, FCMin, ConsumoCalorico, TipoActividadID,SubtipoActividadID, DeportistaID) values (null,?,?,?,?,?,?,?,?,?,?) 
+                insert into Actividad(ID, Fecha, DuracionHoras, Localizacion, DistanciaKms, FCMax, FCMin, ConsumoCalorico, TipoActividadID,SubtipoActividadID, DeportistaID, Publico) values (null,?,?,?,?,?,?,?,?,?,?,?)  
                 """ 
         # Ejecutamos la query con los parámetros correspondientes
-        self.db.executeUpdateQuery(query,fecha,duracion_horas,localizacion,distancia_kms,FC_max,FC_min,consumo_calorico,tipo_actividad_id,subtipo_actividad_id,idDeportista)
+        self.db.executeUpdateQuery(query,fecha,duracion_horas,localizacion,distancia_kms,FC_max,FC_min,consumo_calorico,tipo_actividad_id,subtipo_actividad_id,idDeportista,publica)
         
         # Devolvemos "OK"
         return "OK"
             
-    def getSummary(self,idDeportista):
+    def getSummary_propio(self,idDeportista):
         '''Método que obtiene un resumen de las actividades realizadas por un deportista
         
         Parámetros
@@ -128,6 +128,37 @@ class DeportistaModel:
         
         # Ejecutamos la query y la retornamos
         return self.db.executeQuery(query,idDeportista)
+    
+    def getSummary_otro(self,idDeportista):
+        '''Método que obtiene un resumen de las actividades realizadas por un deportista
+        
+        Parámetros
+        ----------
+        idDeportista : int
+            ID del deportista del que se quiere obtener el resumen de actividades.
+            
+        Devuelve
+        -------
+        list
+            Lista de diccionarios con el resumen de las actividades realizadas por el deportista.
+        '''
+
+        # Creamos una query para obtener el resumen de las actividades realizadas por el deportista
+        # query = select TipoActividadID, count(*) as NumeroSesiones, sum(DistanciaKms) as DistanciaTotal
+        # from Actividad 
+        # where Publico=True and where DeportistaID = ?
+        # group by TipoActividadID
+
+        query = """select TipoActividadID, count(*) as NumeroSesiones, sum(DistanciaKms) as DistanciaTotal
+                     from Actividad
+                        where Publico=True and DeportistaID = ?
+                        group by TipoActividadID
+                """
+
+
+        # Ejecutamos la query y la retornamos
+        return self.db.executeQuery(query,idDeportista)
+
     
     def premium(self,idDeportista):
         '''Método que comprueba si un deportista es premium
@@ -173,7 +204,8 @@ class DeportistaModel:
                                         A.FCMin,
                                         A.ConsumoCalorico,
                                         TA.Tipo,
-                                        STA.Subtipo
+                                        STA.Subtipo,
+                                        A.Publico
                                         FROM Actividad A
                                         JOIN TipoActividad TA ON A.TipoActividadID = TA.ID
                                         JOIN SubtipoActividad STA ON A.SubtipoActividadID = STA.ID
@@ -185,7 +217,7 @@ class DeportistaModel:
     #Como deportista “Premium” obtener la actividad de otro deportista por tipo de actividad a lo largo del tiempo.
     def getActividadesDeportistaTipo(self, idDeportista, tipoActividadID):
        
-        queryActividadesDeportista = "select Fecha, DuracionHoras, DistanciaKms from Actividad where DeportistaID = ? and TipoActividadID = ? order by Fecha desc"
+        queryActividadesDeportista = "select Fecha, DuracionHoras, DistanciaKms from Actividad where DeportistaID = ? and TipoActividadID = ? and Publico=True order by Fecha desc"
         resultActividades = self.db.executeQuery(queryActividadesDeportista, idDeportista, tipoActividadID)
         
         return resultActividades
