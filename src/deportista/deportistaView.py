@@ -558,6 +558,7 @@ class DeportistaView:
                 fc_min = row["FCMin"]
                 subtipo_actividad_id = row["SubtipoActividadID"]
 
+                # Calculamos el consumo calorico de dicha actividad para guardarla en el registro
                 consumo_calorico = self.deportista.getConsumoCalorico(id_deportista,tipo_actividad_id,duracion_horas)
                 
                 # Insertamos la actividad
