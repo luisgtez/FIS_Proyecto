@@ -43,8 +43,9 @@ CREATE TABLE Actividad(
     TipoActividadID INTEGER,
     SubtipoActividadID INTEGER,
     DeportistaID INTEGER,
+    Publico BOOLEAN,
     FOREIGN KEY (DeportistaID) REFERENCES Deportista(ID),
-    FOREIGN KEY (TipoActividadID) REFERENCES TipoActividad(ID)
+    FOREIGN KEY (TipoActividadID) REFERENCES TipoActividad(ID),
     FOREIGN KEY (SubtipoActividadID) REFERENCES SubtipoActividad(ID)
 );
 
