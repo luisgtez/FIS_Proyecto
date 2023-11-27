@@ -39,7 +39,7 @@ class DeportistaView:
         # Introdcir los datos de la actividad
         print("\nIntrodcir los datos de la actividad")
         try:
-
+            
             if self.deportista.premium(idDeportista)[0].get("Premium")==True:
                 publica = input("¿Quieres que la actividad sea pública? S/N: ")
                 while publica not in ["S", "N"]:
@@ -49,7 +49,8 @@ class DeportistaView:
             else:
                 print("La actividad será publica. Para ")
                 publica = True
-
+                                    
+        
         # Fecha
         
             # Pedimos la fecha
@@ -575,7 +576,7 @@ class DeportistaView:
                 consumo_calorico = self.deportista.getConsumoCalorico(id_deportista,tipo_actividad_id,duracion_horas)
                 
                 # Insertamos la actividad
-                self.deportista.insertActivity(fecha=fecha,duracion_horas=duracion_horas,localizacion=localizacion,distancia_kms=distancia_kms,FC_max=fc_max,FC_min=fc_min,consumo_calorico=consumo_calorico,tipo_actividad_id=tipo_actividad_id,idDeportista=id_deportista,subtipo_actividad_id=subtipo_actividad_id,publica=publica)       
+                self.deportista.insertActivity(fecha=fecha,duracion_horas=duracion_horas,localizacion=localizacion,distancia_kms=distancia_kms,FC_max=fc_max,FC_min=fc_min,consumo_calorico=consumo_calorico,tipo_actividad_id=tipo_actividad_id,idDeportista=id_deportista,subtipo_actividad_id=subtipo_actividad_id, publica=publica)       
                 
 
             # Si todo ha ido bien, mostramos un mensaje de éxito

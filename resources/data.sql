@@ -19,6 +19,7 @@ VALUES
     ( 3,  5, 'Tarjeta', 'Mensual');
 
 
+
 -- Insert data into the Actividad table
 INSERT INTO Actividad (ID, Fecha, DuracionHoras, Localizacion, DistanciaKms, FCMax, FCMin, ConsumoCalorico, TipoActividadID, SubtipoActividadID, DeportistaID, Publico)
 VALUES

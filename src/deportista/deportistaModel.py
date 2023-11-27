@@ -101,10 +101,10 @@ class DeportistaModel:
         '''
         # Creamos una query para insertar los datos en la tabla Actividad
         query = """ 
-                insert into Actividad(ID, Fecha, DuracionHoras, Localizacion, DistanciaKms, FCMax, FCMin, ConsumoCalorico, TipoActividadID,SubtipoActividadID, DeportistaID, Publico) values (null,?,?,?,?,?,?,?,?,?,?,?)  
+                insert into Actividad(ID, Fecha, DuracionHoras, Localizacion, DistanciaKms, FCMax, FCMin, ConsumoCalorico, TipoActividadID,SubtipoActividadID, DeportistaID, Publico) values (null,?,?,?,?,?,?,?,?,?,?,?) 
                 """ 
         # Ejecutamos la query con los parámetros correspondientes
-        self.db.executeUpdateQuery(query,fecha,duracion_horas,localizacion,distancia_kms,FC_max,FC_min,consumo_calorico,tipo_actividad_id,subtipo_actividad_id,idDeportista,publica)
+        self.db.executeUpdateQuery(query,fecha,duracion_horas,localizacion,distancia_kms,FC_max,FC_min,consumo_calorico,tipo_actividad_id,subtipo_actividad_id,idDeportista, publica)
         
         # Devolvemos "OK"
         return "OK"
