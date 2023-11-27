@@ -104,7 +104,7 @@ VALUES
 -- Insert data into the ActividadEntidad table
 INSERT INTO ActividadEntidad (ID, EntidadID, NombreActividad, Descripcion, Fecha, DuracionDias, NumPlazas, Coste)
 VALUES
-    (1, 1, 'San Silvestre 2023', 'carrera anual de fin de año por la ciudad de Oviedo', '2023-12-31', 1, 1000, 5),
-    (2, 1, 'Deporte en la calle', 'juegos y actividades de todo tipo en la plaza de la catedral de Oviedo', '2024-1-28', 5, 500, 5),
-    (3, 2, 'Torneo OCB juevenil', 'torneo de baloncesto por equipos de juveniles', '2023-12-10', 3, 50, 10);
+    (1, 1, 'San Silvestre 2023', 'carrera anual de fin de año por la ciudad de Oviedo',                     '2023-12-31', 1, 1000, 5),
+    (2, 1, 'Deporte en la calle', 'juegos y actividades de todo tipo en la plaza de la catedral de Oviedo', '2024-1-28',  5, 500,  5),
+    (3, 2, 'Torneo OCB juevenil', 'torneo de baloncesto por equipos de juveniles',                          '2023-12-10', 3, 50,   10);
 
