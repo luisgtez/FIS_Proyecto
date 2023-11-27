@@ -139,3 +139,46 @@ class utils:
         
         # Retornamos la lista
         return subtipos_actividad
+    
+    '''
+    HU #23773
+    '''  
+    def mapEntidades(self):
+        '''Método que obtiene las entidades
+        
+        Devuelve
+        -------
+        dict
+            Diccionario con las entidades. Clave: ID de la entidad, Valor: entidad.
+        '''
+        # Creamos una query para obtener los tipos de actividad unicos
+        query = "SELECT DISTINCT ID, NombreEntidad FROM Entidad"
+        
+        # Ejecutamos la query y guardamos el resultado en result
+        result = self.db.executeQuery(query)
+        
+        # Creamos un diccionario con los tipos de actividad unicos
+        entidades = {dict_values["ID"] : dict_values["NombreEntidad"] for dict_values in result}
+        
+        # Retornamos el diccionario
+        return entidades
+        
+    def mapActividadesEntidad(self, idEntidad):
+            '''Método que obtiene las actividades de una entidad
+            
+            Devuelve
+            -------
+            dict
+                Diccionario con las actividades de una entidad. Clave: ID de la actividad, Valor: Nombre de la actividad.
+            '''
+            # Creamos una query para obtener las actividades de la entidad
+            query = "SELECT ID, NombreActividad FROM ActividadEntidad WHERE EntidadID = ?;"
+            
+            # Ejecutamos la query y guardamos el resultado en result
+            result = self.db.executeQuery(query, idEntidad)
+            
+            # Creamos un diccionario con las actividades de la entidad
+            actividades = {dict_values["ID"] : dict_values["NombreActividad"] for dict_values in result}
+            
+            # Retornamos el diccionario
+            return actividades

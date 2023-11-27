@@ -155,7 +155,28 @@ class EntidadView:
         self.entidad.registrarEntidad(nombre)
 
         print('Entidad registrada correctamente')
+    
+    '''
+    HU #23773
+    '''  
 
+    def showInscripcionesActividad(self):
+        print("#"*20)
+        # Llamamos al metodo para escoger la entidad
+        entidad_id = self.escoger_entidad()
+        print()
+        # Llamamos al metodo para escoger la actividad
+        actividad_id = self.escoger_actividad_entidad(entidad_id)
+        #obtenemos total inscripciones
+        res = self.entidad.getInscripcionesActividad(actividad_id)
+        
+        entidad = self.entidad.getNombreEntidad(entidad_id)
+
+        
+        print()
+        print(f"Entidad: {entidad}")
+        print(f"Inscripciones de la actividad:")
+        utils.printTable(res)
 
     def escoger_entidad(self):
         '''Método que permite escoger la entidad, mostrandole todas y dandole a escoger en base a un número.
@@ -165,7 +186,7 @@ class EntidadView:
         Devuelve la entidad escogida en ID
         '''
         # Obtenemos las entidades
-        entidades = self.entidad.mapEntidades()
+        entidades = self.utils.mapEntidades()
         
         # Ensñamos las entidades y sus ids
         print("Entidades:")
@@ -189,5 +210,40 @@ class EntidadView:
         
         # Devolvemos la entidad escogida
         return entidad  
+    
+    def escoger_actividad_entidad(self, idEntidad):
+        '''Método que permite escoger una actividad de una entidad, mostrandole todas y dandole a escoger en base a un número.
             
+        Se mostrarán las actividades disponibles y se solicitará una. Si no es correcta, se mostrará un mensaje de error y se volverá a solicitar la actividad.
+            
+        Devuelve la actividad escogida en ID
+            '''
+        # Obtenemos las actividades
+        actividades = self.utils.mapActividadesEntidad(idEntidad)
+            
+        # Ensñamos las entidades y sus ids
+        print("Actividades de la entidad:")
+        for key,value in actividades.items():
+            key = key + 1 - min(actividades.keys())
+            print(f"{key}: {value}")
+        actividad = input("Introduce la actividad: ")
+            
+        # Intentamos convertir la actividad a int
+        try:
+            actividad = int(actividad)
+            
+        # Si da error, mostramos un mensaje de error y volvemos a pedir la actividad
+        except:
+            print("La entidad debe ser un número")
+            return self.escoger_entidad()
+
+        # Recuperamos el indice del subtipo de actividad
+        actividad = actividad + min(actividades.keys()) - 1    
+        # Si la actividad no está en las actividades, mostramos un mensaje de error y volvemos a pedir la actividad
+        if actividad not in actividades.keys():
+            print("La actividad no es correcta")
+            return self.escoger_actividad_entidad(idEntidad)
+            
+        # Devolvemos la actividad escogida
+        return actividad  
         

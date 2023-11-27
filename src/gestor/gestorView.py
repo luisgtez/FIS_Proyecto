@@ -123,3 +123,15 @@ class GestorView:
             
         self.gestor.añadirSubtipo(subtipo, tipo_id)
         print("Subtipo añadido correctamente")
+    
+    '''
+    HU #23773
+    '''  
+    def inscripcionesEntidades(self):
+        print("#"*20)
+        res=self.gestor.getTotalInscripcionesEntidades()
+        print("Total de inscripciones de cada entidad colaboradora:")
+        
+        utils.printTable(res)
+        # for dict in res:
+        #     print(f"Entidad: {dict['NombreEntidad']} | Inscripciones Totales: {dict['TotalInscripciones']}")

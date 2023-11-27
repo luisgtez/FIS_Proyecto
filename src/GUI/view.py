@@ -26,13 +26,15 @@ class View:
                         "5": self.deportista.showSummary,
                         "6": self.deportista.showActividadesEnPeriodo,
                         "7": self.deportista.addObjetivoSemanalView,
-                        "8": self.deportista.showActividadesDeportistaTipo,
-                        "9": self.deportista.showComparacion,
-                        "10": self.gestor.gestorEstadoview,
-                        "11": self.gestor.masActivos,
-                        "12": self.gestor.añadirTipoActividad_view,
-                        "13": self.gestor.añadirSubtipoActividad_view,
-                        "14": self.quit
+                        "8": self.entidad.showInscripcionesActividad,
+                        "9": self.deportista.showActividadesDeportistaTipo,
+                        "10": self.deportista.showComparacion,
+                        "11": self.gestor.gestorEstadoview,
+                        "12": self.gestor.masActivos,
+                        "13": self.gestor.añadirTipoActividad_view,
+                        "14": self.gestor.añadirSubtipoActividad_view,
+                        "15": self.gestor.inscripcionesEntidades,
+                        "16": self.quit
                           }
         
     def displayMenu (self):
@@ -47,13 +49,15 @@ class View:
               5. -Resumen de actividad
               6.- Resumen de actividad entre dos fechas
               7.- Añadir objetivo semanal
-              8.- Resumen de actividad de deportista por tipo (Premium)
-              9.- Comparar con deportista (Premium)
-              10.- Datos Deportistas (Gestor)
-              11.- Deportistas más activos (Gestor)
-              12.- Añadir Tipo de Actividad (Gestor)
-              13.- Añadir Subtipo de Actividad (Gestor)
-              12.- Salir
+              8.- Inscripciones de una Actividad (Entidad)
+              9.- Resumen de actividad de deportista por tipo (Premium)
+              10.- Comparar con deportista (Premium)
+              11.- Datos Deportistas (Gestor)
+              12.- Deportistas más activos (Gestor)
+              13.- Añadir Tipo de Actividad (Gestor)
+              14.- Añadir Subtipo de Actividad (Gestor)
+              15.- Monstrar Inscripciones de cada Entidad (Gestor)
+              16.- Salir
               """)
         
     #Muestra la lista de opciones y permite la selección

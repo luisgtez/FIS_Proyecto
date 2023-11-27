@@ -10,6 +10,35 @@ class EntidadModel:
     
     def __init__ (self):
         self.db = DataBase ("AppDB.db") # Crea un objeto DataBase con la ruta de la base de datos
+    
+    def getNombreEntidad(self, entidad_id):
+        query= """SELECT NombreEntidad 
+                FROM Entidad
+                WHERE ID = ?;"""
+        
+        res = self.db.executeQuery(query,entidad_id)
+        # Comprobamos que el resultado tiene un único elemento
+        if len(res)==1:
+        # Si tiene un único elemento, devolvemos el nombre
+            return res[0].get("NombreEntidad")
+        else:
+        # Si no tiene un único elemento, devolvemos None
+            return None
+
+    def getNombreActividadEntidad(self, actividad_id):
+        query= """SELECT NombreActividad 
+                FROM ActividadEntidad
+                WHERE ID = ?;"""
+        
+        res=self.db.executeQuery(query,actividad_id)
+
+        # Comprobamos que el resultado tiene un único elemento
+        if len(res)==1:
+        # Si tiene un único elemento, devolvemos el nombre
+            return res[0].get("NombreActivvidad")
+        else:
+        # Si no tiene un único elemento, devolvemos None
+            return None
 
     def InsertActividadEntidad(self, idEntidad, nombreActividad, descripcion, fecha, duracion_dias, numPlazas, coste):
         '''Método que inserta una actividadEntidad en la base de datos
@@ -72,24 +101,16 @@ class EntidadModel:
 
         print("Registro exitoso. ¡Bienvenido a la aplicación!")
 
+  
+    def getInscripcionesActividad(self, actividad_id):
+        #Peticion a la base de datos para obtenerlas inscripciones de la actividad
+        query="""SELECT
+                D.CorreoElectronico,
+                D.Nombre,
+                D.Apellidos
+                FROM Deportista D
+                JOIN Inscripcion I ON D.ID = I.DeportistaID
+                WHERE I.ActividadEntidadID = ?;"""
         
-    
-    def mapEntidades(self):
-        '''Método que obtiene las entidades
-        
-        Devuelve
-        -------
-        dict
-            Diccionario con las entidades. Clave: ID de la entidad, Valor: entidad.
-        '''
-        # Creamos una query para obtener los tipos de actividad unicos
-        query = "SELECT DISTINCT ID, NombreEntidad FROM Entidad"
-        
-        # Ejecutamos la query y guardamos el resultado en result
-        result = self.db.executeQuery(query)
-        
-        # Creamos un diccionario con los tipos de actividad unicos
-        entidades = {dict_values["ID"] : dict_values["NombreEntidad"] for dict_values in result}
-        
-        # Retornamos el diccionario
-        return entidades
+        return self.db.executeQuery(query,actividad_id)
+
