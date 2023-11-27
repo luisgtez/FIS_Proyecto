@@ -177,7 +177,7 @@ class DeportistaView:
         # Mostramos un mensaje al usuario para indicar que se ha insertado la actividad correctamente
         print(f"Se ha insertado la actividad correctamente la actividad con fecha {fecha}, duracion {duracion_horas} horas, localizacion {localizacion}, distancia {distancia_kms} kms, FC max {FC_max}, FC min {FC_min},consumo calórico {consumo_calorico}, tipo de actividad {tipo_actividad} y subtipo de actividad {subtipo_actividad}")
 
-           
+
     #Vista para la HU Resumen básico sobre mi actividad deportiva a lo largo del tiempo, incluyendo el estado de forma
     def showSummary(self):
         '''

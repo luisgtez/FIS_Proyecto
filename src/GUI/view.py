@@ -1,6 +1,7 @@
 import sys
 from deportista.deportistaView import DeportistaView
 from gestor.gestorView import GestorView
+from entidad.entidadView import EntidadView
 import datetime
 
 class View:
@@ -13,40 +14,45 @@ class View:
     def __init__ (self):
         self.deportista = DeportistaView () #Crea un objeto model que se invocará desde esta vista
         self.gestor = GestorView() #Crea un objeto model que se invocará desde esta vista
+        self.entidad = EntidadView()  #Crea un objeto model que se invocará desde esta vista
         #Crea un diccionario con las opciones (key) y los métodos/acciones que se pueden realizar en este objeto (values)
         self.choices = {
                         "0":self.deportista.showRegistro,
+                        "1":self.entidad.showRegistro,
                             
-                        "1": self.deportista.addActivity,
-                        "2": self.deportista.importar_csv_view,
-                        "3": self.deportista.showSummary,
-                        "4": self.deportista.showActividadesEnPeriodo,
-                        "5": self.deportista.addObjetivoSemanalView,
-                        "6": self.deportista.showActividadesDeportistaTipo,
-                        "7": self.deportista.showComparacion,
-                        "8": self.gestor.gestorEstadoview,
-                        "9": self.gestor.masActivos,
-                        "10":self.gestor.añadirTipoActividad_view,
-                        "11":self.gestor.añadirSubtipoActividad_view,
-                        "12":self.quit
+                        "2": self.deportista.addActivity,
+                        "3": self.entidad.addActividadEntidad,
+                        "4": self.deportista.importar_csv_view,
+                        "5": self.deportista.showSummary,
+                        "6": self.deportista.showActividadesEnPeriodo,
+                        "7": self.deportista.addObjetivoSemanalView,
+                        "8": self.deportista.showActividadesDeportistaTipo,
+                        "9": self.deportista.showComparacion,
+                        "10": self.gestor.gestorEstadoview,
+                        "11": self.gestor.masActivos,
+                        "12": self.gestor.añadirTipoActividad_view,
+                        "13": self.gestor.añadirSubtipoActividad_view,
+                        "14": self.quit
                           }
         
     def displayMenu (self):
         print("#"*20)
         print(""" Opciones: \n
               0.- Registrar nuevo deportista
+              1.- Registrar nueva entidad (Entidad)
                
-              1.- Registrar nueva actividad
-              2.- Importar actividades CSV
-              3. -Resumen de actividad
-              4.- Resumen de actividad entre dos fechas
-              5.- Añadir objetivo semanal
-              6.- Resumen de actividad de deportista por tipo (Premium)
-              7.- Comparar con deportista (Premium)
-              8.- Datos Deportistas (Gestor)
-              9.- Deportistas más activos (Gestor)
-              10.- Añadir Tipo de Actividad (Gestor)
-              11.- Añadir Subtipo de Actividad (Gestor)
+              2.- Registrar nueva actividad
+              3.- Registrar nueva actividad (Entidad)
+              4.- Importar actividades CSV
+              5. -Resumen de actividad
+              6.- Resumen de actividad entre dos fechas
+              7.- Añadir objetivo semanal
+              8.- Resumen de actividad de deportista por tipo (Premium)
+              9.- Comparar con deportista (Premium)
+              10.- Datos Deportistas (Gestor)
+              11.- Deportistas más activos (Gestor)
+              12.- Añadir Tipo de Actividad (Gestor)
+              13.- Añadir Subtipo de Actividad (Gestor)
               12.- Salir
               """)
         
