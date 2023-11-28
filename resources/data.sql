@@ -108,3 +108,10 @@ VALUES
     (2, 1, 'Deporte en la calle', 'juegos y actividades de todo tipo en la plaza de la catedral de Oviedo', '2024-1-28',  5, 500,  5),
     (3, 2, 'Torneo OCB juevenil', 'torneo de baloncesto por equipos de juveniles',                          '2023-12-10', 3, 50,   10);
 
+-- Insert data into the Inscripcion table
+INSERT INTO Inscripcion (ID, DeportistaID, ActividadEntidadID)
+VALUES
+    (1, 1, 1),
+    (2, 1, 2),
+    (3, 2, 1),
+    (4, 2, 2);

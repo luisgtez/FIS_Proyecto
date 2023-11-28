@@ -732,7 +732,23 @@ class DeportistaView:
             objetivoCantidad = int(input("Introduce la cantidad de actividades realizadas en la semana que deseas alcanzar: "))
             self.deportista.addObjetivoSemanal(idDeportista=idDeportista,tipoObjetivo=opcion, valorObjetivo=objetivoCantidad)
 
-    
+    def showInscripcionesDeportista(self):
+        print("#"*20)
+        correoDeportista = input("Introduce tu correo: ")
+        
+        if not self.utils.comprobarExisteCorreo(correoDeportista):
+            print ("No existe el deportista con correo:",correoDeportista)
+            return
+        
+        idDeportista = self.deportista.getIdDeportista(correoDeportista) 
+
+        premium=self.deportista.premium(idDeportista)
+        premium = premium[0].get("Premium")
+
+        res = self.deportista.getInscripcionesDeportista(idDeportista, premium)
+
+        print("Actividades a las que te has inscrito:")
+        utils.printTable(res)
             
         
 
