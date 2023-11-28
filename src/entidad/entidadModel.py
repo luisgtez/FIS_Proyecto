@@ -105,6 +105,7 @@ class EntidadModel:
     def getInscripcionesActividad(self, actividad_id):
         #Peticion a la base de datos para obtenerlas inscripciones de la actividad
         query="""SELECT
+                I.ID,
                 D.CorreoElectronico,
                 D.Nombre,
                 D.Apellidos

@@ -25,18 +25,19 @@ class View:
                         "4": self.deportista.importar_csv_view,
                         "5": self.deportista.showSummary,
                         "6": self.deportista.showActividadesEnPeriodo,
-                        "7": self.deportista.addObjetivoSemanalView,
-                        "8": self.entidad.showInscripcionesActividad,
-                        "9": self.deportista.showActividadesDeportistaTipo,
-                        "10": self.deportista.showComparacion,
-                        "11": self.gestor.gestorEstadoview,
-                        "12": self.gestor.masActivos,
-                        "13":self.gestor.añadirTipoActividad_view,
-                        "14":self.gestor.añadirSubtipoActividad_view,
-                        "15": self.gestor.inscripcionesEntidades,
-                        "16": self.deportista.showSeguir,
-                        "17":self.deportista.showInforme,
-                        "18":self.quit
+                        "7": self.deportista.showInscripcionesDeportista,
+                        "8": self.deportista.addObjetivoSemanalView,
+                        "9": self.entidad.showInscripcionesActividad,
+                        "10": self.deportista.showActividadesDeportistaTipo,
+                        "11": self.deportista.showComparacion,
+                        "12": self.gestor.gestorEstadoview,
+                        "13": self.gestor.masActivos,
+                        "14": self.gestor.añadirTipoActividad_view,
+                        "15": self.gestor.añadirSubtipoActividad_view,
+                        "16": self.gestor.inscripcionesEntidades,
+                        "17": self.deportista.showSeguir,
+                        "18": self.deportista.showInforme,
+                        "19": self.quit
                           }
         
     def displayMenu (self):
@@ -50,18 +51,19 @@ class View:
               4.- Importar actividades CSV
               5. -Resumen de actividad
               6.- Resumen de actividad entre dos fechas
-              7.- Añadir objetivo semanal
-              8.- Inscripciones de una Actividad (Entidad)
-              9.- Resumen de actividad de deportista por tipo (Premium)
-              10.- Comparar con deportista (Premium)
-              11.- Datos Deportistas (Gestor)
-              12.- Deportistas más activos (Gestor)
-              13.- Añadir Tipo de Actividad (Gestor)
-              14.- Añadir Subtipo de Actividad (Gestor)
-              15.- Monstrar Inscripciones de cada Entidad (Gestor)
-              16.- Seguir a un deportista (Premium)
-              17.- Informe de actividad (Premium)
-              18.- Salir
+              7.- Histórico de Inscripciones a Actividades
+              8.- Añadir objetivo semanal
+              9.- Inscripciones de una Actividad (Entidad)
+              10.- Resumen de actividad de deportista por tipo (Premium)
+              11.- Comparar con deportista (Premium)
+              12.- Datos Deportistas (Gestor)
+              13.- Deportistas más activos (Gestor)
+              14.- Añadir Tipo de Actividad (Gestor)
+              15.- Añadir Subtipo de Actividad (Gestor)
+              16.- Monstrar Inscripciones de cada Entidad (Gestor)
+              17.- Seguir a un deportista (Premium)
+              18.- Informe de actividad 
+              19.- Salir
               """)
         
     #Muestra la lista de opciones y permite la selección

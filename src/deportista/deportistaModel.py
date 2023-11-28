@@ -401,7 +401,34 @@ class DeportistaModel:
         
         # Retornamos el diccionario
         return subtipos_actividad
-    
+       
+    def getInscripcionesDeportista(self, deportista_id, premium):
+        if premium:
+            query="""SELECT
+                    AE.NombreActividad,
+                    AE.Fecha,
+                    AE.DuracionDias,
+                    E.NombreEntidad
+                    FROM Inscripcion I
+                    JOIN ActividadEntidad AE ON I.ActividadEntidadID = AE.ID
+                    JOIN Entidad E ON AE.EntidadID = E.ID
+                    WHERE I.DeportistaID = ? 
+                    ORDER BY AE.Fecha DESC;"""
+        else:
+            query="""SELECT
+                    AE.NombreActividad,
+                    AE.Fecha,
+                    AE.DuracionDias,
+                    AE.Coste,
+                    E.NombreEntidad
+                    FROM Inscripcion I
+                    JOIN ActividadEntidad AE ON I.ActividadEntidadID = AE.ID
+                    JOIN Entidad E ON AE.EntidadID = E.ID
+                    WHERE I.DeportistaID = ? 
+                    ORDER BY AE.Fecha DESC;"""
+            
+        return self.db.executeQuery(query,deportista_id)
+
     def seguirDeportista(self,idDeportista,idDeportistaSeguido):
         '''Método que permite a un deportista seguir a otro
         
@@ -549,5 +576,3 @@ class DeportistaModel:
             return informe
         else:
             return None
-
-

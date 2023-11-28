@@ -118,3 +118,11 @@ VALUES
     (3,3,2),
     (4,5,2),
     (5,7,6);
+    
+-- Insert data into the Inscripcion table
+INSERT INTO Inscripcion (ID, DeportistaID, ActividadEntidadID)
+VALUES
+    (1, 1, 1),
+    (2, 1, 2),
+    (3, 2, 1),
+    (4, 2, 2);
