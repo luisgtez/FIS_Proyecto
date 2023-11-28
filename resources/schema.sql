@@ -8,6 +8,7 @@ drop table if exists SubtipoActividad;
 drop table if exists Inscripcion;
 drop table if exists ActividadEntidad;
 drop table if exists Entidad;
+drop table if exists SeguirDeportista;
 
 -- Crear la tabla Deportista
 CREATE TABLE Deportista(
@@ -67,7 +68,6 @@ CREATE TABLE SubtipoActividad(
     TipoActividadID INTEGER,
     FOREIGN KEY(TipoActividadID) REFERENCES TipoActividad(ID)
 );
-
 -- Crear la tabla Entidad
 CREATE TABLE Entidad(
     ID INTEGER PRIMARY KEY,
@@ -96,4 +96,13 @@ CREATE TABLE Inscripcion(
     FOREIGN KEY (DeportistaID) REFERENCES Deportista(ID),
     FOREIGN KEY (ActividadEntidadID) REFERENCES ActividadEntidad(ID)
   
+);
+
+-- Crear la tabla SeguirDeportista
+CREATE TABLE SeguirDeportista(
+    ID INTEGER PRIMARY KEY,
+    DeportistaID INTEGER,
+    SeguidorID INTEGER,
+    FOREIGN KEY(DeportistaID) REFERENCES Deportista(ID),
+    FOREIGN KEY(SeguidorID) REFERENCES Deportista(ID)
 );

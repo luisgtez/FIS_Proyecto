@@ -63,36 +63,37 @@ VALUES
 -- Insert data into SubtipoActividad table
 INSERT INTO SubtipoActividad (ID, Subtipo, TipoActividadID)
 VALUES
-    (1, 'Montaña',                  1),
-    (2, 'Fondo',                    1),
-    (3, 'Sprint',                   1),
-    (4, 'Piscina',                  2),
-    (5, 'Aguas abiertas',           2),
-    (6, 'Buceo',                    2),
-    (7, 'Spinning',                 3),
-    (8, 'Montaña',                  3),
-    (9, 'Asfalto',                  3),
-    (10, 'Sprint',                  4),
-    (11, 'Olimpico',                4),
-    (12, 'Larga distancia',         4),
-    (13, 'Maquina',                 5),
-    (14, 'Aguas abiertas',          5),
-    (15, 'Competicion',             5),
-    (16, 'Rocodromo',               6),
-    (17, 'Deportiva',               6),
-    (18, 'Libre',                   6),
-    (19, 'En linea',                7),
-    (20, 'Sobre hielo',             7),
-    (21, 'Acrobatico',              7),
-    (22, 'De fondo',                8),
-    (23, 'Descenso',                8),
-    (24, 'Acrobatico',              8),
-    (25, 'Marcha',                  9),
-    (26, 'Ruta',                    9),
-    (27, 'Senderismo',              9),
-    (28, 'Boxeo',                   10),
-    (29, 'Judo',                    10),
-    (30, 'Artes marciales mixtas',  10);
+    (1, 'Montaña', 1),
+    (2, 'Fondo', 1),
+    (3, 'Sprint', 1),
+    (4, 'Piscina', 2),
+    (5, 'Aguas abiertas', 2),
+    (6, 'Buceo', 2),
+    (7, 'Spinning', 3),
+    (8, 'Montaña', 3),
+    (9, 'Asfalto', 3),
+    (10, 'Sprint', 4),
+    (11, 'Olimpico', 4),
+    (12, 'Larga distancia', 4),
+    (13, 'Maquina', 5),
+    (14, 'Aguas abiertas', 5),
+    (15, 'Competicion', 5),
+    (16, 'Rocodromo', 6),
+    (17, 'Deportiva', 6),
+    (18, 'Libre', 6),
+    (19, 'En linea', 7),
+    (20, 'Sobre hielo', 7),
+    (21, 'Acrobatico', 7),
+    (22, 'De fondo', 8),
+    (23, 'Descenso', 8),
+    (24, 'Acrobatico', 8),
+    (25, 'Marcha', 9),
+    (26, 'Ruta', 9),
+    (27, 'Senderismo', 9),
+    (28, 'Boxeo', 10),
+    (29, 'Judo', 10),
+    (30, 'Artes marciales mixtas', 10);
+
 
 -- Insert data into the Entidad table
 INSERT INTO Entidad (ID, NombreEntidad)
@@ -108,6 +109,16 @@ VALUES
     (2, 1, 'Deporte en la calle', 'juegos y actividades de todo tipo en la plaza de la catedral de Oviedo', '2024-1-28',  5, 500,  5),
     (3, 2, 'Torneo OCB juevenil', 'torneo de baloncesto por equipos de juveniles',                          '2023-12-10', 3, 50,   10);
 
+
+-- Insert data into SeguirDeportista table
+INSERT INTO SeguirDeportista (ID, DeportistaID, SeguidorID)
+VALUES
+    (1,1,2),
+    (2,1,3),
+    (3,3,2),
+    (4,5,2),
+    (5,7,6);
+    
 -- Insert data into the Inscripcion table
 INSERT INTO Inscripcion (ID, DeportistaID, ActividadEntidadID)
 VALUES

@@ -352,15 +352,11 @@ class DeportistaModel:
         # Calcular el consumo calórico
         consumoCalorico = (MBR/24/60)*MET*min
 
-        # Insertamos ese valor en la tabla Actividad
-        #query_cc = """update Actividad set ConsumoCalorico = ? 
-        #              where Actividad.ID = ?"""
-        #self.db.executeUpdateQuery(query_cc,consumoCalorico,Actividad_id)
+
 
         return consumoCalorico
 
-        
-    
+   
     def mapTiposActividad(self):
         '''Método que obtiene los tipos de actividad unicos
         
@@ -407,7 +403,7 @@ class DeportistaModel:
         
         # Retornamos el diccionario
         return subtipos_actividad
-
+       
     def getInscripcionesDeportista(self, deportista_id, premium):
         if premium:
             query="""SELECT
@@ -434,3 +430,151 @@ class DeportistaModel:
                     ORDER BY AE.Fecha DESC;"""
             
         return self.db.executeQuery(query,deportista_id)
+
+    def seguirDeportista(self,idDeportista,idDeportistaSeguido):
+        '''Método que permite a un deportista seguir a otro
+        
+        Parámetros
+        ----------
+        idDeportista : int
+            ID del deportista que quiere seguir a otro.
+        idDeportistaSeguido : int
+            ID del deportista que va a ser seguido.
+            
+        Devuelve
+        -------
+        str
+            "OK" si la inserción se ha realizado correctamente.
+        '''
+        
+        # Creamos una query para insertar los datos en la tabla Seguir
+        query = """ 
+                insert into SeguirDeportista(ID, DeportistaID, SeguidorID) values (null,?,?) 
+                """ 
+        # Ejecutamos la query con los parámetros correspondientes
+        self.db.executeUpdateQuery(query,idDeportista,idDeportistaSeguido)
+
+        return "OK"
+    
+    def getDeportistasComparar(self,idDeportista):
+        '''Método que obtiene los deportistas que sigue un deportista
+        
+        Parámetros
+        ----------
+        idDeportista : int
+            ID del deportista del que se quiere obtener los deportistas que sigue.
+            
+        Devuelve
+        -------
+        list
+            Lista de diccionarios con los deportistas que sigue un deportista.
+        '''
+        
+        # Creamos una query para obtener los deportistas que sigue un deportista
+        query = "select SeguidorID from SeguirDeportista where DeportistaID = ?"
+        
+        # Ejecutamos la query 
+        id = self.db.executeQuery(query,idDeportista)
+
+        # Obtenemos el correo asociado a cada ID
+        query = "select CorreoElectronico from Deportista where Deportista.ID = ?"
+        deportistas = []
+        for i in id:
+            res = self.db.executeQuery(query,i.get("SeguidorID"))
+            deportistas.append(res[0].get("CorreoElectronico"))
+        
+        # Retornamos la lista de deportistas
+        return deportistas
+    
+    def getInformeMensual(self,idDeportista,tipoInforme):
+        '''Método que obtiene el informe mensual de un deportista
+        
+        Parámetros
+        ----------
+        idDeportista : int
+            ID del deportista del que se quiere obtener el informe mensual.
+        tipoInforme : int
+            1- Indica el informe mensual por total de actividades
+            2- Indica el informe mensual por tipo de actividad
+            
+        Devuelve
+        -------
+        list
+            Lista de diccionarios con el informe mensual de un deportista.
+        '''
+        if tipoInforme == 1:
+            # Para este informe se muestra el total de horas de actividad,todas las localizaciones,total de distancia,media FC max y FC min y total consumo calorico
+            # Se agrupan por mes y el nombre del tipo de actividad
+            query= """select strftime('%m',Fecha) as Mes, TipoActividadID, sum(DuracionHoras) as DuracionTotal, count(*) as NumeroSesiones, sum(DistanciaKms) as DistanciaTotal, avg(FCMax) as FCMaxMedia, avg(FCMin) as FCMinMedia, sum(ConsumoCalorico) as ConsumoCaloricoTotal from Actividad where DeportistaID = ? group by Mes,TipoActividadID"""
+            informe = self.db.executeQuery(query,idDeportista)
+            # Cambiamos el ID del tipo de actividad por el nombre del tipo de actividad
+            for i in informe:
+                query = "select Tipo from TipoActividad where TipoActividad.ID = ?"
+                res = self.db.executeQuery(query,i.get("TipoActividadID"))
+                i["TipoActividadID"] = res[0].get("Tipo")
+            return informe
+        
+        elif tipoInforme == 2:
+            # Para este informe se muestran las mismas características de antes pero ahora desglosadas por subtipo de actividad
+            # Se agrupan por mes y subtipo de actividad, se indica a su vez el nombre  tipo de actividad
+            query= """select strftime('%m',Fecha) as Mes, SubtipoActividadID, TipoActividadID, sum(DuracionHoras) as DuracionTotal, count(*) as NumeroSesiones, sum(DistanciaKms) as DistanciaTotal, avg(FCMax) as FCMaxMedia, avg(FCMin) as FCMinMedia, sum(ConsumoCalorico) as ConsumoCaloricoTotal from Actividad where DeportistaID = ? group by Mes, SubtipoActividadID"""
+            informe = self.db.executeQuery(query,idDeportista)
+            # Cambiamos el ID del tipo de actividad por el nombre del tipo de actividad y el ID del subtipo de actividad por el nombre del subtipo de actividad
+            for i in informe:
+                # Seleccionamos el nombre del tipo de actividad asociado al ID del tipo de actividad
+                query = "select Tipo from TipoActividad where TipoActividad.ID = ?"
+                res = self.db.executeQuery(query,i.get("TipoActividadID"))
+                i["TipoActividadID"] = res[0].get("Tipo")
+                # Seleccionamos el nombre del subtipo de actividad asociado al ID del subtipo de actividad
+                query = "select Subtipo from SubtipoActividad where SubtipoActividad.ID = ?"
+                res = self.db.executeQuery(query,i.get("SubtipoActividadID"))
+                i["SubtipoActividadID"] = res[0].get("Subtipo")
+            return informe
+        else:
+            return None
+    
+    def getInformeAnual(self,idDeportista,tipoInforme):
+        '''Método que obtiene el informe anual de un deportista
+        
+        Parámetros
+        ----------
+        idDeportista : int
+            ID del deportista del que se quiere obtener el informe anual.
+        tipoInforme : int
+            1- Indica el informe anual por total de actividades
+            2- Indica el informe anual por tipo de actividad
+            
+        Devuelve
+        -------
+        list
+            Lista de diccionarios con el informe anual de un deportista.
+        '''
+        if tipoInforme == 1:
+            # Para este informe se muestra el total de horas de actividad,todas las localizaciones,total de distancia,media FC max y FC min y total consumo calorico
+            query= """select strftime('%Y',Fecha) as Año,TipoActividadID, sum(DuracionHoras) as DuracionTotal, count(*) as NumeroSesiones, sum(DistanciaKms) as DistanciaTotal, avg(FCMax) as FCMaxMedia, avg(FCMin) as FCMinMedia, sum(ConsumoCalorico) as ConsumoCaloricoTotal from Actividad where DeportistaID = ? group by Año,TipoActividadID"""
+            informe = self.db.executeQuery(query,idDeportista)
+            # Cambiamos el ID del tipo de actividad por el nombre del tipo de actividad
+            for i in informe:
+                query = "select Tipo from TipoActividad where TipoActividad.ID = ?"
+                res = self.db.executeQuery(query,i.get("TipoActividadID"))
+                i["TipoActividadID"] = res[0].get("Tipo")
+            return informe
+        
+        elif tipoInforme == 2:
+            # Para este informe se muestran las mismas características de antes pero ahora desglosadas por subtipo de actividad
+            query= """select strftime('%Y',Fecha) as Año, SubtipoActividadID, TipoActividadID, sum(DuracionHoras) as DuracionTotal, count(*) as NumeroSesiones, sum(DistanciaKms) as DistanciaTotal, avg(FCMax) as FCMaxMedia, avg(FCMin) as FCMinMedia, sum(ConsumoCalorico) as ConsumoCaloricoTotal from Actividad where DeportistaID = ? group by Año, SubtipoActividadID"""
+            informe = self.db.executeQuery(query,idDeportista)
+            informe = self.db.executeQuery(query,idDeportista)
+            # Cambiamos el ID del tipo de actividad por el nombre del tipo de actividad y el ID del subtipo de actividad por el nombre del subtipo de actividad
+            for i in informe:
+                # Seleccionamos el nombre del tipo de actividad asociado al ID del tipo de actividad
+                query = "select Tipo from TipoActividad where TipoActividad.ID = ?"
+                res = self.db.executeQuery(query,i.get("TipoActividadID"))
+                i["TipoActividadID"] = res[0].get("Tipo")
+                # Seleccionamos el nombre del subtipo de actividad asociado al ID del subtipo de actividad
+                query = "select Subtipo from SubtipoActividad where SubtipoActividad.ID = ?"
+                res = self.db.executeQuery(query,i.get("SubtipoActividadID"))
+                i["SubtipoActividadID"] = res[0].get("Subtipo")
+            return informe
+        else:
+            return None

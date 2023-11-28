@@ -35,7 +35,9 @@ class View:
                         "14": self.gestor.añadirTipoActividad_view,
                         "15": self.gestor.añadirSubtipoActividad_view,
                         "16": self.gestor.inscripcionesEntidades,
-                        "17": self.quit
+                        "17": self.deportista.showSeguir,
+                        "18": self.deportista.showInforme,
+                        "19": self.quit
                           }
         
     def displayMenu (self):
@@ -43,7 +45,7 @@ class View:
         print(""" Opciones: \n
               0.- Registrar nuevo deportista
               1.- Registrar nueva entidad (Entidad)
-               
+              
               2.- Registrar nueva actividad
               3.- Registrar nueva actividad (Entidad)
               4.- Importar actividades CSV
@@ -59,7 +61,9 @@ class View:
               14.- Añadir Tipo de Actividad (Gestor)
               15.- Añadir Subtipo de Actividad (Gestor)
               16.- Monstrar Inscripciones de cada Entidad (Gestor)
-              17.- Salir
+              17.- Seguir a un deportista (Premium)
+              18.- Informe de actividad 
+              19.- Salir
               """)
         
     #Muestra la lista de opciones y permite la selección
