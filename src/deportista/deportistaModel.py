@@ -346,16 +346,11 @@ class DeportistaModel:
             return None
         else:
             MET = res[0].get("MET")
-            
+                   
         # pasar las horas a minutos
         min = horas*60
         # Calcular el consumo calórico
         consumoCalorico = (MBR/24/60)*MET*min
-
-        # Insertamos ese valor en la tabla Actividad
-        #query_cc = """update Actividad set ConsumoCalorico = ? 
-        #              where Actividad.ID = ?"""
-        #self.db.executeUpdateQuery(query_cc,consumoCalorico,Actividad_id)
 
         return consumoCalorico
 
@@ -431,7 +426,7 @@ class DeportistaModel:
         self.db.executeUpdateQuery(query,idDeportista,idDeportistaSeguido)
 
         return "OK"
-    
+
     def getDeportistasComparar(self,idDeportista):
         '''Método que obtiene los deportistas que sigue un deportista
         

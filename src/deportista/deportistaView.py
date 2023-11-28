@@ -251,29 +251,49 @@ class DeportistaView:
                 idDeportistaComparar = self.deportista.getIdDeportista(correoDeportistaComparar)
                 if idDeportistaComparar==None:
                     print("No existe el deportista con correo",correoDeportistaComparar)
+                
+                # Comprobamos que el deportista a seguir sea free 
                 else:
-                    # Deportista premium
-                    nombre,apellidos=self.deportista.getNombreCompletoDeportista(correoDeportista)
-                    print(f"Iniciado sesion: {correoDeportista}")
-                    print(f"\n¡Bienvenido {nombre} {apellidos}!" )
-                    print("Iniciando comparacion")
-                    sexo,fecha=self.deportista.getSexoFecha(idDeportista)
-                    print("Aquí tienes tus datos:")
-                    print(f"Nombre: {nombre} Apellidos: {apellidos}")
-                    print(f"Sexo: {sexo} Fecha de nacimiento: {fecha}")
-                    res = self.deportista.getSummary(idDeportista)
-                    for dict in res:
-                        tipo_actividad_nombre = self.deportista.mapTiposActividad()[dict["TipoActividadID"]]
-                        # print(f"Tipo de actividad: {tipo_actividad_nombre}\n -------------------------- \n\tNumero de sesiones: {dict['NumeroSesiones']} \n\tTotal distancia: {dict['DistanciaTotal']} kms \n --------------------------")
-                    for dict in res:
-                        dict["TipoActividad"] = self.deportista.mapTiposActividad()[dict["TipoActividadID"]]
-                        del dict["TipoActividadID"]
-                    res = [{key: dict[key] for key in ["TipoActividad", "NumeroSesiones", "DistanciaTotal"]} for dict in res]
-                    utils.printTable(res)
+                    premium=self.deportista.premium(idDeportistaComparar)
+                    premium = premium[0].get("Premium")
+                    if premium==True:
+                        print("El deportista a seguir es Premium,se seguirán sus actividades públicas")
+                        self.deportista.seguirDeportista(idDeportista,idDeportistaComparar)
 
-        # Datos deportista a comparar
-        deportistas_comparar = self.deportista.getDeportistasComparar(idDeportista)
-        for deportistaCorreo in deportistas_comparar:
+                    else:
+                        self.deportista.seguirDeportista(idDeportista,idDeportistaComparar)
+                        print("Se ha seguido al deportista con correo",correoDeportistaComparar)
+    
+    def showComparacion(self):
+        idDeportista = self.inicio_sesion_view()
+        # Obtenemos el correo del deportista
+        if idDeportista==None:
+            print("No se ha iniciado sesion correctamente")
+            return
+        else:
+            premium=self.deportista.premium(idDeportista)
+            premium = premium[0].get("Premium")
+            if premium==False:
+                print("Esta funcionalidad solo se permite para deportistas Premium")
+            else:      
+                # Deportista premium
+                print("Iniciando comparacion")
+                sexo,fecha=self.deportista.getSexoFecha(idDeportista)
+                print("Aquí tienes tus datos:")
+                print(f"Sexo: {sexo} Fecha de nacimiento: {fecha}")
+                res = self.deportista.getSummary_propio(idDeportista)
+                #for dict in res:
+                    #tipo_actividad_nombre = self.deportista.mapTiposActividad()[dict["TipoActividadID"]]
+                        # print(f"Tipo de actividad: {tipo_actividad_nombre}\n -------------------------- \n\tNumero de sesiones: {dict['NumeroSesiones']} \n\tTotal distancia: {dict['DistanciaTotal']} kms \n --------------------------")
+                for dict in res:
+                    dict["TipoActividad"] = self.deportista.mapTiposActividad()[dict["TipoActividadID"]]
+                    del dict["TipoActividadID"]
+                res = [{key: dict[key] for key in ["TipoActividad", "NumeroSesiones", "DistanciaTotal"]} for dict in res]
+                utils.printTable(res)
+
+                # Datos deportista a comparar
+                deportistas_comparar = self.deportista.getDeportistasComparar(idDeportista)
+                for deportistaCorreo in deportistas_comparar:
                     idDeportistaComparar = self.deportista.getIdDeportista(deportistaCorreo)
                     nombre2,apellidos2=self.deportista.getNombreCompletoDeportista(deportistaCorreo)
                     print(f"Datos del deportista a comparar de correo {deportistaCorreo}:")
