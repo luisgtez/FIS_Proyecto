@@ -126,4 +126,15 @@ class GestorModel:
                 INSERT INTO SubtipoActividad (ID, Subtipo, TipoActividadID) VALUES (null, ?, ?);
                 """
         self.db.executeQuery(query, subtipo, tipo)
+
+    '''
+    HU #23773
+    '''   
+    def getTotalInscripcionesEntidades(self):
+        query="""SELECT E.NombreEntidad, COUNT(I.ID) AS TotalInscripciones
+                FROM ActividadEntidad AE
+                LEFT JOIN Inscripcion I ON AE.ID = I.ActividadEntidadID
+                JOIN Entidad E ON AE.EntidadID = E.ID
+                GROUP BY E.NombreEntidad;"""
         
+        return self.db.executeQuery(query)

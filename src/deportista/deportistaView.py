@@ -39,6 +39,18 @@ class DeportistaView:
         # Introdcir los datos de la actividad
         print("\nIntrodcir los datos de la actividad")
         try:
+            
+            if self.deportista.premium(idDeportista)[0].get("Premium")==True:
+                publica = input("¿Quieres que la actividad sea pública? S/N: ")
+                while publica not in ["S", "N"]:
+                    print("Respuesta no válida")
+                    publica = input("¿Quieres que la actividad sea pública? S/N: ")
+                publica = True if publica == "S" else False
+            else:
+                print("La actividad será publica. Para ")
+                publica = True
+                                    
+        
         # Fecha
         
             # Pedimos la fecha
@@ -168,7 +180,7 @@ class DeportistaView:
         consumo_calorico = self.deportista.getConsumoCalorico(idDeportista,tipo_actividad_id,duracion_horas)
         
         #Invocación al metodo para insertar la actividad
-        self.deportista.insertActivity(fecha=fecha,duracion_horas=duracion_horas,localizacion=localizacion,distancia_kms=distancia_kms,FC_max=FC_max,FC_min=FC_min,consumo_calorico=consumo_calorico,tipo_actividad_id=tipo_actividad_id,idDeportista=idDeportista,subtipo_actividad_id=subtipo_actividad_id)
+        self.deportista.insertActivity(fecha=fecha,duracion_horas=duracion_horas,localizacion=localizacion,distancia_kms=distancia_kms,FC_max=FC_max,FC_min=FC_min,consumo_calorico=consumo_calorico,tipo_actividad_id=tipo_actividad_id,idDeportista=idDeportista,subtipo_actividad_id=subtipo_actividad_id, publica=publica)
         
         # Obtenemos el nombre del tipo y subtipo de actividad
         tipo_actividad = self.deportista.mapTiposActividad()[tipo_actividad_id]
@@ -177,7 +189,7 @@ class DeportistaView:
         # Mostramos un mensaje al usuario para indicar que se ha insertado la actividad correctamente
         print(f"Se ha insertado la actividad correctamente la actividad con fecha {fecha}, duracion {duracion_horas} horas, localizacion {localizacion}, distancia {distancia_kms} kms, FC max {FC_max}, FC min {FC_min},consumo calórico {consumo_calorico}, tipo de actividad {tipo_actividad} y subtipo de actividad {subtipo_actividad}")
 
-           
+
     #Vista para la HU Resumen básico sobre mi actividad deportiva a lo largo del tiempo, incluyendo el estado de forma
     def showSummary(self):
         '''
@@ -192,7 +204,7 @@ class DeportistaView:
         
 
         #Invocación al modelo para obtener el resumen
-        res = self.deportista.getSummary(idDeportista)
+        res = self.deportista.getSummary_propio(idDeportista)
 
         # Si no tiene actividades, mostramos un mensaje de error y salimos de la funcion
         if len(res)==0:
@@ -240,40 +252,24 @@ class DeportistaView:
                 if idDeportistaComparar==None:
                     print("No existe el deportista con correo",correoDeportistaComparar)
                 else:
-                    #Comprobamos que el deportista es free o premium con activdades públicas para poder seguirlo
-                    premiumComparar=self.deportista.premium(idDeportistaComparar)
-                    if premiumComparar[0].get("Premium")==False:
-                        print("El deportista con correo",correoDeportistaComparar,"tiene el perfil público por lo que se puede seguir")
-                        self.deportista.seguirDeportista(idDeportista,idDeportistaComparar)
-                    else:
-                        #Comprobar si tiene actividades públicas
-
-                        pass
-
-
-   # Vista para la HU comparación con otro deportista (para Premium)
-    def showComparacion(self):
-        correoDeportista = input("Introduce tu correo: ")
-        idDeportista = self.deportista.getIdDeportista(correoDeportista)
-
-        # Datos deportista
-        nombre,apellidos=self.deportista.getNombreCompletoDeportista(correoDeportista)
-        print(f"Iniciado sesion: {correoDeportista}")
-        print(f"\n¡Bienvenido {nombre} {apellidos}!" )
-        print("Iniciando comparacion")
-        sexo,fecha=self.deportista.getSexoFecha(idDeportista)
-        print("Aquí tienes tus datos:")
-        print(f"Nombre: {nombre} Apellidos: {apellidos}")
-        print(f"Sexo: {sexo} Fecha de nacimiento: {fecha}")
-        res = self.deportista.getSummary(idDeportista)
-        for dict in res:
-            tipo_actividad_nombre = self.deportista.mapTiposActividad()[dict["TipoActividadID"]]
-            # print(f"Tipo de actividad: {tipo_actividad_nombre}\n -------------------------- \n\tNumero de sesiones: {dict['NumeroSesiones']} \n\tTotal distancia: {dict['DistanciaTotal']} kms \n --------------------------")   
-        for dict in res:
-            dict["TipoActividad"] = self.deportista.mapTiposActividad()[dict["TipoActividadID"]]
-            del dict["TipoActividadID"]
-        res = [{key: dict[key] for key in ["TipoActividad", "NumeroSesiones", "DistanciaTotal"]} for dict in res]
-        utils.printTable(res)
+                    # Deportista premium
+                    nombre,apellidos=self.deportista.getNombreCompletoDeportista(correoDeportista)
+                    print(f"Iniciado sesion: {correoDeportista}")
+                    print(f"\n¡Bienvenido {nombre} {apellidos}!" )
+                    print("Iniciando comparacion")
+                    sexo,fecha=self.deportista.getSexoFecha(idDeportista)
+                    print("Aquí tienes tus datos:")
+                    print(f"Nombre: {nombre} Apellidos: {apellidos}")
+                    print(f"Sexo: {sexo} Fecha de nacimiento: {fecha}")
+                    res = self.deportista.getSummary(idDeportista)
+                    for dict in res:
+                        tipo_actividad_nombre = self.deportista.mapTiposActividad()[dict["TipoActividadID"]]
+                        # print(f"Tipo de actividad: {tipo_actividad_nombre}\n -------------------------- \n\tNumero de sesiones: {dict['NumeroSesiones']} \n\tTotal distancia: {dict['DistanciaTotal']} kms \n --------------------------")
+                    for dict in res:
+                        dict["TipoActividad"] = self.deportista.mapTiposActividad()[dict["TipoActividadID"]]
+                        del dict["TipoActividadID"]
+                    res = [{key: dict[key] for key in ["TipoActividad", "NumeroSesiones", "DistanciaTotal"]} for dict in res]
+                    utils.printTable(res)
 
         # Datos deportista a comparar
         deportistas_comparar = self.deportista.getDeportistasComparar(idDeportista)
@@ -284,7 +280,7 @@ class DeportistaView:
                     print(f"Nombre: {nombre2} Apellidos: {apellidos2}")
                     sexo2,fecha2=self.deportista.getSexoFecha(idDeportistaComparar)
                     print(f"Sexo: {sexo2} Fecha de nacimiento: {fecha2}")
-                    res2 = self.deportista.getSummary(idDeportistaComparar)
+                    res2 = self.deportista.getSummary_otro(idDeportistaComparar)
                     # for dict in res2:
                     #     tipo_actividad_nombre = self.deportista.mapTiposActividad()[dict["TipoActividadID"]]
                         # print(f"Tipo de actividad: {tipo_actividad_nombre}\n -------------------------- \n\tNumero de sesiones: {dict['NumeroSesiones']} \n\tTotal distancia: {dict['DistanciaTotal']} kms \n --------------------------")
@@ -528,7 +524,7 @@ class DeportistaView:
         
         
         # Comprobamos que el csv tiene las columnas correctas
-        columnas = ['Fecha', 'DuracionHoras', 'Localizacion', 'DistanciaKms','TipoActividadID', 'FCMax', 'FCMin', 'SubtipoActividadID']
+        columnas = ['Fecha', 'DuracionHoras', 'Localizacion', 'DistanciaKms','TipoActividadID', 'FCMax', 'FCMin', 'SubtipoActividadID', "Publica"]
         # Para cada columna, comprobamos que está en el csv
         for columna in columnas:
             # Si no está, mostramos un mensaje de error y salimos de la funcion
@@ -545,6 +541,7 @@ class DeportistaView:
             df["FCMin"] = pd.to_numeric(df["FCMin"])
             df["TipoActividadID"] = pd.to_numeric(df["TipoActividadID"])
             df["SubtipoActividadID"] = pd.to_numeric(df["SubtipoActividadID"])
+            df["Publica"] = df["Publica"].astype("bool")
         # Si hay un error, mostramos un mensaje de error y salimos de la funcion
         except:
             print("Error en el formato de los datos del csv")
@@ -574,12 +571,14 @@ class DeportistaView:
                 fc_max = row["FCMax"]
                 fc_min = row["FCMin"]
                 subtipo_actividad_id = row["SubtipoActividadID"]
+                publica = row["Publica"]
 
                 # Calculamos el consumo calorico de dicha actividad para guardarla en el registro
                 consumo_calorico = self.deportista.getConsumoCalorico(id_deportista,tipo_actividad_id,duracion_horas)
                 
                 # Insertamos la actividad
-                self.deportista.insertActivity(fecha=fecha,duracion_horas=duracion_horas,localizacion=localizacion,distancia_kms=distancia_kms,FC_max=fc_max,FC_min=fc_min,consumo_calorico=consumo_calorico,tipo_actividad_id=tipo_actividad_id,idDeportista=id_deportista,subtipo_actividad_id=subtipo_actividad_id)       
+                self.deportista.insertActivity(fecha=fecha,duracion_horas=duracion_horas,localizacion=localizacion,distancia_kms=distancia_kms,FC_max=fc_max,FC_min=fc_min,consumo_calorico=consumo_calorico,tipo_actividad_id=tipo_actividad_id,idDeportista=id_deportista,subtipo_actividad_id=subtipo_actividad_id, publica=publica)       
+                
 
             # Si todo ha ido bien, mostramos un mensaje de éxito
             print(f"Se han insertado {len(df)}/{len(df)} actividades correctamente")
