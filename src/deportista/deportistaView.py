@@ -223,15 +223,12 @@ class DeportistaView:
         # Mostramos el estado de forma
         print(f"Estado de forma: {estado_forma}")
 
-   # Vista para la HU comparación con otro deportista (para Premium)
-    def showComparacion(self):
-        
-        correoDeportista = input("Introduce tu correo: ")
-        idDeportista = self.deportista.getIdDeportista(correoDeportista) 
-
+    # Vista para la HU de seguir deportistas (Premium)
+    def showSeguir(self):
+        idDeportista = self.inicio_sesion_view()
         if idDeportista==None:
-            print ("No existe el deportista con correo:",correoDeportista)
-        
+            print("No se ha iniciado sesion correctamente")
+            return
         else:
             premium=self.deportista.premium(idDeportista)
             premium = premium[0].get("Premium")
@@ -243,28 +240,47 @@ class DeportistaView:
                 if idDeportistaComparar==None:
                     print("No existe el deportista con correo",correoDeportistaComparar)
                 else:
-                    # Deportista premium
-                    nombre,apellidos=self.deportista.getNombreCompletoDeportista(correoDeportista)
-                    print(f"Iniciado sesion: {correoDeportista}")
-                    print(f"\n¡Bienvenido {nombre} {apellidos}!" )
-                    print("Iniciando comparacion")
-                    sexo,fecha=self.deportista.getSexoFecha(idDeportista)
-                    print("Aquí tienes tus datos:")
-                    print(f"Nombre: {nombre} Apellidos: {apellidos}")
-                    print(f"Sexo: {sexo} Fecha de nacimiento: {fecha}")
-                    res = self.deportista.getSummary(idDeportista)
-                    for dict in res:
-                        tipo_actividad_nombre = self.deportista.mapTiposActividad()[dict["TipoActividadID"]]
-                        # print(f"Tipo de actividad: {tipo_actividad_nombre}\n -------------------------- \n\tNumero de sesiones: {dict['NumeroSesiones']} \n\tTotal distancia: {dict['DistanciaTotal']} kms \n --------------------------")
-                    for dict in res:
-                        dict["TipoActividad"] = self.deportista.mapTiposActividad()[dict["TipoActividadID"]]
-                        del dict["TipoActividadID"]
-                    res = [{key: dict[key] for key in ["TipoActividad", "NumeroSesiones", "DistanciaTotal"]} for dict in res]
-                    utils.printTable(res)
+                    #Comprobamos que el deportista es free o premium con activdades públicas para poder seguirlo
+                    premiumComparar=self.deportista.premium(idDeportistaComparar)
+                    if premiumComparar[0].get("Premium")==False:
+                        print("El deportista con correo",correoDeportistaComparar,"tiene el perfil público por lo que se puede seguir")
+                        self.deportista.seguirDeportista(idDeportista,idDeportistaComparar)
+                    else:
+                        #Comprobar si tiene actividades públicas
 
-                    # Deportista a comparar
-                    nombre2,apellidos2=self.deportista.getNombreCompletoDeportista(correoDeportistaComparar)
-                    print(f"Datos del deportista a comparar de correo {correoDeportistaComparar}")
+                        pass
+
+
+   # Vista para la HU comparación con otro deportista (para Premium)
+    def showComparacion(self):
+        correoDeportista = input("Introduce tu correo: ")
+        idDeportista = self.deportista.getIdDeportista(correoDeportista)
+
+        # Datos deportista
+        nombre,apellidos=self.deportista.getNombreCompletoDeportista(correoDeportista)
+        print(f"Iniciado sesion: {correoDeportista}")
+        print(f"\n¡Bienvenido {nombre} {apellidos}!" )
+        print("Iniciando comparacion")
+        sexo,fecha=self.deportista.getSexoFecha(idDeportista)
+        print("Aquí tienes tus datos:")
+        print(f"Nombre: {nombre} Apellidos: {apellidos}")
+        print(f"Sexo: {sexo} Fecha de nacimiento: {fecha}")
+        res = self.deportista.getSummary(idDeportista)
+        for dict in res:
+            tipo_actividad_nombre = self.deportista.mapTiposActividad()[dict["TipoActividadID"]]
+            # print(f"Tipo de actividad: {tipo_actividad_nombre}\n -------------------------- \n\tNumero de sesiones: {dict['NumeroSesiones']} \n\tTotal distancia: {dict['DistanciaTotal']} kms \n --------------------------")   
+        for dict in res:
+            dict["TipoActividad"] = self.deportista.mapTiposActividad()[dict["TipoActividadID"]]
+            del dict["TipoActividadID"]
+        res = [{key: dict[key] for key in ["TipoActividad", "NumeroSesiones", "DistanciaTotal"]} for dict in res]
+        utils.printTable(res)
+
+        # Datos deportista a comparar
+        deportistas_comparar = self.deportista.getDeportistasComparar(idDeportista)
+        for deportistaCorreo in deportistas_comparar:
+                    idDeportistaComparar = self.deportista.getIdDeportista(deportistaCorreo)
+                    nombre2,apellidos2=self.deportista.getNombreCompletoDeportista(deportistaCorreo)
+                    print(f"Datos del deportista a comparar de correo {deportistaCorreo}:")
                     print(f"Nombre: {nombre2} Apellidos: {apellidos2}")
                     sexo2,fecha2=self.deportista.getSexoFecha(idDeportistaComparar)
                     print(f"Sexo: {sexo2} Fecha de nacimiento: {fecha2}")
@@ -279,7 +295,8 @@ class DeportistaView:
                     # Change columns order
                     res2 = [{key: dict[key] for key in ["TipoActividad", "NumeroSesiones", "DistanciaTotal"]} for dict in res2]
                     utils.printTable(res2)
-                                
+
+
     def showActividadesEnPeriodo(self):
         print("#"*20)
         correoDeportista = str(input("Introducir tu correo: "))
@@ -716,6 +733,90 @@ class DeportistaView:
         else:
             objetivoCantidad = int(input("Introduce la cantidad de actividades realizadas en la semana que deseas alcanzar: "))
             self.deportista.addObjetivoSemanal(idDeportista=idDeportista,tipoObjetivo=opcion, valorObjetivo=objetivoCantidad)
+        
+    
+    def showInforme(self):
+        idDeportista = self.inicio_sesion_view()
+        if idDeportista==None:
+            print("No se ha iniciado sesion correctamente")
+            return
+        
+        # Preguntamos que tipo de informe quiere ver
+        print("¿Qué informe quieres ver?")
+        print("1. Informe de actividades mensual")
+        print("2. Informe de actividades anual")
+        opcion = input("Selecciona una opción (1 o 2): ")
+
+        if opcion not in ["1", "2"]:
+            print("Opción no válida. Debe seleccionar 1 o 2.")
+            return False
+        
+        # Visualizacion de los informes mensauales
+        if opcion == '1':
+            print("Has seleccionado el informe de actividades mensual")
+            print("Seleccione la forma de visualización de las actrividades:")
+            print("1. Por total de actividades")
+            print("2. Por subtipo de actividad")
+            tipoInforme = input("Selecciona una opción (1 o 2): ")
+
+            if tipoInforme not in ["1", "2"]:
+                print("Opción no válida. Debe seleccionar 1 o 2.")
+                return False
+            
+            # Visualización informes por total de actividades
+            if tipoInforme == '1':
+                print("Has seleccionado el informe de actividades mensual por total de actividades")
+                # función get para obtener el informe mensual
+                informe = self.deportista.getInformeMensual(idDeportista,1)
+                #Mostramos el informe en forma de tabla
+                utils.printTable(informe)
+
+            
+            # Visualización informes por tipo de actividad
+            else:
+                print("Has seleccionado el informe de actividades mensual por tipo de actividad")
+                # función get para obtener el informe mensual
+                informe = self.deportista.getInformeMensual(idDeportista,2)
+                #Mostramos el informe en forma de tabla
+                utils.printTable(informe)
+
+        # Visualizacion de los inormes anuales
+        else:
+            print("Has seleccionado el informe de actividades anual")
+            print("Seleccione la forma de visualización de las actividades:")
+            print("1. Por total de actividades")
+            print("2. Por subtipo de actividad")
+            tipoInforme = input("Selecciona una opción (1 o 2): ")
+
+            if tipoInforme not in ["1", "2"]:
+                print("Opción no válida. Debe seleccionar 1 o 2.")
+                return False
+            
+            # Visualización informes por total de actividades
+            if tipoInforme == '1':
+                print("Has seleccionado el informe de actividades anual por total de actividades")
+                # función get para obtener el informe anual
+                informe = self.deportista.getInformeAnual(idDeportista,1)
+                #Mostramos el informe en forma de tabla
+                utils.printTable(informe)
+            
+            # Visualización informes por tipo de actividad
+            else:
+                print("Has seleccionado el informe de actividades anual por tipo de actividad")
+                # función get para obtener el informe anual 
+                informe = self.deportista.getInformeAnual(idDeportista,2)
+                #Mostramos el informe en forma de tabla
+                utils.printTable(informe)
+
+
+    
+
+
+
+
+
+        
+
 
     
             

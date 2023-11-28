@@ -28,7 +28,9 @@ class View:
                         "9": self.gestor.masActivos,
                         "10":self.gestor.añadirTipoActividad_view,
                         "11":self.gestor.añadirSubtipoActividad_view,
-                        "12":self.quit
+                        "12": self.deportista.showSeguir,
+                        "13":self.deportista.showInforme,
+                        "14": self.quit
                           }
         
     def displayMenu (self):
@@ -47,7 +49,9 @@ class View:
               9.- Deportistas más activos (Gestor)
               10.- Añadir Tipo de Actividad (Gestor)
               11.- Añadir Subtipo de Actividad (Gestor)
-              12.- Salir
+              12.- Seguir a un deportista (Premium)
+              13.- Informe de actividad (Premium)
+              14.- Salir
               """)
         
     #Muestra la lista de opciones y permite la selección

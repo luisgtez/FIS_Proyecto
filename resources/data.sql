@@ -92,3 +92,12 @@ VALUES
     (28, 'Boxeo', 10),
     (29, 'Judo', 10),
     (30, 'Artes marciales mixtas', 10);
+
+-- Insert data into SeguirDeportista table
+INSERT INTO SeguirDeportista (ID, DeportistaID, SeguidorID)
+VALUES
+    (1,1,2),
+    (2,1,3),
+    (3,3,2),
+    (4,5,2),
+    (5,7,6);
