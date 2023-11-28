@@ -106,5 +106,18 @@ INSERT INTO ActividadEntidad (ID, EntidadID, NombreActividad, Descripcion, Fecha
 VALUES
     (1, 1, 'San Silvestre 2023', 'carrera anual de fin de año por la ciudad de Oviedo',                     '2023-12-31', 1, 1000, 5),
     (2, 1, 'Deporte en la calle', 'juegos y actividades de todo tipo en la plaza de la catedral de Oviedo', '2024-1-28',  5, 500,  5),
-    (3, 2, 'Torneo OCB juevenil', 'torneo de baloncesto por equipos de juveniles',                          '2023-12-10', 3, 50,   10);
+    (3, 2, 'Torneo OCB juevenil', 'torneo de baloncesto por equipos de juveniles',                          '2023-12-10', 3, 50,   10),
+    (4, 2, 'DEBUG ACT COMPLETA',  'DEBUG ACT COMPLETA',                                                     '2023-12-10', 3, 5,   10),
+    (5, 2, 'DEBUG ACT PASADA',    'DEBUG ACT PASADA',                                                       '2022-12-10', 3, 50,   10);
 
+INSERT INTO Inscripcion (ID, DeportistaID, ActividadEntidadID)
+VALUES
+    (1,2,4),
+    (2,1,4),
+    (3,3,4),
+    (4,5,4),
+    (5,4,4),
+    (6,1,1),
+    (7,1,2),
+    (8,1,3),
+    (9,1,5);
