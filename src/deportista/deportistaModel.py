@@ -398,8 +398,64 @@ class DeportistaModel:
         subtipos_actividad = {dict_values["ID"] : dict_values["Subtipo"] for dict_values in result}
         
         # Retornamos el diccionario
-        return subtipos_actividad
-       
+        return subtipos_actividad       
+
+    def compararConGrupoEdad(self, idDeportista):
+        '''Método que compara al deportista premium con otros deportistas de su franja de edad.
+        
+        Para cada grupo de edad, se mostrarán el número promedio de actividades realizadas (#Act) y las calorías promedio quemadas (CC media).
+        
+        Parámetros
+        ----------
+        idDeportista : int
+            ID del deportista premium que quiere realizar la comparación.
+        
+        Devuelve
+        -------
+        dict or None
+            Un diccionario con los resultados de la comparación o None si no hay suficientes datos.
+        '''
+        # Obtener sexo y fecha de nacimiento del deportista premium
+        sexo, fecha_nacimiento = self.getSexoFecha(idDeportista)
+
+        # Calcular la edad del deportista premium
+        edad = self.utils.calcularEdad(fecha_nacimiento)
+
+        # Obtener el rango de edad para la comparación
+        rango_edad = self.utils.obtenerRangoEdad(edad)
+
+        # Obtener deportistas en el mismo rango de edad
+        deportistas_grupo = self.gestor_model.getDeportistasPorRangoEdad(rango_edad)
+
+        # Verificar si hay suficientes deportistas en el grupo de edad
+        if not deportistas_grupo:
+            return None
+
+        # Obtener el resumen de actividades y calorías para la franja de edad
+        query = "SELECT COUNT(*) AS NumeroSesiones, AVG(ConsumoCalorico) AS ConsumoCaloricoPromedio FROM Actividad WHERE DeportistaID IN ({})".format(','.join(map(str, deportistas_grupo)))
+        resumen_grupo = self.db.executeQuery(query)
+
+        if not resumen_grupo:
+            return None
+
+        # Obtener el resumen de actividades y calorías para el deportista premium
+        query_deportista_premium = "SELECT COUNT(*) AS TotalActividades, AVG(ConsumoCalorico) AS ConsumoCaloricoPromedio FROM Actividad WHERE DeportistaID = ?"
+        resumen_deportista_premium = self.db.executeQuery(query_deportista_premium, idDeportista)
+
+        if not resumen_deportista_premium:
+            return None
+
+        # Retornar los resultados
+        resultados = {
+            "Edad": edad,
+            "TotalActividades": resumen_deportista_premium[0]['TotalActividades'],
+            "ConsumoCaloricoPromedio": resumen_deportista_premium[0]['ConsumoCaloricoPromedio'],
+            "NumeroSesionesPromedio": resumen_grupo[0]['NumeroSesionesPromedio'],
+            "ConsumoCaloricoPromedioGrupo": resumen_grupo[0]['ConsumoCaloricoPromedio']
+        }
+
+        return resultados
+
     def getInscripcionesDeportista(self, deportista_id, premium):
         if premium:
             query="""SELECT
