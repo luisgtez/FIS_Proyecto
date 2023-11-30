@@ -400,6 +400,34 @@ class DeportistaModel:
         # Retornamos el diccionario
         return subtipos_actividad       
 
+    def actividadesPorSemana(self, idDeportista):
+        '''Método que obtiene el número de actividades realizadas por semana.
+        
+        Parámetros
+        ----------
+        idDeportista : int
+            ID del deportista del que se quiere obtener el número de actividades por semana.
+            
+        Devuelve
+        -------
+        str
+            Cadena que indica el número de actividades realizadas por semana.
+        '''
+        # Obtener la fecha actual
+        fecha_actual = datetime.now().date()
+
+        # Calcular la fecha de inicio de la semana actual (lunes)
+        inicio_semana = fecha_actual - timedelta(days=fecha_actual.weekday())
+
+        # Creamos una query para contar las actividades realizadas desde el inicio de la semana
+        query = "select count(*) as NumeroActividades from Actividad where DeportistaID = ? and Fecha >= ?"
+
+        # Ejecutamos la query con los parámetros correspondientes
+        resultado = self.db.executeQuery(query, idDeportista, inicio_semana)
+
+        # Devolvemos la cadena con el número de actividades realizadas por semana
+        return f"Esta semana has realizado {resultado[0]['NumeroActividades']} actividades."
+
     def compararConGrupoEdad(self, idDeportista):
         '''Método que compara al deportista premium con otros deportistas de su franja de edad.
         
