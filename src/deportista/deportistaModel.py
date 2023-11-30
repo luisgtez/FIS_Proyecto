@@ -400,6 +400,110 @@ class DeportistaModel:
         # Retornamos el diccionario
         return subtipos_actividad       
 
+    def getActividadesProgramadasPublicas(self):
+        '''Método que obtiene las actividades programadas publicas
+        
+        Devuelve
+        -------
+        list
+            Lista de diccionarios con las actividades programadas publicas.
+        '''
+        
+        # Creamos una query para obtener las actividades programadas que cumplan numplazas > numinscripciones y fecha > fecha actual
+        query = """SELECT ActividadEntidad.ID as "Nº Actividad",NombreActividad as "Nombre", Descripcion, Fecha, DuracionDias AS "Duracion Dias", NumPlazas as "Numero de Plazas", Coste FROM ActividadEntidad 
+            LEFT JOIN Inscripcion ON ActividadEntidad.ID = Inscripcion.ActividadEntidadID
+                GROUP BY ActividadEntidadID 
+                HAVING COUNT(Inscripcion.ActividadEntidadID) < ActividadEntidad.NumPlazas
+                AND ActividadEntidad.Fecha > DATE();
+        """
+
+        # Ejecutamos la query y guardamos el resultado en result
+        result = self.db.executeQuery(query)
+        
+        
+        # Retornamos el resultado
+        return result
+    
+    def InscribirEnActividad(self, IDDeportista, IDActividad):
+        '''Método que inscribe a un deportista en una actividad
+        
+        Parámetros
+        ----------
+        IDDeportista : int
+            ID del deportista que se quiere inscribir en la actividad.
+        IDActividad : int
+            ID de la actividad en la que se quiere inscribir el deportista.
+            
+        Devuelve
+        -------
+        str
+            "OK" si la inscripción se ha realizado correctamente.
+        '''
+        
+        # Creamos una query para inscribir al deportista en la actividad
+        query = "INSERT INTO Inscripcion (ID,DeportistaID, ActividadEntidadID) VALUES (null,?,?)"
+        
+        try:
+            # Ejecutamos la query y guardamos el resultado en result
+            self.db.executeUpdateQuery(query,IDDeportista,IDActividad)
+            
+            # Retornamos "OK"
+            return "OK"
+        except:
+            # Retornamos "ERROR"
+            return "ERROR"
+        
+    def getDatosActividad(self,IDActividad):
+        '''Método que obtiene los datos de una actividad
+        
+        Parámetros
+        ----------
+        IDActividad : int
+            ID de la actividad de la que se quieren obtener los datos.
+            
+        Devuelve
+        -------
+        dict
+            Diccionario con los datos de la actividad.
+        '''
+        
+        # Creamos una query para obtener los datos de la actividad
+        query = """SELECT * FROM ActividadEntidad 
+                    WHERE ActividadEntidad.ID = ?
+        """
+        
+        # Ejecutamos la query y guardamos el resultado en result
+        result = self.db.executeQuery(query,IDActividad)
+        
+        # Retornamos el resultado
+        return result
+    
+    def EstaInscritoEnActividad(self,IDDeportista,IDActividad):
+        '''Método que comprueba si un deportista está inscrito en una actividad
+        
+        Parámetros
+        ----------
+        IDDeportista : int
+            ID del deportista que se quiere comprobar si está inscrito en la actividad.
+        IDActividad : int
+            ID de la actividad en la que se quiere comprobar si el deportista está inscrito.
+            
+        Devuelve
+        -------
+        bool
+            True si el deportista está inscrito en la actividad, False en caso contrario.
+        '''
+        
+        # Creamos una query para comprobar si el deportista está inscrito en la actividad
+        query = """SELECT * FROM Inscripcion 
+                    WHERE DeportistaID = ? AND ActividadEntidadID = ?
+        """
+        
+        # Ejecutamos la query y guardamos el resultado en result
+        result = self.db.executeQuery(query,IDDeportista,IDActividad)
+        
+        # Retornamos True si el resultado tiene al menos un elemento, False en caso contrario
+        return len(result)>0
     def actividadesPorSemana(self, idDeportista):
         '''Método que obtiene el número de actividades realizadas por semana.
         

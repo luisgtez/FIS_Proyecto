@@ -753,6 +753,63 @@ class DeportistaView:
             objetivoCantidad = int(input("Introduce la cantidad de actividades realizadas en la semana que deseas alcanzar: "))
             self.deportista.addObjetivoSemanal(idDeportista=idDeportista,tipoObjetivo=opcion, valorObjetivo=objetivoCantidad)
 
+    
+    def inscribir_actividad(self):
+        
+        idDeportista = self.inicio_sesion_view()
+        if idDeportista==None:
+            print("No se ha iniciado sesion correctamente")
+            return
+        
+        print("Escoge una de las actividades disponibles:")
+        actividades = self.deportista.getActividadesProgramadasPublicas()
+        
+        utils.printTable(actividades)
+        num_actividad = input("Introduce el número de la actividad que quieres inscribirte (Pulsa 0 para salir): ")
+        
+        if num_actividad == "0":
+            return
+        
+        # try:
+        #     num_actividad = int(num_actividad)
+        # except:
+        #     print("Número de actividad no válido")
+        #     return
+        
+        # if num_actividad < 1 or num_actividad > len(actividades):
+        #     print("El numero de actividad debe corresponder con una de las actividades disponibles")
+        #     return
+        
+        while True:
+            if num_actividad == "0":
+                return
+            try:
+                num_actividad = int(num_actividad)
+                
+                if num_actividad < 1 or num_actividad > len(actividades):
+                    print("El numero de actividad debe corresponder con una de las actividades disponibles")
+                    
+                elif self.deportista.EstaInscritoEnActividad(idDeportista, num_actividad):
+                    print("Ya estás inscrito en esta actividad") 
+                    
+                else:
+                    break
+            except:
+                print("Número de actividad no válido")
+            
+            num_actividad = input("Introduce el número de la actividad que quieres inscribirte (Pulsa 0 para salir): ")
+        
+            
+        
+        respuesta = self.deportista.InscribirEnActividad(idDeportista, num_actividad)
+        if respuesta == "OK":
+            datos_actividad = self.deportista.getDatosActividad(num_actividad)[0]
+            print(f"Te has inscrito en la actividad '{datos_actividad['NombreActividad']}', recuerda que se celebra el {datos_actividad['Fecha']}, dura {datos_actividad['DuracionDias']} dias y tiene un coste de {datos_actividad['Coste']}€")
+        else:
+            print("Ha ocurrido un error al inscribirte en la actividad")
+            
+        return
+            
     def mostrarProgresoObjetivos(self):
         '''Método que muestra por pantalla el progreso del deportista en relación con sus objetivos.'''
         idDeportista = self.inicio_sesion_view()

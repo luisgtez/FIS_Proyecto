@@ -1,5 +1,5 @@
 --Primero se deben borrar todas las tablas (de detalle a maestro) y lugeo añadirlas (de maestro a detalle)
-
+PRAGMA encoding="UTF-8";
 drop table if exists Deportista;
 drop table if exists Actividad;
 drop table if exists TipoActividad;

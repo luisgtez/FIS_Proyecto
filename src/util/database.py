@@ -21,6 +21,7 @@ class DataBase:
         try:
             conn = sqlite3.connect(self.dbname)
             curs = conn.cursor()
+            curs.executescript('PRAGMA encoding="UTF-8";')
             curs.executescript (sqlScript) #Ejecuta el script
             conn.commit()
             curs.close()
