@@ -47,7 +47,7 @@ class DeportistaView:
                     publica = input("¿Quieres que la actividad sea pública? S/N: ")
                 publica = True if publica == "S" else False
             else:
-                print("La actividad será publica. Para ")
+                print("La actividad será publica. Para poder elegir si la actividad es pública o no, debes ser deportista premium")
                 publica = True
                                     
         
@@ -487,7 +487,7 @@ class DeportistaView:
             # Transferencia
             else:
                 print("Mandar transferencia a la cuenta ES 1234 5678 9012 3456 7890")
-                self.deportista.registrarDeportista(nombre, apellidos, correo, fecha_nacimiento, sexo, peso, altura, formadepago, facturacion)
+                self.deportista.registrarDeportista(altura=altura, correo=correo, fecha_nacimiento=fecha_nacimiento,apellidos=apellidos,facturacion=facturacion, formapago=formadepago, nombre=nombre, peso=peso, premium=premium, sexo=sexo)
                 print('Transferencia realizada correctamente')
 
             # Justificante de registro

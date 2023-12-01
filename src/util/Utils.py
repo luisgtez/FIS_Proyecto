@@ -57,7 +57,7 @@ class utils:
         return False
     
     def comprobarCorreoEscrito(self,correo):
-        reg = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+        reg = r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"
         return re.match(reg,correo)
     
     def mapTiposActividad(self):
