@@ -1,2 +1,3 @@
 #Ignorar archivos de cache de python
 __pycache__/
+AppDB.db
