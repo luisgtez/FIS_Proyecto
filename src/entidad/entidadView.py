@@ -136,7 +136,7 @@ class EntidadView:
         #Invocación al metodo para insertar la actividad
         self.entidad.InsertActividadEntidad(entidad_id, nombreActividad, descripcion, fecha, duracion_dias, numplazas, coste)
         # Obtenemos el nombre de la entidad
-        entidad = self.entidad.mapEntidades()[entidad_id]
+        entidad = self.utils.mapEntidades()[entidad_id]
         
         # Mostramos un mensaje al usuario para indicar que se ha insertado la actividad correctamente
         print(f"Se ha insertado correctamente la actividad {nombreActividad} de {entidad} con fecha {fecha}, duracion {duracion_dias} dias, número de plazas {numplazas} y coste {coste}")
