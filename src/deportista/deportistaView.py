@@ -818,7 +818,7 @@ class DeportistaView:
             return
 
         # Obtener el resumen de actividades del deportista
-        resumen_actividades = self.deportista.getSummary(idDeportista)
+        resumen_actividades = self.deportista.getSummary_propio(idDeportista)
 
         if not resumen_actividades:
             print("No hay actividades registradas para mostrar progreso.")

@@ -40,7 +40,7 @@ class View:
                         "18": self.gestor.añadirSubtipoActividad_view,
                         "19": self.gestor.inscripcionesEntidades,
                         
-                        "20": self.quit
+                        "20": self.quit,
                           }
 
     def displayMenu(self):

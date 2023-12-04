@@ -688,8 +688,9 @@ class DeportistaModel:
         '''
         if tipoInforme == 1:
             # Para este informe se muestra el total de horas de actividad,todas las localizaciones,total de distancia,media FC max y FC min y total consumo calorico
-            # Se agrupan por mes y el nombre del tipo de actividad
-            query= """select strftime('%m',Fecha) as Mes, TipoActividadID, sum(DuracionHoras) as DuracionTotal, count(*) as NumeroSesiones, sum(DistanciaKms) as DistanciaTotal, avg(FCMax) as FCMaxMedia, avg(FCMin) as FCMinMedia, sum(ConsumoCalorico) as ConsumoCaloricoTotal from Actividad where DeportistaID = ? group by Mes,TipoActividadID"""
+            # Se muestra el informe del mes actual
+            query = """select strftime('%m',Fecha) as Mes, TipoActividadID, sum(DuracionHoras) as DuracionTotal, count(*) as NumeroSesiones, sum(DistanciaKms) as DistanciaTotal, avg(FCMax) as FCMaxMedia, avg(FCMin) as FCMinMedia, sum(ConsumoCalorico) as ConsumoCaloricoTotal from Actividad where DeportistaID = ? and strftime('%m',Fecha) = strftime('%m','now') group by Mes,TipoActividadID"""
+
             informe = self.db.executeQuery(query,idDeportista)
             # Cambiamos el ID del tipo de actividad por el nombre del tipo de actividad
             for i in informe:
@@ -701,7 +702,7 @@ class DeportistaModel:
         elif tipoInforme == 2:
             # Para este informe se muestran las mismas características de antes pero ahora desglosadas por subtipo de actividad
             # Se agrupan por mes y subtipo de actividad, se indica a su vez el nombre  tipo de actividad
-            query= """select strftime('%m',Fecha) as Mes, SubtipoActividadID, TipoActividadID, sum(DuracionHoras) as DuracionTotal, count(*) as NumeroSesiones, sum(DistanciaKms) as DistanciaTotal, avg(FCMax) as FCMaxMedia, avg(FCMin) as FCMinMedia, sum(ConsumoCalorico) as ConsumoCaloricoTotal from Actividad where DeportistaID = ? group by Mes, SubtipoActividadID"""
+            query = """select strftime('%m',Fecha) as Mes, SubtipoActividadID, TipoActividadID, sum(DuracionHoras) as DuracionTotal, count(*) as NumeroSesiones, sum(DistanciaKms) as DistanciaTotal, avg(FCMax) as FCMaxMedia, avg(FCMin) as FCMinMedia, sum(ConsumoCalorico) as ConsumoCaloricoTotal from Actividad where DeportistaID = ? and strftime('%m',Fecha) = strftime('%m','now') group by Mes,SubtipoActividadID"""
             informe = self.db.executeQuery(query,idDeportista)
             # Cambiamos el ID del tipo de actividad por el nombre del tipo de actividad y el ID del subtipo de actividad por el nombre del subtipo de actividad
             for i in informe:
@@ -735,7 +736,9 @@ class DeportistaModel:
         '''
         if tipoInforme == 1:
             # Para este informe se muestra el total de horas de actividad,todas las localizaciones,total de distancia,media FC max y FC min y total consumo calorico
-            query= """select strftime('%Y',Fecha) as Año,TipoActividadID, sum(DuracionHoras) as DuracionTotal, count(*) as NumeroSesiones, sum(DistanciaKms) as DistanciaTotal, avg(FCMax) as FCMaxMedia, avg(FCMin) as FCMinMedia, sum(ConsumoCalorico) as ConsumoCaloricoTotal from Actividad where DeportistaID = ? group by Año,TipoActividadID"""
+            # Mostramos el informe del año actual
+            query = """select strftime('%Y',Fecha) as Año, TipoActividadID, sum(DuracionHoras) as DuracionTotal, count(*) as NumeroSesiones, sum(DistanciaKms) as DistanciaTotal, avg(FCMax) as FCMaxMedia, avg(FCMin) as FCMinMedia, sum(ConsumoCalorico) as ConsumoCaloricoTotal from Actividad where DeportistaID = ? and strftime('%Y',Fecha) = strftime('%Y','now') group by Año,TipoActividadID"""
+
             informe = self.db.executeQuery(query,idDeportista)
             # Cambiamos el ID del tipo de actividad por el nombre del tipo de actividad
             for i in informe:
@@ -746,8 +749,8 @@ class DeportistaModel:
         
         elif tipoInforme == 2:
             # Para este informe se muestran las mismas características de antes pero ahora desglosadas por subtipo de actividad
-            query= """select strftime('%Y',Fecha) as Año, SubtipoActividadID, TipoActividadID, sum(DuracionHoras) as DuracionTotal, count(*) as NumeroSesiones, sum(DistanciaKms) as DistanciaTotal, avg(FCMax) as FCMaxMedia, avg(FCMin) as FCMinMedia, sum(ConsumoCalorico) as ConsumoCaloricoTotal from Actividad where DeportistaID = ? group by Año, SubtipoActividadID"""
-            informe = self.db.executeQuery(query,idDeportista)
+            query = """select strftime('%Y',Fecha) as Año, SubtipoActividadID, TipoActividadID, sum(DuracionHoras) as DuracionTotal, count(*) as NumeroSesiones, sum(DistanciaKms) as DistanciaTotal, avg(FCMax) as FCMaxMedia, avg(FCMin) as FCMinMedia, sum(ConsumoCalorico) as ConsumoCaloricoTotal from Actividad where DeportistaID = ? and strftime('%Y',Fecha) = strftime('%Y','now') group by Año,SubtipoActividadID"""
+
             informe = self.db.executeQuery(query,idDeportista)
             # Cambiamos el ID del tipo de actividad por el nombre del tipo de actividad y el ID del subtipo de actividad por el nombre del subtipo de actividad
             for i in informe:
