@@ -504,6 +504,29 @@ class DeportistaModel:
         
         # Retornamos True si el resultado tiene al menos un elemento, False en caso contrario
         return len(result)>0
+        
+    def getObjetivos(self, idDeportista):
+        '''Método que obtiene los objetivos de un deportista.
+        
+        Parámetros
+        ----------
+        idDeportista : int
+            ID del deportista del que se quieren obtener los objetivos.
+        
+        Devuelve
+        -------
+        list
+            Lista de diccionarios con los objetivos del deportista.
+        '''
+        # Creamos una query para obtener los objetivos del deportista
+        query = """
+            SELECT ObjetivoHoras, ObjetivoCantidad
+            FROM Deportista
+            WHERE ID = ?
+        """
+        
+        return self.db.executeQuery(query, idDeportista)
+        
     def actividadesPorSemana(self, idDeportista):
         '''Método que obtiene el número de actividades realizadas por semana.
         
