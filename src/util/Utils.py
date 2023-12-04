@@ -182,3 +182,14 @@ class utils:
             
             # Retornamos el diccionario
             return actividades
+
+    def comprobarExisteEntidad(self,nombre):
+        query = "SELECT NombreEntidad FROM Entidad"
+        
+        res = self.db.executeQuery(query)
+        
+        for row in res:
+            if row["NombreEntidad"] == nombre:
+                return True
+        
+        return False
