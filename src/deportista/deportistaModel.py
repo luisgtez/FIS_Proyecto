@@ -1,5 +1,6 @@
 from util.database import DataBase
 from datetime import datetime, timedelta
+from util.Utils import utils
 
 class DeportistaModel:
     '''
@@ -10,6 +11,7 @@ class DeportistaModel:
     
     def __init__ (self):
         self.db = DataBase ("AppDB.db") # Crea un objeto DataBase con la ruta de la base de datos
+        self.utils = utils() # Crea un objeto Utils para utilizar sus métodos
 
     def getIdDeportista(self,correoDeportista):
         '''Método que obtiene el ID de un deportista a partir de su correo electrónico.
@@ -765,3 +767,25 @@ class DeportistaModel:
             return informe
         else:
             return None
+        
+    def getObjetivos(self, idDeportista):
+        '''Método que obtiene los objetivos de un deportista.
+        
+        Parámetros
+        ----------
+        idDeportista : int
+            ID del deportista del que se quieren obtener los objetivos.
+        
+        Devuelve
+        -------
+        list
+            Lista de diccionarios con los objetivos del deportista.
+        '''
+        # Creamos una query para obtener los objetivos del deportista
+        query = """
+            SELECT ObjetivoHoras, ObjetivoCantidad
+            FROM Deportista
+            WHERE ID = ?
+        """
+
+        return self.db.executeQuery(query, idDeportista)

@@ -835,7 +835,7 @@ class DeportistaView:
         print("Resumen de actividades:")
         for resumen in resumen_actividades:
             tipo_actividad_id = resumen.get("TipoActividadID")
-            tipo_actividad = self.deportista.mapTipoActividad(tipo_actividad_id)
+            tipo_actividad = self.deportista.mapTiposActividad().get(tipo_actividad_id)
             print(f"{tipo_actividad}: {resumen.get('NumeroSesiones')} sesiones, {resumen.get('DistanciaTotal')} km")
 
         # Mostrar progreso en relación con los objetivos
@@ -850,13 +850,22 @@ class DeportistaView:
             elif tipo_objetivo == "ObjetivoCantidad":
                 print(f"Objetivo de actividades semanales: {valor_objetivo} actividades, Progreso: {progreso} actividades")
             
-        
 
-            
-        
-
-    def mostrarComparacionGrupoEdad(self, idDeportista):
+    def mostrarComparacionGrupoEdad(self):
         '''Método que muestra la comparación del deportista premium con otros deportistas de su franja de edad.'''
+        
+        idDeportista = self.inicio_sesion_view()
+        if idDeportista is None:
+            print("No se ha iniciado sesión correctamente.")
+            return
+        
+        # Comprobar si el deportista es premium
+        premium = self.deportista.premium(idDeportista)
+        premium = premium[0].get("Premium")
+        if not premium:
+            print("Esta funcionalidad solo se permite para deportistas Premium")
+            return
+        
         # Obtener la comparación con el grupo de edad desde el modelo
         comparacion = self.deportista.compararConGrupoEdad(idDeportista)
 
@@ -872,12 +881,6 @@ class DeportistaView:
             print(f"Consumo calórico promedio: {comparacion['ConsumoCaloricoPromedio']:.2f} kcal")
         else:
             print("No hay suficientes datos para realizar la comparación en este grupo de edad.")
-            
-        
-
-            
-        
-
     
     def showInforme(self):
         idDeportista = self.inicio_sesion_view()
