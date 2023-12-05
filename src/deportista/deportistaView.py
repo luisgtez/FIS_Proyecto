@@ -842,6 +842,9 @@ class DeportistaView:
         print("\nProgreso de objetivos:")
         for objetivo in objetivos:
             tipo_objetivo = objetivo.get("TipoObjetivo")
+            print(f"--------Objetivo: {objetivo}")
+            
+            print(f"----------Tipo de objetivo: {tipo_objetivo}")
             valor_objetivo = objetivo.get("ValorObjetivo")
             progreso = self.deportista.calcularProgresoObjetivo(idDeportista, tipo_objetivo)
 
@@ -871,6 +874,9 @@ class DeportistaView:
 
         # Mostrar los resultados en la consola o manejarlos según tus necesidades
         if comparacion:
+            if comparacion["TotalActividades"] == 0:
+                print("No puedes realizar la comparación porque no tienes actividades registradas.")
+                return
             print(f"Comparación con deportistas en la franja de edad de {comparacion['Edad']} años:")
             print("Edad\t#Act Promedio\tCC Media")
             print(f"{comparacion['Edad']}\t{comparacion['NumeroSesionesPromedio']:.2f}\t\t{comparacion['ConsumoCaloricoPromedioGrupo']:.2f} kcal")

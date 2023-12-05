@@ -111,9 +111,12 @@ class GestorView:
         tipo_id = invert_map_tipos[tipo]
         subtipos = self.utils.subtiposActividad(tipo_id)
         
-        print(f"Estos son los subtipos de {tipo} ya guardados:")
-        for subtipo in subtipos:
-            print(f"\t{subtipo}")
+        if subtipos == []:
+            print(f"No hay subtipos de '{tipo}' guardados")
+        else:
+            print(f"Estos son los subtipos de '{tipo}' ya guardados:")
+            for subtipo in subtipos:
+                print(f"\t{subtipo}")
             
         subtipo = input("Introduzca el subtipo de actividad: ")
         

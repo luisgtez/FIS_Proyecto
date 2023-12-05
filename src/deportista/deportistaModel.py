@@ -1,5 +1,6 @@
 from util.database import DataBase
-from datetime import datetime, timedelta
+from datetime import  timedelta,datetime
+import datetime as dt
 from util.Utils import utils
 
 class DeportistaModel:
@@ -535,30 +536,14 @@ class DeportistaModel:
         return f"Esta semana has realizado {resultado[0]['NumeroActividades']} actividades."
 
     def compararConGrupoEdad(self, idDeportista):
-        '''Método que compara al deportista premium con otros deportistas de su franja de edad.
-        
-        Para cada grupo de edad, se mostrarán el número promedio de actividades realizadas (#Act) y las calorías promedio quemadas (CC media).
-        
-        Parámetros
-        ----------
-        idDeportista : int
-            ID del deportista premium que quiere realizar la comparación.
-        
-        Devuelve
-        -------
-        dict or None
-            Un diccionario con los resultados de la comparación o None si no hay suficientes datos.
-        '''
+        '''Método que compara al deportista premium con otros deportistas de su franja de edad.'''
         # Obtener sexo y fecha de nacimiento del deportista premium
         sexo, fecha_nacimiento = self.getSexoFecha(idDeportista)
 
-        # Calcular la edad del deportista premium
-        edad = self.calcularEdad(fecha_nacimiento)
-
         # Obtener el rango de edad para la comparación
-        rango_edad = self.obtenerRangoEdad(edad)
+        rango_edad = self.obtenerRangoEdad(self.calcularEdad(fecha_nacimiento))
 
-        # Obtener deportistas en el mismo rango de edad
+        # Obtener deportistas en el mismo rango de edad y sexo
         deportistas_grupo = self.getDeportistasPorRangoEdad(rango_edad, sexo)
 
         # Verificar si hay suficientes deportistas en el grupo de edad
@@ -569,7 +554,7 @@ class DeportistaModel:
         query = "SELECT COUNT(*) AS NumeroSesiones, AVG(ConsumoCalorico) AS ConsumoCaloricoPromedio FROM Actividad WHERE DeportistaID IN ({})".format(','.join(map(str, deportistas_grupo)))
         resumen_grupo = self.db.executeQuery(query)
 
-        if not resumen_grupo:
+        if not resumen_grupo or 'NumeroSesiones' not in resumen_grupo[0]:
             return None
 
         # Obtener el resumen de actividades y calorías para el deportista premium
@@ -581,11 +566,11 @@ class DeportistaModel:
 
         # Retornar los resultados
         resultados = {
-            "Edad": edad,
-            "TotalActividades": resumen_deportista_premium[0]['TotalActividades'],
-            "ConsumoCaloricoPromedio": resumen_deportista_premium[0]['ConsumoCaloricoPromedio'],
-            "NumeroSesionesPromedio": resumen_grupo[0]['NumeroSesionesPromedio'],
-            "ConsumoCaloricoPromedioGrupo": resumen_grupo[0]['ConsumoCaloricoPromedio']
+            "Edad": self.calcularEdad(fecha_nacimiento),
+            "TotalActividades": resumen_deportista_premium[0].get('TotalActividades', 0),
+            "ConsumoCaloricoPromedio": resumen_deportista_premium[0].get('ConsumoCaloricoPromedio', 0),
+            "NumeroSesionesPromedio": resumen_grupo[0].get('NumeroSesiones', 0),
+            "ConsumoCaloricoPromedioGrupo": resumen_grupo[0].get('ConsumoCaloricoPromedio', 0)
         }
 
         return resultados
@@ -768,66 +753,61 @@ class DeportistaModel:
         else:
             return None
         
+   
     def getObjetivos(self, idDeportista):
-        '''Método que obtiene los objetivos de un deportista.
-        
-        Parámetros
-        ----------
-        idDeportista : int
-            ID del deportista del que se quieren obtener los objetivos.
-        
-        Devuelve
-        -------
-        list
-            Lista de diccionarios con los objetivos del deportista.
-        '''
-        # Creamos una query para obtener los objetivos del deportista
         query = """
             SELECT ObjetivoHoras, ObjetivoCantidad
             FROM Deportista
             WHERE ID = ?
         """
-
-        return self.db.executeQuery(query, idDeportista)
-    
-    def calcularProgresoObjetivo(self, idDeportista, tipoObjetivo):
-        '''Método que calcula el progreso del deportista en relación con un objetivo específico.
+        result = self.db.executeQuery(query, idDeportista)
         
-        Parámetros
-        ----------
-        idDeportista : int
-            ID del deportista del que se quiere calcular el progreso.
-        tipoObjetivo : str
-            Tipo de objetivo para el que se desea calcular el progreso.
-            
-        Devuelve
-        -------
-        float
-            Valor que representa el progreso del deportista en relación con el objetivo.
-        '''
-        # Obtener la información de las actividades del deportista
-        query_actividades = "SELECT Fecha, DuracionHoras FROM Actividad WHERE DeportistaID = ?"
-        actividades = self.db.executeQuery(query_actividades, idDeportista)
+        if result:
+            return [{"ObjetivoHoras": result[0]["ObjetivoHoras"], "ObjetivoCantidad": result[0]["ObjetivoCantidad"]}]
+        else:
+            return []
 
-        # Obtener el valor objetivo del deportista
-        query_valor_objetivo = f"SELECT {tipoObjetivo} FROM Deportista WHERE ID = ?"
-        valor_objetivo = self.db.executeQuery(query_valor_objetivo, idDeportista)[0][tipoObjetivo]
+    def calcularProgresoObjetivo(self, idDeportista, tipo_objetivo):
+        if tipo_objetivo == "ObjetivoHoras":
+            query = """
+                SELECT COALESCE(SUM(DuracionHoras), 0) as TotalHoras
+                FROM Actividad
+                WHERE DeportistaID = ?
+            """
+            total_horas = self.db.executeQuery(query, idDeportista)[0]["TotalHoras"]
 
-        # Calcular el progreso
-        progreso = 0.0
-        total_horas_actividades = sum(actividad["DuracionHoras"] for actividad in actividades)
+            objetivos = self.getObjetivos(idDeportista)
+            objetivo_horas = objetivos[0]["ObjetivoHoras"] if objetivos else None
 
-        if tipoObjetivo == "ObjetivoHoras":
-            progreso = total_horas_actividades
-        elif tipoObjetivo == "ObjetivoCantidad":
-            progreso = len(actividades)
+            if objetivo_horas is None:
+                print(f"Error: No se encontró el objetivo de horas para el deportista con ID {idDeportista}")
+                return {"error": True, "message": "Objetivo de horas no encontrado."}
 
-        # Calcular el porcentaje de progreso
-        porcentaje_progreso = (progreso / valor_objetivo) * 100 if valor_objetivo > 0 else 0
+            progreso_horas = total_horas / objetivo_horas if objetivo_horas > 0 else 0
+            return progreso_horas
 
-        return porcentaje_progreso
+        elif tipo_objetivo == "ObjetivoCantidad":
+            query = """
+                SELECT COALESCE(COUNT(*), 0) as TotalActividades
+                FROM Inscripcion
+                WHERE DeportistaID = ?
+            """
+            total_actividades = self.db.executeQuery(query, idDeportista)[0]["TotalActividades"]
 
+            objetivos = self.getObjetivos(idDeportista)
+            objetivo_cantidad = objetivos[0]["ObjetivoCantidad"] if objetivos else None
 
+            if objetivo_cantidad is None:
+                print(f"Error: No se encontró el objetivo de cantidad para el deportista con ID {idDeportista}")
+                return {"error": True, "message": "Objetivo de cantidad no encontrado."}
+
+            progreso_cantidad = total_actividades / objetivo_cantidad if objetivo_cantidad > 0 else 0
+            return progreso_cantidad
+
+        else:
+            print(f"Error: Tipo de objetivo no válido: {tipo_objetivo}")
+            return {"error": True, "message": "Tipo de objetivo no válido."}
+        
     def calcularEdad(self, fecha_nacimiento):
         '''Método que calcula la edad a partir de la fecha de nacimiento.
         
@@ -874,26 +854,45 @@ class DeportistaModel:
         else:
             return '65+'
 
-    def getDeportistasPorRangoEdad(self, rango_edad):
-        '''Método que obtiene los ID de deportistas en el mismo rango de edad.
-        
-        Parámetros
-        ----------
-        rango_edad : str
-            Rango de edad para el que se quieren obtener deportistas.
-        
-        Devuelve
-        -------
-        list
-            Lista de ID de deportistas en el mismo rango de edad.
-        '''
-        query = "SELECT ID FROM Deportista WHERE FechaNacimiento IS NOT NULL"
-        deportistas = self.db.executeQuery(query)
+    def getDeportistasPorRangoEdad(self, rango_edad, sexo):
+        '''Obtiene deportistas en el mismo rango de edad y sexo.'''
+        query = "SELECT ID, FechaNacimiento FROM Deportista WHERE Sexo = ?"
+        deportistas = self.db.executeQuery(query, sexo)
 
-        deportistas_en_rango = []
+        deportistas_grupo = []
         for deportista in deportistas:
             edad = self.calcularEdad(deportista['FechaNacimiento'])
             if self.obtenerRangoEdad(edad) == rango_edad:
-                deportistas_en_rango.append(deportista['ID'])
+                deportistas_grupo.append(deportista['ID'])
 
-        return deportistas_en_rango  
+        return deportistas_grupo  
+    
+    ############################################
+    def getNumeroActividadesSieteDias(self, id_deportista):
+        # Obtener la fecha actual
+        fecha_actual = self.getFechaActual()
+
+        # Calcular la fecha hace siete días
+        fecha_hace_siete_dias = fecha_actual - dt.timedelta(days=7)
+
+        # Crear la query para contar el número de actividades en el periodo de siete días
+        query = """SELECT COUNT(*) as NumActividades 
+                   FROM Actividad 
+                   WHERE Actividad.DeportistaID = ? 
+                         AND Actividad.Fecha BETWEEN ? AND ?"""
+        
+        # Ejecutar la query y obtener el resultado
+        res = self.db.executeQuery(query, id_deportista, fecha_hace_siete_dias, fecha_actual)
+
+        # Obtener el número de actividades desde el resultado
+        num_actividades = res[0].get("NumActividades")
+
+        return num_actividades
+
+    def mostrarProgreso(self, id_deportista):
+        num_actividades = self.getNumeroActividadesSieteDias(id_deportista)
+        mensaje = f"En los últimos siete días has realizado {num_actividades} actividades."
+        return mensaje
+    
+    def getFechaActual(self):
+        return dt.date.today()
