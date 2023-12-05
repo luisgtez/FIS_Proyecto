@@ -553,13 +553,13 @@ class DeportistaModel:
         sexo, fecha_nacimiento = self.getSexoFecha(idDeportista)
 
         # Calcular la edad del deportista premium
-        edad = self.utils.calcularEdad(fecha_nacimiento)
+        edad = self.calcularEdad(fecha_nacimiento)
 
         # Obtener el rango de edad para la comparación
-        rango_edad = self.utils.obtenerRangoEdad(edad)
+        rango_edad = self.obtenerRangoEdad(edad)
 
         # Obtener deportistas en el mismo rango de edad
-        deportistas_grupo = self.gestor_model.getDeportistasPorRangoEdad(rango_edad)
+        deportistas_grupo = self.getDeportistasPorRangoEdad(rango_edad, sexo)
 
         # Verificar si hay suficientes deportistas en el grupo de edad
         if not deportistas_grupo:
@@ -789,3 +789,111 @@ class DeportistaModel:
         """
 
         return self.db.executeQuery(query, idDeportista)
+    
+    def calcularProgresoObjetivo(self, idDeportista, tipoObjetivo):
+        '''Método que calcula el progreso del deportista en relación con un objetivo específico.
+        
+        Parámetros
+        ----------
+        idDeportista : int
+            ID del deportista del que se quiere calcular el progreso.
+        tipoObjetivo : str
+            Tipo de objetivo para el que se desea calcular el progreso.
+            
+        Devuelve
+        -------
+        float
+            Valor que representa el progreso del deportista en relación con el objetivo.
+        '''
+        # Obtener la información de las actividades del deportista
+        query_actividades = "SELECT Fecha, DuracionHoras FROM Actividad WHERE DeportistaID = ?"
+        actividades = self.db.executeQuery(query_actividades, idDeportista)
+
+        # Obtener el valor objetivo del deportista
+        query_valor_objetivo = f"SELECT {tipoObjetivo} FROM Deportista WHERE ID = ?"
+        valor_objetivo = self.db.executeQuery(query_valor_objetivo, idDeportista)[0][tipoObjetivo]
+
+        # Calcular el progreso
+        progreso = 0.0
+        total_horas_actividades = sum(actividad["DuracionHoras"] for actividad in actividades)
+
+        if tipoObjetivo == "ObjetivoHoras":
+            progreso = total_horas_actividades
+        elif tipoObjetivo == "ObjetivoCantidad":
+            progreso = len(actividades)
+
+        # Calcular el porcentaje de progreso
+        porcentaje_progreso = (progreso / valor_objetivo) * 100 if valor_objetivo > 0 else 0
+
+        return porcentaje_progreso
+
+
+    def calcularEdad(self, fecha_nacimiento):
+        '''Método que calcula la edad a partir de la fecha de nacimiento.
+        
+        Parámetros
+        ----------
+        fecha_nacimiento : str
+            Fecha de nacimiento en formato 'YYYY-MM-DD'.
+        
+        Devuelve
+        -------
+        int
+            Edad del deportista.
+        '''
+        fecha_nacimiento = datetime.strptime(fecha_nacimiento, "%Y-%m-%d")
+        fecha_actual = datetime.now()
+        edad = fecha_actual.year - fecha_nacimiento.year - ((fecha_actual.month, fecha_actual.day) < (fecha_nacimiento.month, fecha_nacimiento.day))
+        return edad
+
+    def obtenerRangoEdad(self, edad):
+        '''Método que obtiene el rango de edad para la comparación.
+        
+        Parámetros
+        ----------
+        edad : int
+            Edad del deportista.
+        
+        Devuelve
+        -------
+        str
+            Rango de edad ('<18', '18-24', '25-34', '35-44', '45-54', '55-64', '65+').
+        '''
+        if edad < 18:
+            return '<18'
+        elif 18 <= edad <= 24:
+            return '18-24'
+        elif 25 <= edad <= 34:
+            return '25-34'
+        elif 35 <= edad <= 44:
+            return '35-44'
+        elif 45 <= edad <= 54:
+            return '45-54'
+        elif 55 <= edad <= 64:
+            return '55-64'
+        else:
+            return '65+'
+
+    def getDeportistasPorRangoEdad(self, rango_edad):
+        '''Método que obtiene los ID de deportistas en el mismo rango de edad.
+        
+        Parámetros
+        ----------
+        rango_edad : str
+            Rango de edad para el que se quieren obtener deportistas.
+        
+        Devuelve
+        -------
+        list
+            Lista de ID de deportistas en el mismo rango de edad.
+        '''
+        query = "SELECT ID FROM Deportista WHERE FechaNacimiento IS NOT NULL"
+        deportistas = self.db.executeQuery(query)
+
+        deportistas_en_rango = []
+        for deportista in deportistas:
+            edad = self.calcularEdad(deportista['FechaNacimiento'])
+            if self.obtenerRangoEdad(edad) == rango_edad:
+                deportistas_en_rango.append(deportista['ID'])
+
+        return deportistas_en_rango  
