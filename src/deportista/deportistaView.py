@@ -840,18 +840,23 @@ class DeportistaView:
 
         # Mostrar progreso en relación con los objetivos
         print("\nProgreso de objetivos:")
-        for objetivo in objetivos:
-            tipo_objetivo = objetivo.get("TipoObjetivo")
-            print(f"--------Objetivo: {objetivo}")
+        for key_objetivo in objetivos[0]:
+            # tipo_objetivo = objetivo.get("TipoObjetivo")
+            # print(f"--------Objetivo: {objetivo}")
             
-            print(f"----------Tipo de objetivo: {tipo_objetivo}")
-            valor_objetivo = objetivo.get("ValorObjetivo")
-            progreso = self.deportista.calcularProgresoObjetivo(idDeportista, tipo_objetivo)
+            # print(f"----------Tipo de objetivo: {tipo_objetivo}")
+            # valor_objetivo = objetivo.get("ValorObjetivo")
+            # progreso = self.deportista.calcularProgresoObjetivo(idDeportista, tipo_objetivo)
 
-            if tipo_objetivo == "ObjetivoHoras":
-                print(f"Objetivo de horas semanales: {valor_objetivo} horas, Progreso: {progreso:.2f} horas")
-            elif tipo_objetivo == "ObjetivoCantidad":
-                print(f"Objetivo de actividades semanales: {valor_objetivo} actividades, Progreso: {progreso} actividades")
+            # if tipo_objetivo == "ObjetivoHoras":
+            #     print(f"Objetivo de horas semanales: {valor_objetivo} horas, Progreso: {progreso:.2f} horas")
+            # elif tipo_objetivo == "ObjetivoCantidad":
+            #     print(f"Objetivo de actividades semanales: {valor_objetivo} actividades, Progreso: {progreso} actividades")
+            tipo_obj = key_objetivo
+            valor_obj = objetivos[0][tipo_obj]
+            progreso = self.deportista.calcularProgresoObjetivo(idDeportista, tipo_obj)
+            print(f"{tipo_obj} = {valor_obj} - Progreso: {progreso}")
+            
             
 
     def mostrarComparacionGrupoEdad(self):

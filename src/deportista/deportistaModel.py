@@ -768,11 +768,11 @@ class DeportistaModel:
             return []
 
     def calcularProgresoObjetivo(self, idDeportista, tipo_objetivo):
+        fecha_semana = (datetime.now() - timedelta(days=7)).strftime("%Y/%m/%d")
+
         if tipo_objetivo == "ObjetivoHoras":
-            query = """
-                SELECT COALESCE(SUM(DuracionHoras), 0) as TotalHoras
-                FROM Actividad
-                WHERE DeportistaID = ?
+            query = f"""
+                SELECT SUM(DuracionHoras) as TotalHoras FROM Actividad WHERE DeportistaID = ? AND Fecha > {fecha_semana}
             """
             total_horas = self.db.executeQuery(query, idDeportista)[0]["TotalHoras"]
 
@@ -783,14 +783,11 @@ class DeportistaModel:
                 print(f"Error: No se encontró el objetivo de horas para el deportista con ID {idDeportista}")
                 return {"error": True, "message": "Objetivo de horas no encontrado."}
 
-            progreso_horas = total_horas / objetivo_horas if objetivo_horas > 0 else 0
-            return progreso_horas
+            return objetivo_horas
 
         elif tipo_objetivo == "ObjetivoCantidad":
-            query = """
-                SELECT COALESCE(COUNT(*), 0) as TotalActividades
-                FROM Inscripcion
-                WHERE DeportistaID = ?
+            query = f"""
+               SELECT COUNT(ID) as TotalActividades FROM Actividad WHERE DeportistaID = ? AND Fecha > {fecha_semana};
             """
             total_actividades = self.db.executeQuery(query, idDeportista)[0]["TotalActividades"]
 
@@ -801,8 +798,8 @@ class DeportistaModel:
                 print(f"Error: No se encontró el objetivo de cantidad para el deportista con ID {idDeportista}")
                 return {"error": True, "message": "Objetivo de cantidad no encontrado."}
 
-            progreso_cantidad = total_actividades / objetivo_cantidad if objetivo_cantidad > 0 else 0
-            return progreso_cantidad
+
+            return objetivo_cantidad
 
         else:
             print(f"Error: Tipo de objetivo no válido: {tipo_objetivo}")

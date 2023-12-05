@@ -36,14 +36,16 @@ VALUES
     (10, '2023-02-15', 1.5, 'Pista de atletismo',   8.0,    175, 120, 679,   1, 2, 2, False),
     (11, '2023-06-05', 2.0, 'Paseo Maritimo',       8.7,    180, 125, 124,   2, 1, 6, False),
     (12, '2023-07-20', 1.0, 'Parque Central',       5.0,    170, 120, 981,   2, 2, 6, False),
-    (13, '2023-08-10', 2.5, 'Bosque Nacional',      11.0,   185, 130, 478,   1, 1, 6, False),
+    (13, '2023-08-10', 2.5, 'Bosque Nacional',      11.0,   185, 130, 478,   1, 1, 6, True),
     (14, '2023-09-15', 1.5, 'Pista de atletismo',   9.0,    175, 120, 224,   2, 2, 6, False),
     (15, '2023-10-05', 3.0, 'Gimnasio FitLife',     10.0,   165, 110, 809,   1, 1, 6, False),
     (16, '2023-06-05', 2.0, 'Paseo Maritimo',       8.7,    180, 125, 445,   2, 1, 7, False),
     (17, '2023-07-20', 1.0, 'Parque Central',       5.0,    170, 120, 632,   2, 2, 7, True),
     (18, '2023-08-10', 2.5, 'Bosque Nacional',      11.0,   185, 130, 773,   1, 1, 7, True),
     (19, '2023-09-15', 1.5, 'Pista de atletismo',   9.0,    175, 120, 553,   2, 2, 7, True),
-    (20, '2023-10-05', 3.0, 'Gimnasio FitLife',     10.0,   165, 110, 299,   1, 1, 7, False);
+    (20, '2023-10-05', 3.0, 'Gimnasio FitLife',     10.0,   165, 110, 299,   1, 1, 7, False),
+    (21, '2023-12-05', 3.0, 'Gimnasio FitLife',     10.0,   165, 110, 299,   1, 1, 6, True);
+
 
 
 
@@ -109,8 +111,9 @@ VALUES
     (1, 1, 'San Silvestre 2023', 'carrera anual de fin de año por la ciudad de Oviedo',                     '2023-12-31', 1, 1000, 5),
     (2, 1, 'Deporte en la calle', 'juegos y actividades de todo tipo en la plaza de la catedral de Oviedo', '2024-1-28',  5, 500,  5),
     (3, 2, 'Torneo OCB juvenil', 'torneo de baloncesto por equipos de juveniles',                          '2023-12-10', 3, 50,   10),
-    (4, 2, 'DEBUG ACT COMPLETA',  'DEBUG ACT COMPLETA',                                                     '2023-12-10', 3, 5,   10),
-    (5, 2, 'DEBUG ACT PASADA',    'DEBUG ACT PASADA',                                                       '2022-12-10', 3, 50,   10);
+    (4, 3, 'Torneo Petanca juvenil', 'torneo de petanca por equipos de juveniles',                          '2023-12-11', 2, 20,   10),
+    (5, 2, 'DEBUG ACT COMPLETA',  'DEBUG ACT COMPLETA',                                                     '2023-12-10', 3, 5,   10),
+    (6, 2, 'DEBUG ACT PASADA',    'DEBUG ACT PASADA',                                                       '2022-12-10', 3, 50,   10);
 
 INSERT INTO Inscripcion (ID, DeportistaID, ActividadEntidadID)
 VALUES
